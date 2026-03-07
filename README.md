@@ -16,7 +16,7 @@ gamified student skill dashboard.
 ```
 becp/
 ├── apps/
-│   └── web/                 ← Next.js 15 PWA (TypeScript + Tailwind + ShadCN)
+│   └── web/                 ← Next.js 16 PWA (TypeScript + Tailwind + ShadCN)
 │                               Wagmi v2 + RainbowKit + TanStack Query
 │
 ├── contracts/               ← Solidity smart contracts (Hardhat + OpenZeppelin)
@@ -36,20 +36,20 @@ becp/
 
 | Layer | Technology |
 |---|---|
-| Frontend Framework | Next.js 15 (App Router, PWA) |
+| Frontend Framework | Next.js 16 (App Router, PWA) |
 | UI Components | ShadCN UI + Tailwind CSS |
 | Charts / Dashboard | Recharts |
-| Blockchain Client | Wagmi v2 + Viem |
+| Blockchain Client | Wagmi v3 + Viem |
 | Wallet Integration | RainbowKit v2 |
 | Smart Contract Language | Solidity 0.8.28 |
-| Contract Framework | Hardhat v2 + OpenZeppelin v5 |
+| Contract Framework | Hardhat v3 + OpenZeppelin v5 |
 | Token Standard | ERC-1155 (multi-token, soulbound) |
 | Blockchain Network | Optimism / OP Sepolia (testnet) |
 | RPC Provider | Alchemy |
 | Decentralized Storage | IPFS via Pinata |
-| AI Skill Inferencing | OpenAI / Anthropic API |
+| AI Skill Inferencing | Anthropic API |
 | Deployment | Vercel (frontend) |
-| Monorepo | Turborepo + pnpm workspaces |
+| Monorepo | Turborepo + bun workspaces |
 
 ## Development Methodology
 
@@ -73,16 +73,7 @@ This project follows **Extreme Programming (XP)**, adapted for solo development:
 
 ```bash
 git clone https://github.com/tsujisalju/becp.git
-cd becp
-bash scripts/setup.sh
 ```
-
-The setup script will:
-1. Check prerequisites
-2. Install all dependencies via pnpm workspaces
-3. Copy `.env.local.example` files (fill in your API keys)
-4. Build the shared package
-5. Compile the smart contracts (generates TypeScript bindings)
 
 ### Environment Variables
 
@@ -114,13 +105,13 @@ After setup, fill in your API keys:
 
 ```bash
 # Terminal 1 — start local Hardhat blockchain node
-pnpm --filter @becp/contracts node
+bun --filter @becp/contracts node
 
 # Terminal 2 — deploy contract to local node
-pnpm contract:deploy:local
+bun run contract:deploy:local
 
 # Terminal 3 — start Next.js dev server
-pnpm dev
+bun run dev
 ```
 
 The app will be available at [http://localhost:3000](http://localhost:3000).
@@ -129,7 +120,7 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 
 ```bash
 # Deploy contract to OP Sepolia
-pnpm contract:deploy:testnet
+bun run contract:deploy:testnet
 
 # Copy the deployed contract address into apps/web/.env.local
 # NEXT_PUBLIC_CONTRACT_ADDRESS=0x...
@@ -141,17 +132,17 @@ git push origin main
 ## Key Commands
 
 ```bash
-pnpm dev                        # Start all workspaces in dev mode
-pnpm build                      # Build all workspaces
-pnpm test                       # Run all tests
-pnpm lint                       # Lint all workspaces
-pnpm typecheck                  # Type-check all workspaces
-pnpm format                     # Format all files with Prettier
+bun run dev                        # Start all workspaces in dev mode
+bun run build                      # Build all workspaces
+bun run test                       # Run all tests
+bun run lint                       # Lint all workspaces
+bun run typecheck                  # Type-check all workspaces
+bun run format                     # Format all files with Prettier
 
-pnpm contract:compile           # Compile Solidity contracts
-pnpm contract:test              # Run Hardhat tests
-pnpm contract:deploy:local      # Deploy to local Hardhat node
-pnpm contract:deploy:testnet    # Deploy to OP Sepolia
+bun run contract:compile           # Compile Solidity contracts
+bun run contract:test              # Run Hardhat tests
+bun run contract:deploy:local      # Deploy to local Hardhat node
+bun run contract:deploy:testnet    # Deploy to OP Sepolia
 ```
 
 ## Smart Contract Architecture
