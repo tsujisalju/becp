@@ -1,0 +1,62 @@
+# ── Dependencies ───────────────────────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ── Environment files ──────────────────────────────────────────────────────────
+# .env*.local catches: .env.local, .env.development.local, .env.production.local
+# .env.local.example and .env.example are NOT matched and will be committed
+.env*.local
+.env.local
+
+# ── Next.js ────────────────────────────────────────────────────────────────────
+.next/
+out/
+
+# ── Hardhat / Contracts ────────────────────────────────────────────────────────
+artifacts/
+cache/
+dist/
+coverage/
+typechain-types/
+
+# ── Build outputs ──────────────────────────────────────────────────────────────
+build/
+*.tsbuildinfo
+
+# ── OS ─────────────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ── Editor ─────────────────────────────────────────────────────────────────────
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.pem
+
+# ── Debug logs ─────────────────────────────────────────────────────────────────
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+bun-error.log*
+
+# ── Vercel ─────────────────────────────────────────────────────────────────────
+.vercel
+
+# ── Testing ────────────────────────────────────────────────────────────────────
+coverage/

@@ -1,0 +1,18 @@
+{
+  "name": "becp",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "contracts",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "cd frontend && bun dev",
+    "build": "cd frontend && bun build",
+    "contract:compile": "cd contracts && bunx hardhat compile",
+    "contract:test": "cd contracts && bunx hardhat test",
+    "contract:deploy:local": "cd contracts && bunx hardhat ignition deploy --network localhost",
+    "contract:deploy:testnet": "cd contracts && bunx hardhat ignition deploy --network op-sepolia"
+  }
+}

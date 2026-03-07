@@ -1,0 +1,31 @@
+# ── Node modules ───────────────────────────────────────────────────────────────
+/node_modules
+
+# ── Environment files (NEVER commit secrets) ───────────────────────────────────
+.env
+.env.local
+.env.*.local
+# Keep example/template files
+!.env.example
+!.env.*.example
+
+# ── Compilation output ─────────────────────────────────────────────────────────
+/dist
+
+# ── pnpm deploy output ─────────────────────────────────────────────────────────
+/bundle
+
+# ── Hardhat build artifacts ────────────────────────────────────────────────────
+/artifacts
+
+# ── Hardhat compilation cache ──────────────────────────────────────────────────
+/cache
+
+# ── Typechain output ───────────────────────────────────────────────────────────
+/types
+
+# ── Coverage reports ───────────────────────────────────────────────────────────
+/coverage
+
+# ── TypeScript build info ──────────────────────────────────────────────────────
+*.tsbuildinfo
