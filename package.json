@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "cd frontend && bun dev",
     "build": "cd frontend && bun build",
+    "contract:clean": "cd contracts && bunx hardhat clean",
     "contract:compile": "cd contracts && bunx hardhat compile",
     "contract:test": "cd contracts && bunx hardhat test",
     "contract:deploy:local": "cd contracts && bunx hardhat ignition deploy --network localhost",

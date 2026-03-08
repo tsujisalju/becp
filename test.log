@@ -1,0 +1,130 @@
+
+WARNING: You are using Node.js 25.2.1 which is not supported by Hardhat.
+Please upgrade to 22.10.0 or a later LTS version (even major version number)
+
+No contracts to compile
+No Solidity tests to compile
+
+Running Solidity tests
+
+
+Running node:test tests
+
+  BECPCredential
+    1. Deployment & Initialization
+      ✔ grants DEFAULT_ADMIN_ROLE to the deployer
+      ✔ grants UNIVERSITY_ADMIN_ROLE to the deployer
+      ✔ sets UNIVERSITY_ADMIN_ROLE as the admin of ISSUER_ROLE
+      ✔ starts with zero credential types registered
+      ✔ reverts if deployed with zero address as admin
+    2. Two-tier Organizer Trust Model
+      ✔ allows university admin can approve an organizer
+      ✔ allows university admin to revoke an organizer
+      ✔ prevents stranger from approving and organizer
+      ✔ reverts approveOrganizer with zero address
+      ✔ prevents a plain organizer from approving other organizers
+    3. Credential Type Registration
+      ✔ allows organizer to register a credential type and receives token ID 1
+      ✔ auto-increments token IDs from 1
+      ✔ ensures totalCredentialTypes reflects registered count
+      ✔ stores issuer address, URI, active flag, and timestamp
+      1) ensures uri() returns the correct IPFS URI for the token
+      ✔ reverts registration with a non-IPFS URI
+      ✔ reverts registration with an empty string
+      ✔ prevents non-issuer from registering a credential type
+    4. Single Credential Issuance
+      ✔ organizer can issue a credential to a student
+      ✔ student balance is 1 after issuance
+      ✔ hasCredential returns true for the student after issuance
+      ✔ hasCredential returns false before issuance
+      ✔ reverts when issuing to zero address
+      ✔ reverts when issuing an already-held credential
+      ✔ reverts when issuing a non-existent token type
+      ✔ non-issuer cannot issue a credential
+    5. Batch Credential Issuance
+      ✔ organizer can batch issue to multiple students
+      ✔ all recipients hold the credential after batch issue
+      ✔ reverts atomically if any recipient already holds the credential
+      ✔ reverts batch issue with empty recipients array
+      ✔ reverts batch issue if any recipient is zero address
+    6. Credential Revocation
+      ✔ original issuer can revoke a credential
+      ✔ university admin can revoke a credential from any organizer
+      ✔ student balance is 0 after revocation
+      ✔ hasCredential returns false after revocation
+      ✔ stranger cannot revoke a credential
+      ✔ reverts revocation of a non-held credential
+      ✔ reverts revocation with empty reason
+      ✔ revoked credential is excluded from getStudentCredentials()
+    7. Soulbound Token Transfers
+      ✔ student cannot transfer their credential to another wallet
+      ✔ even with approval, transfer is blocked
+      ✔ batch transfer is also blocked
+    8. Student Credential Portfolio
+      ✔ getStudentCredentials returns all held token IDs
+      ✔ getStudentCredentials returns empty array for student with no credentials
+      ✔ getStudentCredentials excludes revoked credentials
+    9. Emergency Pause
+      ✔ admin can pause the contract
+      ✔ admin can unpause the contract (79ms)
+      ✔ pause blocks registerCredentialType (79ms)
+      ✔ non-admin cannot pause
+    10. Interface Support (ERC-165)
+      ✔ supports ERC-1155 interface
+      ✔ supports AccessControl interface
+      ✔ does not support random interface
+
+
+51 passing (51 nodejs)
+1 failing (1 nodejs)
+
+  1) BECPCredential
+       3. Credential Type Registration
+         ensures uri() returns the correct IPFS URI for the token:
+
+   ContractFunctionExecutionError: An unknown RPC error occurred.
+   
+   Raw Call Arguments:
+     to:    0x322813fd9a801c5507c9de605d63cea4f2ce6c44
+     data:  0x0e89341c0000000000000000000000000000000000000000000000000000000000000001
+    
+   Contract Call:
+     address:   0x322813fd9a801c5507c9de605d63cea4f2ce6c44
+     function:  uri(uint256 tokenId)
+     args:         (1)
+   
+   Docs: https://viem.sh/docs/contract/readContract
+   Details: VM Exception while processing transaction: reverted with custom error 'TokenIdNotFound(1)'
+   Version: viem@2.47.0
+       at getContractError (/home/tsujisalju/repos/becp/node_modules/.bun/viem@2.47.0+50555f8ded582d61/node_modules/viem/utils/errors/getContractError.ts:81:10)
+       at readContract (/home/tsujisalju/repos/becp/node_modules/.bun/viem@2.47.0+50555f8ded582d61/node_modules/viem/actions/public/readContract.ts:138:11)
+       at async TestContext.<anonymous> (test/BECPCredential.test.ts:200:20)
+     [cause]: CallExecutionError: An unknown RPC error occurred.
+     
+     Raw Call Arguments:
+       to:    0x322813fd9a801c5507c9de605d63cea4f2ce6c44
+       data:  0x0e89341c0000000000000000000000000000000000000000000000000000000000000001
+     
+     Details: VM Exception while processing transaction: reverted with custom error 'TokenIdNotFound(1)'
+     Version: viem@2.47.0
+         at getCallError (/home/tsujisalju/repos/becp/node_modules/.bun/viem@2.47.0+50555f8ded582d61/node_modules/viem/utils/errors/getCallError.ts:42:10)
+         at call (/home/tsujisalju/repos/becp/node_modules/.bun/viem@2.47.0+50555f8ded582d61/node_modules/viem/_esm/actions/public/call.js:149:15)
+         at async readContract (/home/tsujisalju/repos/becp/node_modules/.bun/viem@2.47.0+50555f8ded582d61/node_modules/viem/actions/public/readContract.ts:122:22)
+         at async TestContext.<anonymous> (test/BECPCredential.test.ts:200:20)
+       [cause]: UnknownRpcError: An unknown RPC error occurred.
+       
+       Details: VM Exception while processing transaction: reverted with custom error 'TokenIdNotFound(1)'
+       Version: viem@2.47.0
+           at withRetry.delay.count.count (/home/tsujisalju/repos/becp/node_modules/.bun/viem@2.47.0+50555f8ded582d61/node_modules/viem/utils/buildRequest.ts:251:25)
+           at async attemptRetry (/home/tsujisalju/repos/becp/node_modules/.bun/viem@2.47.0+50555f8ded582d61/node_modules/viem/utils/promise/withRetry.ts:44:22)
+         [cause]: Error: VM Exception while processing transaction: reverted with custom error 'TokenIdNotFound(1)'
+             at BECPCredential.uri (contracts/BECPCredential.sol:228)
+             at EdrProvider.#handleEdrResponse (/home/tsujisalju/repos/becp/node_modules/.bun/hardhat@3.1.11/node_modules/hardhat/src/internal/builtin-plugins/network-manager/edr/edr-provider.ts:338:17)
+             at EdrProvider.#handleRequest (/home/tsujisalju/repos/becp/node_modules/.bun/hardhat@3.1.11/node_modules/hardhat/src/internal/builtin-plugins/network-manager/edr/edr-provider.ts:424:35)
+             at async next (/home/tsujisalju/repos/becp/node_modules/.bun/hardhat@3.1.11/node_modules/hardhat/src/internal/core/hook-manager.ts:122:13)
+             at async next (/home/tsujisalju/repos/becp/node_modules/.bun/hardhat@3.1.11/node_modules/hardhat/src/internal/core/hook-manager.ts:121:13)
+             at async EdrProvider.request (/home/tsujisalju/repos/becp/node_modules/.bun/hardhat@3.1.11/node_modules/hardhat/src/internal/builtin-plugins/network-manager/edr/edr-provider.ts:254:25)
+             at async withRetry.delay.count.count (/home/tsujisalju/repos/becp/node_modules/.bun/viem@2.47.0+50555f8ded582d61/node_modules/viem/utils/buildRequest.ts:153:22)
+             at async attemptRetry (/home/tsujisalju/repos/becp/node_modules/.bun/viem@2.47.0+50555f8ded582d61/node_modules/viem/utils/promise/withRetry.ts:44:22)
+
+

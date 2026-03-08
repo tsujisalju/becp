@@ -6,15 +6,16 @@ export default defineConfig({
   solidity: {
     profiles: {
       default: {
-        version: "0.8.28",
+        version: "0.8.34",
       },
       production: {
-        version: "0.8.28",
+        version: "0.8.34",
         settings: {
           optimizer: {
             enabled: true,
             runs: 200,
           },
+          viaIR: true,
         },
       },
     },
@@ -28,11 +29,25 @@ export default defineConfig({
       type: "edr-simulated",
       chainType: "op",
     },
-    sepolia: {
+    opSepolia: {
       type: "http",
-      chainType: "l1",
-      url: configVariable("SEPOLIA_RPC_URL"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+      chainType: "op",
+      url: configVariable(
+        "ALCHEMY_API_KEY",
+        "https:/opt-sepolia.g.alchemy.com/v2/{variable}"
+      ),
+      accounts: [configVariable("DEPLOYER_PRIVATE_KEY")],
+      chainId: 11155420,
+    },
+    opMainnet: {
+      type: "http",
+      chainType: "op",
+      url: configVariable(
+        "ALCHEMY_API_KEY",
+        "https://opt-mainnet.g.alchemy.com/v2/{variable}",
+      ),
+      accounts: [configVariable("DEPLOYER_PRIVATE_KEY")],
+      chainId: 10,
     },
   },
 });
