@@ -7,7 +7,7 @@ export default function Home() {
     <div className="flex flex-col justify-center items-center">
       <div className="relative w-full grid place-items-center h-screen bg-chart-1">
         <div className="noise-overlay"></div>
-        <div className="bg-background max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 justify-center items-center space-y-4 rounded-lg">
+        <div className="bg-background max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 justify-center items-center space-y-4 rounded-lg z-10">
           <div className="w-full h-full m-0"></div>
           <div className="flex flex-col space-y-8 p-16">
             <h1 className="text-5xl font-bold">Your extracurricular achievements, verified on-chain</h1>
