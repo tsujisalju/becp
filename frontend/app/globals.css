@@ -4,6 +4,18 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.noise-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('/noise.png');
+        background-repeat: repeat;
+        opacity: 0.1;
+        pointer-events: none;
+    }
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
