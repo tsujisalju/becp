@@ -8,7 +8,7 @@ export const wagmiConfig = getDefaultConfig({
     chains: [optimism, optimismSepolia],
   ssr: true,
   transports: {
-    [optimism.id]: http(`https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`),
-    [optimismSepolia.id]: http(`https:/opt-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`),
+    [optimism.id]: http(`https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`),
+    [optimismSepolia.id]: http(`https:/opt-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`),
   }
   })

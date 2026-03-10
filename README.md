@@ -83,7 +83,7 @@ After setup, fill in your API keys:
 
 | Variable | Where to get it |
 |---|---|
-| `NEXT_PUBLIC_ALCHEMY_API_KEY` | [dashboard.alchemy.com](https://dashboard.alchemy.com) |
+| `ALCHEMY_API_KEY` | [dashboard.alchemy.com](https://dashboard.alchemy.com) |
 | `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` | [cloud.walletconnect.com](https://cloud.walletconnect.com) |
 | `NEXT_PUBLIC_CONTRACT_ADDRESS` | After running `bun run contract:deploy:testnet` |
 | `PINATA_JWT` | [app.pinata.cloud/keys](https://app.pinata.cloud/keys) |
