@@ -1,0 +1,85 @@
+"use client";
+
+import BECPLogo from "@/components/logo/becp-logo";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
+import { useRole } from "@/hooks/useRole";
+import { ROUTES, UserRole } from "@becp/shared";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { BookOpenText, Calendars, University } from "lucide-react";
+import Link from "next/link";
+import { cloneElement, ReactElement } from "react";
+
+const ROLE_HOME: Record<UserRole, string> = {
+  student: ROUTES.DASHBOARD,
+  organizer: ROUTES.ORGANIZER_PORTAL,
+  university_admin: ROUTES.ADMIN,
+  recruiter: ROUTES.VERIFY,
+}
+
+interface RoleItem {
+  role: UserRole;
+  icon: ReactElement<{ className?: string }>;
+  label: string;
+  desc: string;
+}
+
+const ROLE_ITEMS: RoleItem[] = [
+  { role:"student", icon: <BookOpenText />, label: "Student", desc: "View and share your credential portfolio" },
+  { role:"organizer", icon: <Calendars />, label: "Organizer", desc: "Issue certificates to event participants" },
+  { role: "university_admin", icon: <University />,  label: "University", desc: "Manage organizer approvals and oversight" },
+]
+
+export default function ConnectPage() {
+  const { role, isConnected, isLoading } = useRole();
+  const connectedRole = ROLE_ITEMS.find(item => item.role == role);
+
+  return (
+    <div className="relative grid w-screen h-screen place-items-center bg-chart-1">
+      <div className="noise-overlay"></div>
+      <div className="w-full max-w-lg flex flex-col items-center space-y-4">
+        <BECPLogo className="w-48 z-10"/>
+        <Card className="relative">
+          <CardHeader>
+            <CardTitle>Connect your wallet</CardTitle>
+            <CardDescription>Your wallet address is your identity on BECP. Your role is determined automatically from on-chain permissions.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <h2 className="font-bold">Who is this for?</h2>
+            <div className="flex flex-row">
+              {ROLE_ITEMS.map((role) => (
+                <div key={role.label}>
+                  <div className="flex flex-col space-y-2 justify-center items-center p-4 text-center">
+                    {cloneElement(role.icon, { className: "w-8 h-8" })}
+                    <p className="font-bold">{role.label}</p>
+                    <p>{role.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-4">
+            <div className="w-full flex flex-row justify-around">
+              <ConnectButton label="Connect Wallet" showBalance={false} chainStatus="icon" />
+              {isConnected &&
+                <Button asChild disabled={isLoading}>
+                  {(!isLoading && connectedRole) ?
+                    <Link href={ROLE_HOME[role]}>
+                      {connectedRole.icon} Proceed as {connectedRole.label}
+                    </Link>
+                    :
+                    <Spinner />
+                  }
+                </Button>
+              }
+            </div>
+            <div className="w-full text-center text-muted-foreground text-xs">
+              Recruiter? <Link href="/verify" className="underline">No wallet needed to verify credentials →</Link>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
+    </div>
+  )
+}

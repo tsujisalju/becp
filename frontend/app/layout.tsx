@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Roboto_Slab } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import '@rainbow-me/rainbowkit/styles.css';
+
 
 const robotoSlab = Roboto_Slab({subsets:['latin'],variable:'--font-serif'});
 
@@ -30,7 +32,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+          {children}
       </body>
     </html>
   );
