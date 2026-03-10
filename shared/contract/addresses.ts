@@ -7,7 +7,7 @@
 import { CHAIN } from "../constants";
 
 const DEPLOYED_ADDRESSES: Record<number, `0x${string}`> = {
-  [CHAIN.OP_SEPOLIA.id]: "0x",
+  [CHAIN.OP_SEPOLIA.id]: "0x0b7E8cd604830d29DDe6eb5417b948F89eBE248D",
   [CHAIN.OPTIMISM.id]: "0x",
 }
 

@@ -21,15 +21,16 @@ export interface UseRoleResult {
 }
 
 export function useRole(): UseRoleResult {
-  const { address, isConnected } = useConnection();
+  const { address, isConnected, isReconnecting, isConnecting } = useConnection();
   const chainId = useChainId();
 
   let contractAddress: `0x${string}` | undefined;
   try {
-    contractAddress: getContractAddress(chainId);
+    contractAddress = getContractAddress(chainId);
   } catch {
     contractAddress = undefined;
   }
+  console.log(contractAddress);
 
   const { data, isLoading } = useReadContracts({
     contracts: address && contractAddress ? [
@@ -74,7 +75,7 @@ export function useRole(): UseRoleResult {
     isUniversityAdmin,
     isOrganizer: isOrganizer && !isUniversityAdmin,
     isStudent: role === "student",
-    isLoading: isLoading && !!address,
+    isLoading: isReconnecting || isConnecting || (isLoading && !!address),
     isConnected,
   }
 }

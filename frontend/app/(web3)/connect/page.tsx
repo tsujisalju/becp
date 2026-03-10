@@ -63,13 +63,13 @@ export default function ConnectPage() {
             <div className="w-full flex flex-row justify-around">
               <ConnectButton label="Connect Wallet" showBalance={false} chainStatus="icon" />
               {isConnected &&
-                <Button asChild disabled={isLoading}>
+                <Button disabled={isLoading}>
                   {(!isLoading && connectedRole) ?
-                    <Link href={ROLE_HOME[role]}>
-                      {connectedRole.icon} Proceed as {connectedRole.label}
+                    <Link className="flex flex-row space-x-2 items-center" href={ROLE_HOME[role]}>
+                      {connectedRole.icon} <span>Proceed as {connectedRole.label}</span>
                     </Link>
                     :
-                    <Spinner />
+                    <><Spinner data-icon="inline-start"/> Loading</>
                   }
                 </Button>
               }

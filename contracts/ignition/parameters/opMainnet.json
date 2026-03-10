@@ -1,0 +1,5 @@
+{
+  "BECPCredentialModule": {
+    "admin": "0xYOUR_MULTISIG_OR_HARDWARE_WALLET_ADDRESS_HERE"
+  }
+}

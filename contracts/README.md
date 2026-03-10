@@ -1,57 +1,176 @@
-# Sample Hardhat 3 Beta Project (`node:test` and `viem`)
+# BECP Contracts
 
-This project showcases a Hardhat 3 Beta project using the native Node.js test runner (`node:test`) and the `viem` library for Ethereum interactions.
+Solidity smart contracts for the **Blockchain-based Extracurricular Credentials Platform (BECP)**.
 
-To learn more about the Hardhat 3 Beta, please visit the [Getting Started guide](https://hardhat.org/docs/getting-started#getting-started-with-hardhat-3). To share your feedback, join our [Hardhat 3 Beta](https://hardhat.org/hardhat3-beta-telegram-group) Telegram group or [open an issue](https://github.com/NomicFoundation/hardhat/issues/new) in our GitHub issue tracker.
+Built with [Hardhat 3](https://hardhat.org/docs/getting-started#getting-started-with-hardhat-3), [OpenZeppelin Contracts v5](https://docs.openzeppelin.com/contracts/5.x/), and [Hardhat Ignition](https://hardhat.org/ignition/docs/getting-started) for deterministic deployments.
 
-## Project Overview
+---
 
-This example project includes:
+## Contracts
 
-- A simple Hardhat configuration file.
-- Foundry-compatible Solidity unit tests.
-- TypeScript integration tests using [`node:test`](nodejs.org/api/test.html), the new Node.js native test runner, and [`viem`](https://viem.sh/).
-- Examples demonstrating how to connect to different types of networks, including locally simulating OP mainnet.
+### `BECPCredential.sol`
 
-## Usage
+An ERC-1155 **soulbound** credential contract. Each token type represents one extracurricular event or activity, and tokens are non-transferable (soulbound) — they can only be minted to or burned from a student's wallet.
 
-### Running Tests
+#### Role hierarchy
 
-To run all the tests in the project, execute the following command:
+| Role | Granted to | Capabilities |
+|---|---|---|
+| `DEFAULT_ADMIN_ROLE` | Admin (deployer / multi-sig) | Pause & unpause the contract, manage role admins |
+| `UNIVERSITY_ADMIN_ROLE` | Admin | Approve / revoke organizers, revoke any credential |
+| `ISSUER_ROLE` | Approved organizers | Register credential types, issue & revoke credentials |
 
-```shell
+> **Note:** `UNIVERSITY_ADMIN_ROLE` is the role admin for `ISSUER_ROLE`, implementing a two-tier trust model where the university controls which organizers can issue credentials.
+
+#### Key functions
+
+| Function | Role required | Description |
+|---|---|---|
+| `approveOrganizer(address)` | `UNIVERSITY_ADMIN_ROLE` | Grant `ISSUER_ROLE` to an organizer |
+| `revokeOrganizer(address)` | `UNIVERSITY_ADMIN_ROLE` | Revoke `ISSUER_ROLE` from an organizer |
+| `registerCredentialType(string)` | `ISSUER_ROLE` | Register a new credential type, returns its `tokenId` |
+| `issueCredential(uint256, address)` | `ISSUER_ROLE` | Issue a credential to one student |
+| `batchIssueCredential(uint256, address[])` | `ISSUER_ROLE` | Issue a credential to many students atomically |
+| `revokeCredential(uint256, address, string)` | `ISSUER_ROLE` (original) or `UNIVERSITY_ADMIN_ROLE` | Revoke a credential, burning it from the student's wallet |
+| `pause()` / `unpause()` | `DEFAULT_ADMIN_ROLE` | Emergency circuit breaker |
+
+---
+
+## Setup
+
+### Prerequisites
+
+- [Bun](https://bun.sh/) (used as the package manager)
+- Node.js ≥ 20
+
+### Install dependencies
+
+```sh
+bun install
+```
+
+### Environment variables
+
+The following configuration variables are required for testnet / mainnet deployments. You can set them via `hardhat-keystore` (recommended) or as shell environment variables.
+
+| Variable | Description |
+|---|---|
+| `ALCHEMY_API_KEY` | Alchemy API key used to construct RPC URLs for OP Sepolia and OP Mainnet |
+| `DEPLOYER_PRIVATE_KEY` | Private key of the account that will sign and fund the deployment transaction |
+
+To set a variable using `hardhat-keystore`:
+
+```sh
+npx hardhat keystore set ALCHEMY_API_KEY
+npx hardhat keystore set DEPLOYER_PRIVATE_KEY
+```
+
+---
+
+## Running Tests
+
+Run all tests (Solidity + Node.js):
+
+```sh
 npx hardhat test
 ```
 
-You can also selectively run the Solidity or `node:test` tests:
+Run only Solidity tests:
 
-```shell
+```sh
 npx hardhat test solidity
+```
+
+Run only Node.js / viem integration tests:
+
+```sh
 npx hardhat test nodejs
 ```
 
-### Make a deployment to Sepolia
+---
 
-This project includes an example Ignition module to deploy the contract. You can deploy this module to a locally simulated chain or to Sepolia.
+## Deployment
 
-To run the deployment to a local chain:
+All deployments use the `BECPCredential` Ignition module located at `ignition/modules/BECPCredential.ts`.
 
-```shell
-npx hardhat ignition deploy ignition/modules/Counter.ts
+The module accepts one parameter:
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `admin` | `address` | Deployer account (index 0) | Address granted `DEFAULT_ADMIN_ROLE` and `UNIVERSITY_ADMIN_ROLE` |
+
+> For any persistent deployment, always override `admin` with a multi-sig wallet (e.g. Safe) or a hardware wallet address using a parameters file. **Never leave the deployer EOA as the long-term admin in production.**
+
+### Local — simulated OP chain
+
+No environment variables are needed. The deployer account is used as admin by default.
+
+```sh
+npx hardhat ignition deploy ignition/modules/BECPCredential.ts --network hardhatOp
 ```
 
-To run the deployment to Sepolia, you need an account with funds to send the transaction. The provided Hardhat configuration includes a Configuration Variable called `SEPOLIA_PRIVATE_KEY`, which you can use to set the private key of the account you want to use.
+### OP Sepolia (testnet)
 
-You can set the `SEPOLIA_PRIVATE_KEY` variable using the `hardhat-keystore` plugin or by setting it as an environment variable.
+1. Fill in your admin address in `ignition/parameters/opSepolia.json`:
 
-To set the `SEPOLIA_PRIVATE_KEY` config variable using `hardhat-keystore`:
+   ```json
+   {
+     "BECPCredentialModule": {
+       "admin": "0xYOUR_ADMIN_ADDRESS_HERE"
+     }
+   }
+   ```
 
-```shell
-npx hardhat keystore set SEPOLIA_PRIVATE_KEY
+2. Ensure `ALCHEMY_API_KEY` and `DEPLOYER_PRIVATE_KEY` are set, then deploy:
+
+   ```sh
+   npx hardhat ignition deploy ignition/modules/BECPCredential.ts \
+     --network opSepolia \
+     --parameters ignition/parameters/opSepolia.json
+   ```
+
+### OP Mainnet (production)
+
+1. Fill in your **multi-sig or hardware wallet** address in `ignition/parameters/opMainnet.json`:
+
+   ```json
+   {
+     "BECPCredentialModule": {
+       "admin": "0xYOUR_MULTISIG_OR_HARDWARE_WALLET_ADDRESS_HERE"
+     }
+   }
+   ```
+
+2. Ensure `ALCHEMY_API_KEY` and `DEPLOYER_PRIVATE_KEY` are set, then deploy:
+
+   ```sh
+   npx hardhat ignition deploy ignition/modules/BECPCredential.ts \
+     --network opMainnet \
+     --parameters ignition/parameters/opMainnet.json \
+     --deployment-id becp-credential-mainnet
+   ```
+
+   The `--deployment-id` flag gives this deployment a stable, human-readable name so Ignition can resume or track it correctly across sessions.
+
+---
+
+## Project Structure
+
 ```
-
-After setting the variable, you can run the deployment with the Sepolia network:
-
-```shell
-npx hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
+contracts/
+├── contracts/
+│   └── BECPCredential.sol        # Main soulbound ERC-1155 credential contract
+├── interfaces/
+│   └── IBECPCredential.sol       # External-facing interface (events, errors, structs)
+├── libraries/
+│   └── CredentialLib.sol         # Shared validation helpers
+├── ignition/
+│   ├── modules/
+│   │   └── BECPCredential.ts     # Ignition deployment module
+│   └── parameters/
+│       ├── opSepolia.json        # Parameter overrides for OP Sepolia
+│       └── opMainnet.json        # Parameter overrides for OP Mainnet
+├── test/                         # Node.js / viem integration tests
+├── hardhat.config.ts             # Hardhat 3 configuration
+└── package.json
 ```
