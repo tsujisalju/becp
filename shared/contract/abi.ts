@@ -1,8 +1,8 @@
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
 // Program Name     : shared/contract/abi.ts
 // Description      : Single source of truth for the contract ABI on the front.
-// First Written on : Sunday, 10-Mar-2026
-// Last Modified on :
+// First Written on : Tuesday, 10-Mar-2026
+// Last Modified on : Tuesday, 10-Mar-2026
 
 export const BECP_CREDENTIAL_ABI = [
   {

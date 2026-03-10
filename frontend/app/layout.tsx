@@ -1,3 +1,9 @@
+// Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
+// Program Name     : frontend/app/layout.tsx
+// Description      : Layout component for entire route hierarchy. Applies fonts and metadata.
+// First Written on : Saturday, 7-Mar-2026
+// Last Modified on : Tuesday, 10-Mar-2026
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Roboto_Slab } from "next/font/google";
 import "./globals.css";

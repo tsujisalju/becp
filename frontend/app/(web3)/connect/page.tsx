@@ -1,5 +1,11 @@
 "use client";
 
+// Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
+// Program Name     : frontend/app/(web3)/connect/page.tsx
+// Description      : Connect page for connecting wallet and redirecting to role-specific home pages
+// First Written on : Tuesday, 10-Mar-2026
+// Last Modified on : Wednesday, 11-Mar-2026
+
 import BECPLogo from "@/components/logo/becp-logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";

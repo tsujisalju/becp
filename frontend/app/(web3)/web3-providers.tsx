@@ -1,5 +1,11 @@
 "use client";
 
+// Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
+// Program Name     : frontend/app/(web3)/web3-providers.tsx
+// Description      : Include all Wagmi, React Query and Rainbowkit providers into one reusable wrapper component.
+// First Written on : Tuesday, 10-Mar-2026
+// Last Modified on : Tuesday, 10-Mar-2026
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import { WagmiProvider } from "wagmi";

@@ -2,7 +2,7 @@
 // Program Name     : BECPCredential.test.ts
 // Description      : Test suite for BECPCredential structured around XP acceptance criteria, one describe block per feature directly mapped to a user story.
 // First Written on : Sunday, 8-Mar-2026
-// Last Modified on :
+// Last Modified on : Sunday, 8-Mar-2026
 
 import { network } from "hardhat";
 import assert from "node:assert/strict";

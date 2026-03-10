@@ -5,7 +5,7 @@ pragma solidity ^0.8.34;
 // Program Name     : CredentialLib.sol
 // Description      : Pure validation helpers used by BECPCredential contract to separate business logic from guard clauses
 // First Written on : Sunday, 8-Mar-2026
-// Last Modified on :
+// Last Modified on : Sunday, 8-Mar-2026
 
 library CredentialLib {
     // Validate that a metadata URI is a valid non-empty IPFS URI

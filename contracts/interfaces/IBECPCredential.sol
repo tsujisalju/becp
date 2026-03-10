@@ -5,7 +5,7 @@ pragma solidity ^0.8.34;
 // Program Name     : IBECPCredential.sol
 // Description      : Provide interfaces for functions, events and errors to be used by external contracts and frontend (via Wagmi)
 // First Written on : Saturday, 7-Mar-2026
-// Last Modified on :
+// Last Modified on : Sunday, 8-Mar-2026
 
 interface IBECPCredential {
     // Emitted when a new credential type is registered

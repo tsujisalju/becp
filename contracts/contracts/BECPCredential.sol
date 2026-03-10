@@ -5,7 +5,7 @@ pragma solidity ^0.8.34;
 // Program Name     : BECPCredential.sol
 // Description      : ERC-1155 soulbound credential contract for the Blockchain-based Extracurricular Credentials Platform (BECP)
 // First Written on : Sunday, 8-Mar-2026
-// Last Modified on :
+// Last Modified on : Sunday, 8-Mar-2026
 
 import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import {ERC1155Supply} from "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";

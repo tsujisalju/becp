@@ -1,5 +1,11 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
+// Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
+// Program Name     : contracts/ignition/modules/BECPCredential.ts
+// Description      : Hardhat Ignition deployment module for BECPCredential to deploy contract on Optimism network
+// First Written on : Sunday, 8-Mar-2026
+// Last Modified on : Sunday, 8-Mar-2026
+
 /**
  * Hardhat Ignition deployment module for BECPCredential.
  *

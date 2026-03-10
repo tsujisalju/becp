@@ -4,7 +4,7 @@ import { useRole } from "@/hooks/useRole";
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
 // Program Name     : frontend/components/auth/RoleGuard.tsx
 // Description      : Prevent unauthorized role from accessing certain pages
-// First Written on : Sunday, 10-Mar-2026
+// First Written on : Tuesday, 10-Mar-2026
 // Last Modified on :
 
 import { ROUTES, UserRole } from "@becp/shared";
