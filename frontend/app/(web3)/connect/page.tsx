@@ -75,7 +75,7 @@ export default function ConnectPage() {
                       {connectedRole.icon} <span>Proceed as {connectedRole.label}</span>
                     </Link>
                     :
-                    <><Spinner data-icon="inline-start"/> Loading</>
+                    <><Spinner data-icon="inline-start"/> Detecting role</>
                   }
                 </Button>
               }

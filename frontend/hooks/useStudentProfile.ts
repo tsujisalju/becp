@@ -4,7 +4,7 @@
 // Program Name     : frontend/hooks/useStudentProfile.ts
 // Description      : Off-chain half of hybrid auth. Fetched and updates a student's profile from the Next.js API route that is not stored on-chain.
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on :
+// Last Modified on : Wednesday, 11-Mar-2026
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useConnection } from "wagmi";
