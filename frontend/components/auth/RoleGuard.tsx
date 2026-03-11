@@ -5,7 +5,7 @@ import { useRole } from "@/hooks/useRole";
 // Program Name     : frontend/components/auth/RoleGuard.tsx
 // Description      : Prevent unauthorized role from accessing certain pages
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on :
+// Last Modified on : Thursday, 12-Mar-2026
 
 import { ROUTES, UserRole } from "@becp/shared";
 import { useRouter } from "next/navigation";
@@ -14,10 +14,10 @@ import BECPLogo from "../logo/becp-logo";
 import { Spinner } from "../ui/spinner";
 
 const ROLE_HOME: Record<UserRole, string> = {
-  student:          ROUTES.DASHBOARD,
-  organizer:        ROUTES.ORGANIZER_PORTAL,
+  student: ROUTES.DASHBOARD,
+  organizer: ROUTES.ORGANIZER_PORTAL,
   university_admin: ROUTES.ADMIN,
-  recruiter:        ROUTES.VERIFY,
+  recruiter: ROUTES.VERIFY,
 }
 
 interface RoleGuardProps {
@@ -43,7 +43,7 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
 
   useEffect(() => {
     if (isLoading) return;
-    if (!isConnected) { router.replace(ROUTES.CONNECT); console.log("not connected"); return };
+    if (!isConnected) { router.replace(ROUTES.CONNECT); return };
     if (!allowedRoles.includes(role)) { router.replace(ROLE_HOME[role]) };
   }, [isConnected, isLoading, role, allowedRoles, router]);
 
