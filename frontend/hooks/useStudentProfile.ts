@@ -4,16 +4,16 @@
 // Program Name     : frontend/hooks/useStudentProfile.ts
 // Description      : Off-chain half of hybrid auth. Fetched and updates a student's profile from the Next.js API route that is not stored on-chain.
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on : Wednesday, 11-Mar-2026
+// Last Modified on : Thursday, 12-Mar-2026
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useConnection } from "wagmi";
 
 export interface StudentProfile {
   address: `0x${string}`;
-  displayName: string;
-  bio: string;
-  careerGoal: string;
+  displayName?: string;
+  bio?: string;
+  careerGoal?: string;
   avatarUri?: string;
   createdAt: string;
   updatedAt: string;
@@ -34,7 +34,7 @@ async function upsertProfile(address: string, update: StudentProfileUpdate): Pro
   const res = await fetch(`/api/profile/${address.toLowerCase()}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(update),
+    body: JSON.stringify(update, (_, value) => value === undefined ? null : value),
   })
   if (!res.ok) throw new Error('Failed to save profile')
   return res.json()

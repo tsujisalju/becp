@@ -18,6 +18,7 @@ import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 
 const CAREER_GOALS = [
@@ -37,24 +38,31 @@ const CAREER_GOALS = [
   'Other',
 ] as const
 
+const CAREER_GOAL_NONE = "__none__" as const
+
 export default function ProfileEditForm() {
   const { profile, isLoading, saveProfile, displayName } = useStudentProfile();
 
   const form = useForm({
     defaultValues: {
-      displayName: '',
-      bio: '',
-      careerGoal: '',
+      displayName: "",
+      bio: "",
+      careerGoal: undefined,
     } as StudentProfileUpdate,
     onSubmit: async ({ value }) => {
       try {
-        await saveProfile(value)
+        const normalizedValue: StudentProfileUpdate = {
+          ...value,
+          displayName: value.displayName?.trim() || undefined,
+          bio: value.bio?.trim() || undefined,
+        };
+        await saveProfile(normalizedValue);
         // Reset with the saved values so they become the new baseline,
         // which clears isDirty without wiping the inputs.
-        form.reset(value)
-        toast.success('Profile saved')
+        form.reset(normalizedValue);
+        toast.success('Profile saved');
       } catch {
-        toast.error('Failed to save profile. Please try again.')
+        toast.error('Failed to save profile. Please try again.');
       }
     },
   })
@@ -62,6 +70,7 @@ export default function ProfileEditForm() {
   // Populate form once profile loads
   useEffect(() => {
     if (profile) {
+      console.log(profile);
       form.reset({
         displayName: profile.displayName,
         bio: profile.bio,
@@ -85,7 +94,7 @@ export default function ProfileEditForm() {
 
   return (
     <form
-      className="max-w-xl"
+      className="max-w-xl space-y-4"
       id="profile-edit-form"
       onSubmit={(e) => {
         e.preventDefault()
@@ -150,6 +159,9 @@ export default function ProfileEditForm() {
                     </InputGroupText>
                   </InputGroupAddon>
                 </InputGroup>
+                <FieldDescription className="text-xs">
+                  Shown on your public credential portfolio page. Defaults to your shortened wallet address.
+                </FieldDescription>
               </Field>
             )
           }}
@@ -161,17 +173,21 @@ export default function ProfileEditForm() {
             return (
               <Field data-invalid={isInvalid}>
                 <FieldLabel htmlFor={field.name}>
-                  Display Name
+                  Career Goal
                 </FieldLabel>
                 <Select
                   name={field.name}
-                  value={field.state.value ?? ""}
-                  onValueChange={field.handleChange}
+                  onValueChange={(v) =>
+                    field.handleChange(
+                      v === CAREER_GOAL_NONE ? undefined : v as StudentProfileUpdate['careerGoal']
+                    )
+                  }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select your career goal..." />
+                    <SelectValue placeholder={profile?.careerGoal ?? "Select a career goal..."} />
                   </SelectTrigger>
                   <SelectContent position="item-aligned">
+                    <SelectItem value={CAREER_GOAL_NONE}>None</SelectItem>
                     {CAREER_GOALS.map((career) => (
                       <SelectItem key={career} value={career}>
                         {career}
@@ -186,7 +202,7 @@ export default function ProfileEditForm() {
             )
           }}
         </form.Field>
-        <Field data-disabled>
+        <Field>
           <FieldLabel>
             Wallet Address
             <Badge variant="secondary" className="ml-auto">Read-only</Badge>
@@ -223,6 +239,14 @@ export default function ProfileEditForm() {
           )}
         </form.Subscribe>
       </FieldGroup>
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle className="text-sm">Privacy</CardTitle>
+          <CardDescription className="text-xs">This profile data is stored off-chain (not on the blockchain). Your wallet address
+            is your only on-chain identity. You can leave all fields blank to remain anonymous.
+            SIWE authentication will be added in Phase 4 to secure write access.</CardDescription>
+        </CardHeader>
+      </Card>
     </form>
   )
 }

@@ -9,6 +9,8 @@
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Award, CalendarCheck2, FileBadge, Footprints, GalleryVertical, Target } from "lucide-react";
 import PageHeader from "../page-header";
+import { useStudentProfile } from "@/hooks/useStudentProfile";
+import { useConnection } from "wagmi";
 
 const QUICK_STATS = [
   {
@@ -37,10 +39,24 @@ const QUICK_STATS = [
   }
 ]
 
+function RandomGreeting(displayName: string) {
+  const greetings = [
+    `Welcome, ${displayName}!`,
+    `Hello, ${displayName}!`,
+    `What's good, ${displayName}?`,
+    `Ready or not, ${displayName}?`
+  ]
+  return greetings[Math.floor(Math.random() * greetings.length)];
+}
+
 export default function DashboardPage() {
+  const { profile, isLoading } = useStudentProfile();
+  const { address } = useConnection();
+  const displayName = profile?.displayName ?? `${address?.slice(0, 4)}...${address?.slice(-4)}`
+
   return (
     <div className="px-6 flex flex-col space-y-4">
-      <PageHeader title="My Dashboard" desc="Your skill portfolio and credential overview." />
+      <PageHeader title={RandomGreeting(displayName)} desc="View your skill portfolio and credentials at a glance." />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {
           QUICK_STATS.map((stat) => (

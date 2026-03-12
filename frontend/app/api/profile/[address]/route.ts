@@ -23,9 +23,9 @@ function profilePath(address: string) {
 
 interface Profile {
   address: string;
-  displayName: string;
-  bio: string;
-  careerGoal: string;
+  displayName?: string;
+  bio?: string;
+  careerGoal?: string;
   avatarUri?: string;
   createdAt: string;
   updatedAt: string;
@@ -83,10 +83,10 @@ export async function PUT(
 
   const updated: Profile = {
     address: addr,
-    displayName: body.displayName ?? existing?.displayName ?? "",
-    bio: body.bio ?? existing?.bio ?? "",
-    careerGoal: body.careerGoal ?? existing?.displayName ?? "",
-    avatarUri: body.avatarUri ?? existing?.avatarUri,
+    displayName: 'displayName' in body ? (body.displayName ?? undefined) : existing?.displayName,
+    bio: 'bio' in body ? (body.bio ?? undefined) : existing?.bio,
+    careerGoal: 'careerGoal' in body ? (body.careerGoal ?? undefined) : existing?.careerGoal,
+    avatarUri: 'avatarUri' in body ? (body.avatarUri ?? undefined) : existing?.avatarUri,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   };
