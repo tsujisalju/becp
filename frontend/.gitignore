@@ -34,6 +34,9 @@ yarn-error.log*
 .env*.local
 .env.local
 
+# local profile data, only works locally
+/.becp-profiles
+
 # vercel
 .vercel
 

@@ -4,7 +4,7 @@
 // Program Name     : frontend/app/(web3)/dashboard/layout.tsx
 // Description      : Page contents for dashboard overview. Shows quick statistics on credentials and activity participation.
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on : Thursday, 12-Mar-2026
+// Last Modified on : Friday, 13-Mar-2026
 //
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Award, CalendarCheck2, FileBadge, Footprints, GalleryVertical, Target } from "lucide-react";
@@ -50,7 +50,7 @@ function RandomGreeting(displayName: string) {
 }
 
 export default function DashboardPage() {
-  const { profile, isLoading } = useStudentProfile();
+  const { profile } = useStudentProfile();
   const { address } = useConnection();
   const displayName = profile?.displayName ?? `${address?.slice(0, 4)}...${address?.slice(-4)}`
 

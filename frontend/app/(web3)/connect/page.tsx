@@ -4,11 +4,12 @@
 // Program Name     : frontend/app/(web3)/connect/page.tsx
 // Description      : Connect page for connecting wallet and redirecting to role-specific home pages
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on : Wednesday, 11-Mar-2026
+// Last Modified on : Friday, 13-Mar-2026
 
 import BECPLogo from "@/components/logo/becp-logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import ConnectWallet from "@/components/ui/connect-wallet";
 import { Spinner } from "@/components/ui/spinner";
 import { useRole } from "@/hooks/useRole";
 import { ROUTES, UserRole } from "@becp/shared";
@@ -32,9 +33,9 @@ interface RoleItem {
 }
 
 const ROLE_ITEMS: RoleItem[] = [
-  { role:"student", icon: <BookOpenText />, label: "Student", desc: "View and share your credential portfolio" },
-  { role:"organizer", icon: <Calendars />, label: "Organizer", desc: "Issue certificates to event participants" },
-  { role: "university_admin", icon: <University />,  label: "University", desc: "Manage organizer approvals and oversight" },
+  { role: "student", icon: <BookOpenText />, label: "Student", desc: "View and share your credential portfolio" },
+  { role: "organizer", icon: <Calendars />, label: "Organizer", desc: "Issue certificates to event participants" },
+  { role: "university_admin", icon: <University />, label: "University", desc: "Manage organizer approvals and oversight" },
 ]
 
 export default function ConnectPage() {
@@ -45,7 +46,7 @@ export default function ConnectPage() {
     <div className="relative grid w-screen h-screen place-items-center bg-chart-1">
       <div className="noise-overlay"></div>
       <div className="w-full max-w-lg flex flex-col items-center space-y-4">
-        <BECPLogo className="w-48 z-10"/>
+        <BECPLogo className="w-48 z-10" />
         <Card className="relative">
           <CardHeader>
             <CardTitle>Connect your wallet</CardTitle>
@@ -67,7 +68,7 @@ export default function ConnectPage() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <div className="w-full flex flex-row justify-around">
-              <ConnectButton label="Connect Wallet" showBalance={false} chainStatus="icon" />
+              <ConnectWallet />
               {isConnected &&
                 <Button disabled={isLoading}>
                   {(!isLoading && connectedRole) ?
@@ -75,7 +76,7 @@ export default function ConnectPage() {
                       {connectedRole.icon} <span>Proceed as {connectedRole.label}</span>
                     </Link>
                     :
-                    <><Spinner data-icon="inline-start"/> Detecting role</>
+                    <><Spinner data-icon="inline-start" /> Detecting role</>
                   }
                 </Button>
               }

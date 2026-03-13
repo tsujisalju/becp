@@ -2,7 +2,7 @@
 // Program Name     : BECPCredential.test.ts
 // Description      : Test suite for BECPCredential structured around XP acceptance criteria, one describe block per feature directly mapped to a user story.
 // First Written on : Sunday, 8-Mar-2026
-// Last Modified on : Sunday, 8-Mar-2026
+// Last Modified on : Friday, 13-Mar-2026
 
 import { network } from "hardhat";
 import assert from "node:assert/strict";
@@ -17,7 +17,7 @@ const DEFAULT_ADMIN_ROLE = zeroHash;
 // Sample IPFS URIs
 const SAMPLE_URI_1 = "ipfs://QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG";
 const SAMPLE_URI_2 = "ipfs://QmSomeOtherCIDForAnotherEvent12345678901234567890";
-const INVALID_URI  = "https://not-ipfs.com/metadata.json";
+const INVALID_URI = "https://not-ipfs.com/metadata.json";
 
 describe("BECPCredential", async () => {
   // Connect to network to expose wallet clients, contract deployment and assestions
@@ -72,18 +72,18 @@ describe("BECPCredential", async () => {
   // Helper function to register a credential type and return its token ID
   async function registerType(uri: string = SAMPLE_URI_1, c = contract): Promise<bigint> {
     const publicClient = await viem.getPublicClient();
-        const hash = await (await as(organizer, c)).write.registerCredentialType([uri]);
-        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+    const hash = await (await as(organizer, c)).write.registerCredentialType([uri]);
+    const receipt = await publicClient.waitForTransactionReceipt({ hash });
 
-        for (const log of receipt.logs) {
-          try {
-            const event = decodeEventLog({ abi: c.abi, data: log.data, topics: log.topics }) as { eventName: string; args: Record<string, unknown> };
-            if (event.eventName === "CredentialTypeRegistered") {
-              return (event.args as { tokenId: bigint }).tokenId;
-            }
-          } catch { /* not a log we care about */ }
+    for (const log of receipt.logs) {
+      try {
+        const event = decodeEventLog({ abi: c.abi, data: log.data, topics: log.topics }) as { eventName: string; args: Record<string, unknown> };
+        if (event.eventName === "CredentialTypeRegistered") {
+          return (event.args as { tokenId: bigint }).tokenId;
         }
-        throw new Error("CredentialTypeRegistered event not found in receipt");
+      } catch { /* not a log we care about */ }
+    }
+    throw new Error("CredentialTypeRegistered event not found in receipt");
   }
 
   describe("1. Deployment & Initialization", async () => {
@@ -117,7 +117,7 @@ describe("BECPCredential", async () => {
       await (await as(admin)).write.grantRole([UNIVERSITY_ADMIN_ROLE, uniAdminAddr]);
     });
 
-    it("allows university admin can approve an organizer", async () => {
+    it("allows university admin to approve an organizer", async () => {
       const asUniAdmin = await as(universityAdmin);
       await viem.assertions.emitWithArgs(
         asUniAdmin.write.approveOrganizer([organizerAddr]),

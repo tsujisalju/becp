@@ -4,14 +4,15 @@
 // Program Name     : frontend/app/(web3)/(student)/student-sidebar.tsx
 // Description      : Sidebar component for student dashboard. Provide navigation and wallet connection status.
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on : Thursday, 12-Mar-2026
+// Last Modified on : Friday, 13-Mar-2026
 
 import BECPLogo from "@/components/logo/becp-logo";
+import ConnectWallet from "@/components/ui/connect-wallet";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { ROUTES } from "@becp/shared";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { CalendarFold, CircleUser, FileBadge, SquareChartGantt } from "lucide-react";
 import Link from "next/link";
+import ConnectWalletSidebar from "./connect-wallet-sidebar";
 
 const items = [
   {
@@ -63,7 +64,7 @@ export function StudentSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        <ConnectButton chainStatus={"none"} accountStatus={"avatar"} showBalance={false} />
+        <ConnectWalletSidebar />
       </SidebarFooter>
     </Sidebar>
   )
