@@ -1,13 +1,12 @@
 "use client";
 
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
-// Program Name     : frontend/app/(web3)/(student)/student-sidebar.tsx
+// Program Name     : frontend/components/ui/student-sidebar.tsx
 // Description      : Sidebar component for student dashboard. Provide navigation and wallet connection status.
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on : Friday, 13-Mar-2026
+// Last Modified on : Saturday, 14-Mar-2026
 
 import BECPLogo from "@/components/logo/becp-logo";
-import ConnectWallet from "@/components/ui/connect-wallet";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { ROUTES } from "@becp/shared";
 import { CalendarFold, CircleUser, FileBadge, SquareChartGantt } from "lucide-react";

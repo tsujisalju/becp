@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 // Program Name     : frontend/app/(web3)/dashboard/credentials/page.tsx
 // Description      : Page contents for dashboard credentials. Shows list of credentials owned by the student.
 // First Written on : Wednesday, 11-Mar-2026
-// Last Modified on : Thursday, 12-Mar-2026
+// Last Modified on : Saturday, 14-Mar-2026
 
-import PageHeader from "../../page-header";
+import PageHeader from "@/components/ui/page-header";
 
 export default function CredentialsPage() {
   return (

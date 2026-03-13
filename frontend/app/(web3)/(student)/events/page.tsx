@@ -6,7 +6,7 @@
 // First Written on : Wednesday, 11-Mar-2026
 // Last Modified on : Thursday, 12-Mar-2026
 
-import PageHeader from "../page-header";
+import PageHeader from "@/components/ui/page-header";
 
 export default function CredentialsPage() {
   return (

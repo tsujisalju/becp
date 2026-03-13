@@ -13,7 +13,6 @@ import ConnectWallet from "@/components/ui/connect-wallet";
 import { Spinner } from "@/components/ui/spinner";
 import { useRole } from "@/hooks/useRole";
 import { ROUTES, UserRole } from "@becp/shared";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { BookOpenText, Calendars, University } from "lucide-react";
 import Link from "next/link";
 import { cloneElement, ReactElement } from "react";

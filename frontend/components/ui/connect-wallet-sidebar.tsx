@@ -1,5 +1,5 @@
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
-// Program Name     : frontend/app/(web3)/(student)/connect-wallet-sidebar.tsx
+// Program Name     : frontend/components/ui/connect-wallet-sidebar.tsx
 // Description      : Sidebar component for connecting wallet and displaying wallet connection status.
 // First Written on : Friday, 13-Mar-2026
 // Last Modified on : Saturday, 14-Mar-2026
@@ -47,12 +47,12 @@ export default function ConnectWalletSidebar() {
                     {connected ?
                       <>
                         <Avatar className="h-8 w-8 rounded-lg">
-                          <AvatarImage src={profile?.avatarUri ?? account?.ensName} alt={profile?.displayName ?? account?.displayName} />
+                          <AvatarImage src={profile?.avatarUri ?? account.ensName} alt={profile?.displayName ?? account.displayName} />
                           <AvatarFallback className="rounded-lg bg-chart-2 text-white"><User /></AvatarFallback>
                         </Avatar>
                         <div className="grid flex-1 text-left text-sm leading-tight">
-                          <span className="truncate font-medium">{profile?.displayName ?? account?.displayName}</span>
-                          <span className="truncate text-xs">{account?.address}</span>
+                          <span className="truncate font-medium">{profile?.displayName ?? account.displayName}</span>
+                          <span className="truncate text-xs">{account.address}</span>
                         </div>
                       </> :
                       <div className="flex items-center gap-4">
@@ -77,12 +77,12 @@ export default function ConnectWalletSidebar() {
                       {connected ?
                         <>
                           <Avatar className="h-8 w-8 rounded-lg">
-                            <AvatarImage src={profile?.avatarUri ?? ""} alt={profile?.displayName ?? "unknown avatar"} />
+                            <AvatarImage src={profile?.avatarUri ?? account.ensName} alt={profile?.displayName ?? account.displayName} />
                             <AvatarFallback className="rounded-lg bg-chart-2 text-white"><User /></AvatarFallback>
                           </Avatar>
                           <div className="grid flex-1 text-left text-sm leading-tight">
-                            <span className="truncate font-medium">{profile?.displayName ?? ""}</span>
-                            <span className="truncate text-xs">{profile?.address ?? ""}</span>
+                            <span className="truncate font-medium">{profile?.displayName ?? account.displayName}</span>
+                            <span className="truncate text-xs">{profile?.address ?? account.address}</span>
                           </div>
                         </> :
                         <div className="flex items-center gap-4">

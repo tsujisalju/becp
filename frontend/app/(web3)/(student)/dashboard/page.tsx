@@ -4,13 +4,13 @@
 // Program Name     : frontend/app/(web3)/dashboard/layout.tsx
 // Description      : Page contents for dashboard overview. Shows quick statistics on credentials and activity participation.
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on : Friday, 13-Mar-2026
-//
+// Last Modified on : Saturday, 14-Mar-2026
+
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Award, CalendarCheck2, FileBadge, Footprints, GalleryVertical, Target } from "lucide-react";
-import PageHeader from "../page-header";
 import { useStudentProfile } from "@/hooks/useStudentProfile";
 import { useConnection } from "wagmi";
+import PageHeader from "@/components/ui/page-header";
 
 const QUICK_STATS = [
   {

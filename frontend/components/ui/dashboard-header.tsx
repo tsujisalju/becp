@@ -1,7 +1,7 @@
 "use client";
 
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
-// Program Name     : frontend/app/(web3)/dashboard/dashboard-header.tsx
+// Program Name     : frontend/components/ui/dashboard-header.tsx
 // Description      : Dashboard header with a dynamic breadcrumb that derives items from the
 //                    current pathname, making it scale automatically with new routes.
 // First Written on : Saturday, 7-Mar-2026

@@ -4,9 +4,9 @@
 // Program Name     : frontend/app/(web3)/dashboard/profile/page.tsx
 // Description      : Page contents for dashboard profile. Shows personal profile information.
 // First Written on : Wednesday, 11-Mar-2026
-// Last Modified on : Thursday, 12-Mar-2026
+// Last Modified on : Saturday, 14-Mar-2026
 
-import PageHeader from "../../page-header";
+import PageHeader from "@/components/ui/page-header";
 import ProfileEditForm from "./profile-edit-form";
 
 
