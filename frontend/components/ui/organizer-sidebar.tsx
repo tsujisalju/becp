@@ -26,7 +26,7 @@ const items = [
   },
   {
     title: "Issue Credentials",
-    url: ROUTES.EVENTS,
+    url: ROUTES.ORGANIZER_ISSUE,
     icon: <FilePlusCorner />
   },
 ]
