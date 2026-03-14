@@ -218,7 +218,7 @@ export default function ProfileEditForm() {
             Your on-chain identity. Cannot be changed as this is your wallet address.
           </FieldDescription>
         </Field>
-        <form.Subscribe selector={s => ({ isDirty: s.isDirty, isSubmitting: s.isSubmitting })}>
+        <form.Subscribe selector={(s) => ({ isDirty: s.isDirty, isSubmitting: s.isSubmitting })}>
           {({ isDirty, isSubmitting }) => (
             <div className="flex items-center gap-3 pt-1">
               <Button

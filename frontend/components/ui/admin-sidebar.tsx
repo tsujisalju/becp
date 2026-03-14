@@ -25,8 +25,8 @@ const items = [
     icon: <Calendars />,
   },
   {
-    title: "Platform",
-    url: `${ROUTES.ADMIN}/platform`,
+    title: "Credentials",
+    url: `${ROUTES.ADMIN}/credentials`,
     icon: <FileBadge />
   },
 ]

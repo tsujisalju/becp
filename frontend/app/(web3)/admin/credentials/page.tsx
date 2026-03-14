@@ -13,7 +13,7 @@ export default function AdminPlatformPage() {
   return (
     <div className="px-6 flex flex-col space-y-4">
       <PageHeader
-        title="Platform Overview"
+        title="Credentials Overview"
         desc="Platform-wide credential issuance activity and audit log."
       />
       <div className="grid sm:grid-cols-3 gap-4 stagger">
