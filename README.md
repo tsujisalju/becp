@@ -15,10 +15,6 @@ gamified student skill dashboard.
 
 ```
 becp/
-├── apps/
-│   └── web/                 ← Next.js 16 PWA (TypeScript + Tailwind + ShadCN)
-│                               Wagmi v2 + RainbowKit + TanStack Query
-│
 ├── contracts/               ← Solidity smart contracts (Hardhat + OpenZeppelin)
 │   ├── contracts/
 │   │   ├── BECPCredential.sol      ← ERC-1155 credential NFT contract
@@ -26,7 +22,15 @@ becp/
 │   │   └── libraries/              ← Shared Solidity libraries
 │   ├── scripts/                    ← Deployment scripts
 │   └── test/                       ← Hardhat tests (Chai + Mocha)
-│
+├── frontend/
+│   ├── app/
+│   │   ├── (web3)/
+│   │   └── api/
+│   ├── components/
+│   ├── hooks/
+│   ├── lib/
+│   ├── public/
+│   └── tests/
 └── packages/
     └── shared/              ← Shared TypeScript types, constants, schemas
                                 Imported by both apps/web and contracts
