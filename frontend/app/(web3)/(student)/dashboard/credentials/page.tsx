@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
 // Program Name     : frontend/app/(web3)/dashboard/credentials/page.tsx
 // Description      : Page contents for dashboard credentials. Shows list of credentials owned by the student.
 // First Written on : Wednesday, 11-Mar-2026
 // Last Modified on : Saturday, 14-Mar-2026
 
+import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/ui/page-header";
 
 export default function CredentialsPage() {
