@@ -45,7 +45,7 @@ export default function OrganizerIssuePage() {
       <Alert className="max-w-lg border-amber-200 bg-amber-50 text-amber-900">
         <Info />
         <AlertTitle>On-chain action</AlertTitle>
-        <AlertDescription>Issuing credentials writes to the Optimism blockchain. Your connected wallet must hold
+        <AlertDescription className="text-xs">Issuing credentials writes to the Optimism blockchain. Your connected wallet must hold
           the <code className="font-mono bg-amber-100 dark:bg-amber-900 px-1 rounded text-xs">ISSUER_ROLE</code> on
           the BECPCredential contract. Each batch issuance requires a single transaction, regardless
           of how many recipients are included.</AlertDescription>

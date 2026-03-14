@@ -4,7 +4,7 @@
 // Program Name     : frontend/app/(web3)/(student)/dashboard/profile/profile-edit-form.tsx
 // Description      : Form component for editing profile information
 // First Written on : Thursday, 12-Mar-2026
-// Last Modified on : Thursday, 12-Mar-2026
+// Last Modified on : Saturday, 14-Mar-2026
 
 import { useForm } from "@tanstack/react-form";
 import { useEffect } from "react";
@@ -18,7 +18,8 @@ import { InputGroup, InputGroupAddon, InputGroupText, InputGroupTextarea } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { GlobeLock } from "lucide-react";
 
 
 const CAREER_GOALS = [
@@ -70,7 +71,6 @@ export default function ProfileEditForm() {
   // Populate form once profile loads
   useEffect(() => {
     if (profile) {
-      console.log(profile);
       form.reset({
         displayName: profile.displayName,
         bio: profile.bio,
@@ -239,14 +239,13 @@ export default function ProfileEditForm() {
           )}
         </form.Subscribe>
       </FieldGroup>
-      <Card size="sm">
-        <CardHeader>
-          <CardTitle className="text-sm">Privacy</CardTitle>
-          <CardDescription className="text-xs">This profile data is stored off-chain (not on the blockchain). Your wallet address
-            is your only on-chain identity. You can leave all fields blank to remain anonymous.
-            SIWE authentication will be added in Phase 4 to secure write access.</CardDescription>
-        </CardHeader>
-      </Card>
+      <Alert className="max-w-lg">
+        <GlobeLock />
+        <AlertTitle className="text-sm">Privacy</AlertTitle>
+        <AlertDescription className="text-xs">This profile data is stored off-chain (not on the blockchain). Your wallet address
+          is your only on-chain identity. You can leave all fields blank to remain anonymous.
+          SIWE authentication will be added in Phase 4 to secure write access.</AlertDescription>
+      </Alert>
     </form>
   )
 }

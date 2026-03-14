@@ -8,13 +8,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRole } from "@/hooks/useRole";
 import { useStudentProfile } from "@/hooks/useStudentProfile";
+import { roleLabel } from "@becp/shared";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { CircleUserRound, EllipsisVertical, User, Wallet } from "lucide-react";
 import Image from "next/image";
 
 export default function ConnectWalletSidebar() {
   const { profile } = useStudentProfile();
+  const { role } = useRole();
   return (
     <ConnectButton.Custom>
       {({
@@ -52,7 +55,7 @@ export default function ConnectWalletSidebar() {
                         </Avatar>
                         <div className="grid flex-1 text-left text-sm leading-tight">
                           <span className="truncate font-medium">{profile?.displayName ?? account.displayName}</span>
-                          <span className="truncate text-xs">{account.address}</span>
+                          <span className="truncate text-xs capitalize">{roleLabel[role]}</span>
                         </div>
                       </> :
                       <div className="flex items-center gap-4">
@@ -82,7 +85,7 @@ export default function ConnectWalletSidebar() {
                           </Avatar>
                           <div className="grid flex-1 text-left text-sm leading-tight">
                             <span className="truncate font-medium">{profile?.displayName ?? account.displayName}</span>
-                            <span className="truncate text-xs">{profile?.address ?? account.address}</span>
+                            <span className="truncate text-xs">{roleLabel[role]}</span>
                           </div>
                         </> :
                         <div className="flex items-center gap-4">

@@ -4,7 +4,7 @@
 // Program Name     : frontend/hooks/useRole.ts
 // Description      : Reads the connected wallet's on-chain role from BECPCredential and returns the resolved UserRole.
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on : Friday, 13-Mar-2026
+// Last Modified on : Saturday, 14-Mar-2026
 
 import { CONTRACT_ROLES, UserRole } from "@becp/shared";
 import { BECP_CREDENTIAL_ABI, getContractAddress } from "@becp/shared/contract";
@@ -57,7 +57,6 @@ export function useRole(): UseRoleResult {
       staleTime: 30_000,
     }
   })
-  console.log(data);
 
   const isDefaultAdmin = data?.[0]?.result === true;
   const isUniversityAdmin = data?.[1]?.result === true || isDefaultAdmin;
@@ -68,8 +67,6 @@ export function useRole(): UseRoleResult {
   let role: UserRole = "student";
   if (isUniversityAdmin) role = "university_admin";
   else if (isOrganizer) role = "organizer";
-
-  console.log(role)
 
   return {
     role,

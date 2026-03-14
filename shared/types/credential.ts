@@ -12,6 +12,12 @@
  * Maps to on-chain role bytes32 constants in the smart contract.
  */
 export type UserRole = 'student' | 'organizer' | 'university_admin' | 'recruiter'
+export const roleLabel: Record<UserRole, string> = {
+  organizer: "Organizer",
+  university_admin: "University Admin",
+  student: "Student",
+  recruiter: "Recruiter",
+};
 
 // ── Skill Taxonomy ───────────────────────────────────────────────────────────
 

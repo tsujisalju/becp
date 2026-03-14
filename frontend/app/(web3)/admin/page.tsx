@@ -1,49 +1,46 @@
-"use client";
-
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
-// Program Name     : frontend/app/(web3).organizer/page.tsx
-// Description      : Page contents for organizer portal - overview
+// Program Name     : frontend/app/(web3)/admin/page.tsx
+// Description      : Page contents for admin portal - overview
 // First Written on : Saturday, 14-Mar-2026
 // Last Modified on : Saturday, 14-Mar-2026
 
-
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import PageHeader from "@/components/ui/page-header";
-import { FileClock, FileCog, FilePlay, FilePlus, FileUp, Users } from "lucide-react";
+import { CalendarClock, Calendars, FileBadge, FileClock, FilePlus, Users } from "lucide-react";
 
 const QUICK_STATS = [
   {
-    label: "Active Events",
+    label: "Active Organizers",
     value: "-",
-    icon: <FilePlay />,
-    note: "This semester",
+    icon: <Calendars />,
+    note: "Approved",
   },
   {
-    label: "Credentials issued",
+    label: "Total Credentials",
     value: "-",
-    icon: <FileUp />,
-    note: "Total on-chain",
+    icon: <FileBadge />,
+    note: "Platform-wide",
   },
   {
-    label: "Participants",
+    label: "Students onboarded",
     value: "-",
     icon: <Users />,
-    note: "Registered",
+    note: "Unique wallets",
   },
   {
-    label: "Credential Types",
+    label: "Pending approvals",
     value: "-",
-    icon: <FileCog />,
-    note: "Registered"
+    icon: <CalendarClock />,
+    note: "Awaiting review"
   }
 ];
 
-export default function OrganizerPage() {
+export default function AdminPage() {
   return (
     <div className="px-6 flex flex-col space-y-4">
       <PageHeader
-        title="Organizer Portal"
-        desc="Manage events and issue blockchain credentials to participants."
+        title="University Admin"
+        desc="Manage organizer approvals, oversight, and platform configuration"
       />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {
@@ -64,7 +61,7 @@ export default function OrganizerPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Recent Events</CardTitle>
+            <CardTitle>Organizer Management</CardTitle>
             <CardAction><FileClock /></CardAction>
           </CardHeader>
           <CardContent>
@@ -73,7 +70,7 @@ export default function OrganizerPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Quick Issue</CardTitle>
+            <CardTitle>Platform Activity</CardTitle>
             <CardAction><FilePlus /></CardAction>
           </CardHeader>
           <CardContent>
