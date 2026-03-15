@@ -30,7 +30,7 @@ vi.mock("next/link", () => ({
 
 // ── Component under test ──────────────────────────────────────────────────────
 
-import VerifyForm from "@/app/(web3)/verify/verify-form";
+import VerifyForm from "@/app/verify/verify-form";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 

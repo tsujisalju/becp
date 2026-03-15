@@ -2,7 +2,7 @@
 // Program Name     : frontend/app/layout.tsx
 // Description      : Page contents for landing page.
 // First Written on : Saturday, 7-Mar-2026
-// Last Modified on : Wednesday, 11-Mar-2026
+// Last Modified on : Sunday, 15-Mar-2026
 
 import BECPLogo from "@/components/logo/becp-logo";
 import { Button } from "@/components/ui/button";
@@ -66,7 +66,9 @@ export default function Home() {
               <Button size={"lg"} asChild>
                 <Link href={ROUTES.CONNECT}>Connect Wallet</Link>
               </Button>
-              <Button size={"lg"}>Verify a Credential</Button>
+              <Button size={"lg"} asChild>
+                <Link href={ROUTES.VERIFY}>Verify a Credential</Link>
+              </Button>
             </div>
           </div>
         </div>
