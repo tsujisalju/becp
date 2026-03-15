@@ -2,7 +2,7 @@
 // Program Name     : frontend/app/(web3)/verify/verify-form.tsx
 // Description      : Form component for verifiying a credential on the blockchain.
 // First Written on : Saturday, 14-Mar-2026
-// Last Modified on : Saturday, 14-Mar-2026
+// Last Modified on : Sunday, 15-Mar-2026
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { BECP_CREDENTIAL_ABI, CHAIN, ipfsToHttp } from "@becp/shared";
 import { useForm } from "@tanstack/react-form";
 import { CircleAlert, CircleCheck, CircleX, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { isAddress } from "viem";
 import { useReadContracts } from "wagmi";
 import { optimismSepolia } from "wagmi/chains";
@@ -92,7 +93,8 @@ export default function VerifyForm({ initialTokenId, initialAddress }: VerifyFor
     onSubmit: () => {}, //To be implemented
   });
 
-  const submittedValues = form.state.submissionAttempts > 0 && form.state.isValid ? form.state.values : null;
+  const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
+  const submittedValues = hasSubmitted && form.state.isValid ? form.state.values : null;
 
   const parsedTokenId = submittedValues?.tokenId ? BigInt(submittedValues.tokenId.trim()) : undefined;
   const parsedAddress =
@@ -146,10 +148,11 @@ export default function VerifyForm({ initialTokenId, initialAddress }: VerifyFor
   return (
     <>
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
           e.stopPropagation();
-          form.handleSubmit();
+          setHasSubmitted(true);
+          await form.handleSubmit();
         }}
       >
         <FieldGroup>
