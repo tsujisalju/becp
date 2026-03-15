@@ -13,5 +13,5 @@ export default function CredentialsPage() {
     <div className="px-6 flex flex-col space-y-4">
       <PageHeader title="Events" desc="Display name and career information shown on your public credential portfolio." />
     </div>
-  )
+  );
 }

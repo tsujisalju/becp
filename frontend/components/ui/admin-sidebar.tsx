@@ -7,7 +7,15 @@
 // Last Modified on : Saturday, 14-Mar-2026
 
 import BECPLogo from "@/components/logo/becp-logo";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import { ROUTES } from "@becp/shared";
 import { Calendars, FileBadge, SquareChartGantt } from "lucide-react";
 import Link from "next/link";
@@ -27,9 +35,9 @@ const items = [
   {
     title: "Credentials",
     url: `${ROUTES.ADMIN}/credentials`,
-    icon: <FileBadge />
+    icon: <FileBadge />,
   },
-]
+];
 
 export function AdminSidebar() {
   return (
@@ -61,5 +69,5 @@ export function AdminSidebar() {
         <ConnectWalletSidebar />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

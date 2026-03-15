@@ -18,11 +18,21 @@ export default function AdminOrganizersPage() {
         title="Organizer Management"
         desc="Approve organizer wallets to issue credentials on behalf of your university."
       />
-      <Button className="w-max"><Plus />Approve Organizer</Button>
+      <Button className="w-max">
+        <Plus />
+        Approve Organizer
+      </Button>
       <Card>
         <CardHeader>
-          <CardTitle>Pending Approvals<Badge className="ml-2 bg-amber-100 dark:bg-amber-950 text-amber-700" variant="secondary">0</Badge></CardTitle>
-          <CardAction><CalendarClock /></CardAction>
+          <CardTitle>
+            Pending Approvals
+            <Badge className="ml-2 bg-amber-100 dark:bg-amber-950 text-amber-700" variant="secondary">
+              0
+            </Badge>
+          </CardTitle>
+          <CardAction>
+            <CalendarClock />
+          </CardAction>
         </CardHeader>
         <CardContent>
           <span className="text-muted-foreground">Coming soon</span>
@@ -32,7 +42,9 @@ export default function AdminOrganizersPage() {
       <Card>
         <CardHeader>
           <CardTitle>Active Organizers</CardTitle>
-          <CardAction><Calendars /></CardAction>
+          <CardAction>
+            <Calendars />
+          </CardAction>
         </CardHeader>
         <CardContent>
           <span className="text-muted-foreground">Coming soon</span>
@@ -41,11 +53,14 @@ export default function AdminOrganizersPage() {
       <Alert className="bg-muted max-w-lg">
         <Info />
         <AlertTitle>On-chain role management</AlertTitle>
-        <AlertDescription>Approving an organizer calls <code className="font-mono bg-secondary px-1 rounded text-xs">approveOrganizer(address)</code> on
-          the BECPCredential contract, granting them <code className="font-mono bg-secondary px-1 rounded text-xs">ISSUER_ROLE</code>.
-          Revoking calls <code className="font-mono bg-secondary px-1 rounded text-xs">revokeOrganizer(address)</code> and
-          immediately prevents further credential issuance from that wallet.</AlertDescription>
+        <AlertDescription>
+          Approving an organizer calls{" "}
+          <code className="font-mono bg-secondary px-1 rounded text-xs">approveOrganizer(address)</code> on the BECPCredential
+          contract, granting them <code className="font-mono bg-secondary px-1 rounded text-xs">ISSUER_ROLE</code>. Revoking
+          calls <code className="font-mono bg-secondary px-1 rounded text-xs">revokeOrganizer(address)</code> and immediately
+          prevents further credential issuance from that wallet.
+        </AlertDescription>
       </Alert>
     </div>
-  )
+  );
 }

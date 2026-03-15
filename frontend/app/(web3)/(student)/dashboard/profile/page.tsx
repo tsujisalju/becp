@@ -9,13 +9,11 @@
 import PageHeader from "@/components/ui/page-header";
 import ProfileEditForm from "./profile-edit-form";
 
-
 export default function CredentialsPage() {
-
   return (
     <div className="px-6 flex flex-col space-y-4">
       <PageHeader title="My Profile" desc="Display name and career information shown on your public credential portfolio." />
       <ProfileEditForm />
     </div>
-  )
+  );
 }

@@ -14,7 +14,7 @@ export default function CredentialsPage() {
     <div className="px-6 flex flex-col space-y-4">
       <PageHeader title="My Credentials" desc="Your on-chain extracurricular certificates, owned in your wallet." />
       <div className="flex flex-wrap items-center gap-2">
-        {['All', 'Hackathon', 'Workshop', 'Leadership', 'Volunteer'].map((label, i) => (
+        {["All", "Hackathon", "Workshop", "Leadership", "Volunteer"].map((label, i) => (
           <Button
             key={label}
             variant={i === 0 ? "default" : "outline"}
@@ -26,5 +26,5 @@ export default function CredentialsPage() {
         ))}
       </div>
     </div>
-  )
+  );
 }

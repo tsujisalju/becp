@@ -50,9 +50,7 @@ const LEAF_LABEL_OVERRIDES: Record<string, string> = {
 
 /** Converts a raw URL segment (e.g. a kebab-case slug or token ID) to Title Case. */
 function toTitleCase(str: string): string {
-  return str
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return str.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 /** Resolves the human-readable label for a segment. */
@@ -100,26 +98,17 @@ export default function DashboardHeader() {
     <header className="flex h-16 shrink-0 items-center gap-2">
       <div className="flex items-center gap-2 px-4">
         <SidebarTrigger className="-ml-1" />
-        <Separator
-          orientation="vertical"
-          className="mr-2"
-        />
+        <Separator orientation="vertical" className="mr-2" />
         <Breadcrumb>
           <BreadcrumbList>
             {crumbs.map(({ href, label, isLeaf }, index) => (
               <Fragment key={href}>
                 {/* Separator sits between items, never before the first */}
-                {index > 0 && (
-                  <BreadcrumbSeparator className="hidden md:block" />
-                )}
+                {index > 0 && <BreadcrumbSeparator className="hidden md:block" />}
 
                 {/* Ancestor items collapse on small screens; the current page is always visible */}
                 <BreadcrumbItem className={!isLeaf ? "hidden md:block" : undefined}>
-                  {isLeaf ? (
-                    <BreadcrumbPage>{label}</BreadcrumbPage>
-                  ) : (
-                    <BreadcrumbLink href={href}>{label}</BreadcrumbLink>
-                  )}
+                  {isLeaf ? <BreadcrumbPage>{label}</BreadcrumbPage> : <BreadcrumbLink href={href}>{label}</BreadcrumbLink>}
                 </BreadcrumbItem>
               </Fragment>
             ))}

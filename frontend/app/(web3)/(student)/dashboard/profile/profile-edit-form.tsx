@@ -21,25 +21,24 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { GlobeLock } from "lucide-react";
 
-
 const CAREER_GOALS = [
-  'Software Engineer',
-  'Frontend Engineer',
-  'Backend Engineer',
-  'Full-Stack Engineer',
-  'DevOps / Cloud Engineer',
-  'Data Scientist / ML Engineer',
-  'UX / Product Designer',
-  'Product Manager',
-  'Cybersecurity Analyst',
-  'Blockchain Developer',
-  'Business Analyst',
-  'Entrepreneur / Founder',
-  'Academic Researcher',
-  'Other',
-] as const
+  "Software Engineer",
+  "Frontend Engineer",
+  "Backend Engineer",
+  "Full-Stack Engineer",
+  "DevOps / Cloud Engineer",
+  "Data Scientist / ML Engineer",
+  "UX / Product Designer",
+  "Product Manager",
+  "Cybersecurity Analyst",
+  "Blockchain Developer",
+  "Business Analyst",
+  "Entrepreneur / Founder",
+  "Academic Researcher",
+  "Other",
+] as const;
 
-const CAREER_GOAL_NONE = "__none__" as const
+const CAREER_GOAL_NONE = "__none__" as const;
 
 export default function ProfileEditForm() {
   const { profile, isLoading, saveProfile, displayName } = useStudentProfile();
@@ -61,12 +60,12 @@ export default function ProfileEditForm() {
         // Reset with the saved values so they become the new baseline,
         // which clears isDirty without wiping the inputs.
         form.reset(normalizedValue);
-        toast.success('Profile saved');
+        toast.success("Profile saved");
       } catch {
-        toast.error('Failed to save profile. Please try again.');
+        toast.error("Failed to save profile. Please try again.");
       }
     },
-  })
+  });
 
   // Populate form once profile loads
   useEffect(() => {
@@ -75,21 +74,21 @@ export default function ProfileEditForm() {
         displayName: profile.displayName,
         bio: profile.bio,
         careerGoal: profile.careerGoal,
-      })
+      });
     }
-  }, [profile, form])
+  }, [profile, form]);
 
   if (isLoading) {
     return (
       <div className="space-y-4 max-w-xl">
-        {[1, 2, 3].map(i => (
+        {[1, 2, 3].map((i) => (
           <div key={i} className="space-y-2">
             <Skeleton className="h-4 w-24 rounded shimmer" />
             <Skeleton className="h-10 w-full rounded-lg shimmer" />
           </div>
         ))}
       </div>
-    )
+    );
   }
 
   return (
@@ -97,20 +96,17 @@ export default function ProfileEditForm() {
       className="max-w-xl space-y-4"
       id="profile-edit-form"
       onSubmit={(e) => {
-        e.preventDefault()
-        form.handleSubmit()
+        e.preventDefault();
+        form.handleSubmit();
       }}
     >
       <FieldGroup>
-        <form.Field
-          name="displayName">
+        <form.Field name="displayName">
           {(field) => {
             const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>
-                  Display Name
-                </FieldLabel>
+                <FieldLabel htmlFor={field.name}>Display Name</FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -121,26 +117,21 @@ export default function ProfileEditForm() {
                   placeholder={displayName}
                   maxLength={60}
                 />
-                {isInvalid && (
-                  <FieldError errors={field.state.meta.errors} />
-                )}
+                {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 <FieldDescription className="text-xs">
                   Shown on your public credential portfolio page. Defaults to your shortened wallet address.
                 </FieldDescription>
               </Field>
-            )
+            );
           }}
         </form.Field>
-        <form.Field
-          name="bio">
+        <form.Field name="bio">
           {(field) => {
             const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
             const maxLength = 280;
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>
-                  Bio
-                </FieldLabel>
+                <FieldLabel htmlFor={field.name}>Bio</FieldLabel>
                 <InputGroup>
                   <InputGroupTextarea
                     id={field.name}
@@ -163,24 +154,19 @@ export default function ProfileEditForm() {
                   Shown on your public credential portfolio page. Defaults to your shortened wallet address.
                 </FieldDescription>
               </Field>
-            )
+            );
           }}
         </form.Field>
-        <form.Field
-          name="careerGoal">
+        <form.Field name="careerGoal">
           {(field) => {
             const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
             return (
               <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>
-                  Career Goal
-                </FieldLabel>
+                <FieldLabel htmlFor={field.name}>Career Goal</FieldLabel>
                 <Select
                   name={field.name}
                   onValueChange={(v) =>
-                    field.handleChange(
-                      v === CAREER_GOAL_NONE ? undefined : v as StudentProfileUpdate['careerGoal']
-                    )
+                    field.handleChange(v === CAREER_GOAL_NONE ? undefined : (v as StudentProfileUpdate["careerGoal"]))
                   }
                 >
                   <SelectTrigger>
@@ -199,42 +185,37 @@ export default function ProfileEditForm() {
                   Used to personalise activity recommendation on your dashboard.
                 </FieldDescription>
               </Field>
-            )
+            );
           }}
         </form.Field>
         <Field>
           <FieldLabel>
             Wallet Address
-            <Badge variant="secondary" className="ml-auto">Read-only</Badge>
+            <Badge variant="secondary" className="ml-auto">
+              Read-only
+            </Badge>
           </FieldLabel>
-          <Input
-            id="walletAddress"
-            type="text"
-            value={profile?.address ?? "-"}
-            placeholder={"-"}
-            disabled
-          />
+          <Input id="walletAddress" type="text" value={profile?.address ?? "-"} placeholder={"-"} disabled />
           <FieldDescription className="text-xs">
             Your on-chain identity. Cannot be changed as this is your wallet address.
           </FieldDescription>
         </Field>
-        <form.Subscribe selector={(s) => ({ isDirty: s.isDirty, isSubmitting: s.isSubmitting })}>
+        <form.Subscribe
+          selector={(s) => ({
+            isDirty: s.isDirty,
+            isSubmitting: s.isSubmitting,
+          })}
+        >
           {({ isDirty, isSubmitting }) => (
             <div className="flex items-center gap-3 pt-1">
               <Button
                 type="submit"
                 disabled={!isDirty || isSubmitting}
-                variant={
-                  isDirty && !isSubmitting
-                    ? "default"
-                    : "secondary"
-                }
+                variant={isDirty && !isSubmitting ? "default" : "secondary"}
               >
-                {isSubmitting ? 'Saving...' : 'Save changes'}
+                {isSubmitting ? "Saving..." : "Save changes"}
               </Button>
-              {!isDirty && !isLoading && profile && (
-                <span className="text-xs text-muted-foreground">✓ Up to date</span>
-              )}
+              {!isDirty && !isLoading && profile && <span className="text-xs text-muted-foreground">✓ Up to date</span>}
             </div>
           )}
         </form.Subscribe>
@@ -242,10 +223,11 @@ export default function ProfileEditForm() {
       <Alert className="max-w-lg">
         <GlobeLock />
         <AlertTitle className="text-sm">Privacy</AlertTitle>
-        <AlertDescription className="text-xs">This profile data is stored off-chain (not on the blockchain). Your wallet address
-          is your only on-chain identity. You can leave all fields blank to remain anonymous.
-          SIWE authentication will be added in Phase 4 to secure write access.</AlertDescription>
+        <AlertDescription className="text-xs">
+          This profile data is stored off-chain (not on the blockchain). Your wallet address is your only on-chain identity. You
+          can leave all fields blank to remain anonymous. SIWE authentication will be added in Phase 4 to secure write access.
+        </AlertDescription>
       </Alert>
     </form>
-  )
+  );
 }

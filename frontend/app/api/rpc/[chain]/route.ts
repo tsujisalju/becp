@@ -9,31 +9,22 @@ import { NextRequest, NextResponse } from "next/server";
 // Last Modified on :
 
 const ALCHEMY_URLS: Record<string, string> = {
-  optimism:         "https://opt-mainnet.g.alchemy.com/v2",
+  optimism: "https://opt-mainnet.g.alchemy.com/v2",
   "optimism-sepolia": "https://opt-sepolia.g.alchemy.com/v2",
 };
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ chain: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ chain: string }> }) {
   const { chain } = await params;
 
   const alchemyBase = ALCHEMY_URLS[chain];
   if (!alchemyBase) {
-    return NextResponse.json(
-      { error: `Unsupported chain: ${chain}` },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: `Unsupported chain: ${chain}` }, { status: 400 });
   }
 
   const apiKey = process.env.ALCHEMY_API_KEY;
   if (!apiKey) {
     console.error("[rpc-proxy] ALCHEMY_API_KEY is not set");
-    return NextResponse.json(
-      { error: "RPC provider is not configured" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "RPC provider is not configured" }, { status: 500 });
   }
 
   let body: unknown;

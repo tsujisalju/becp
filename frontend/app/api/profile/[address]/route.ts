@@ -45,10 +45,7 @@ async function writeProfile(profile: Profile) {
   await fs.writeFile(profilePath(profile.address), JSON.stringify(profile, null, 2), "utf-8");
 }
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ address: string }> },
-) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ address: string }> }) {
   const { address } = await params;
   if (!isAddress(address)) {
     return NextResponse.json({ error: "Invalid address" }, { status: 400 });
@@ -61,10 +58,7 @@ export async function GET(
   return NextResponse.json(profile);
 }
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: Promise<{ address: string }> },
-) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ address: string }> }) {
   const { address } = await params;
   if (!isAddress(address)) {
     return NextResponse.json({ error: "InvalidAddress" }, { status: 400 });
@@ -83,10 +77,10 @@ export async function PUT(
 
   const updated: Profile = {
     address: addr,
-    displayName: 'displayName' in body ? (body.displayName ?? undefined) : existing?.displayName,
-    bio: 'bio' in body ? (body.bio ?? undefined) : existing?.bio,
-    careerGoal: 'careerGoal' in body ? (body.careerGoal ?? undefined) : existing?.careerGoal,
-    avatarUri: 'avatarUri' in body ? (body.avatarUri ?? undefined) : existing?.avatarUri,
+    displayName: "displayName" in body ? (body.displayName ?? undefined) : existing?.displayName,
+    bio: "bio" in body ? (body.bio ?? undefined) : existing?.bio,
+    careerGoal: "careerGoal" in body ? (body.careerGoal ?? undefined) : existing?.careerGoal,
+    avatarUri: "avatarUri" in body ? (body.avatarUri ?? undefined) : existing?.avatarUri,
     createdAt: existing?.createdAt ?? now,
     updatedAt: now,
   };

@@ -12,15 +12,27 @@ import { FileChartLine, FileCog, GraduationCap } from "lucide-react";
 export default function AdminPlatformPage() {
   return (
     <div className="px-6 flex flex-col space-y-4">
-      <PageHeader
-        title="Credentials Overview"
-        desc="Platform-wide credential issuance activity and audit log."
-      />
+      <PageHeader title="Credentials Overview" desc="Platform-wide credential issuance activity and audit log." />
       <div className="grid sm:grid-cols-3 gap-4 stagger">
         {[
-          { label: 'Total types registered', value: '—', icon: <FileCog />, note: 'Credential types' },
-          { label: 'Total credentials issued', value: '—', icon: <FileChartLine />, note: 'Across all organizers' },
-          { label: 'Unique credential holders', value: '—', icon: <GraduationCap />, note: 'Student wallets' },
+          {
+            label: "Total types registered",
+            value: "—",
+            icon: <FileCog />,
+            note: "Credential types",
+          },
+          {
+            label: "Total credentials issued",
+            value: "—",
+            icon: <FileChartLine />,
+            note: "Across all organizers",
+          },
+          {
+            label: "Unique credential holders",
+            value: "—",
+            icon: <GraduationCap />,
+            note: "Student wallets",
+          },
         ].map(({ label, value, icon, note }) => (
           <Card key={label}>
             <CardHeader>
@@ -44,10 +56,12 @@ export default function AdminPlatformPage() {
         <Card>
           <CardHeader>
             <CardTitle>Platform Pause</CardTitle>
-            <CardDescription>Pausing the contract prevents all credential issuance until unpaused.
-              Use only in emergencies (e.g. discovered vulnerability). This calls{' '}
-              <code className="font-mono bg-secondary px-1 rounded text-xs">pause()</code> on
-              the BECPCredential contract, protected by <code className="font-mono bg-secondary px-1 rounded text-xs">DEFAULT_ADMIN_ROLE</code>.</CardDescription>
+            <CardDescription>
+              Pausing the contract prevents all credential issuance until unpaused. Use only in emergencies (e.g. discovered
+              vulnerability). This calls <code className="font-mono bg-secondary px-1 rounded text-xs">pause()</code> on the
+              BECPCredential contract, protected by{" "}
+              <code className="font-mono bg-secondary px-1 rounded text-xs">DEFAULT_ADMIN_ROLE</code>.
+            </CardDescription>
           </CardHeader>
           <CardFooter className="justify-end">
             <Button variant="destructive">Pause platform</Button>
@@ -55,5 +69,5 @@ export default function AdminPlatformPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

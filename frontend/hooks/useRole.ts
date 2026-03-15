@@ -32,35 +32,38 @@ export function useRole(): UseRoleResult {
   }
 
   const { data, isLoading } = useReadContracts({
-    contracts: address && contractAddress ? [
-      {
-        address: contractAddress,
-        abi: BECP_CREDENTIAL_ABI,
-        functionName: 'hasRole',
-        args: [CONTRACT_ROLES.DEFAULT_ADMIN as `0x${string}`, address],
-      },
-      {
-        address: contractAddress,
-        abi: BECP_CREDENTIAL_ABI,
-        functionName: 'hasRole',
-        args: [CONTRACT_ROLES.UNIVERSITY_ADMIN as `0x${string}`, address],
-      },
-      {
-        address: contractAddress,
-        abi: BECP_CREDENTIAL_ABI,
-        functionName: 'hasRole',
-        args: [CONTRACT_ROLES.ISSUER as `0x${string}`, address],
-      },
-    ] : [],
+    contracts:
+      address && contractAddress
+        ? [
+            {
+              address: contractAddress,
+              abi: BECP_CREDENTIAL_ABI,
+              functionName: "hasRole",
+              args: [CONTRACT_ROLES.DEFAULT_ADMIN as `0x${string}`, address],
+            },
+            {
+              address: contractAddress,
+              abi: BECP_CREDENTIAL_ABI,
+              functionName: "hasRole",
+              args: [CONTRACT_ROLES.UNIVERSITY_ADMIN as `0x${string}`, address],
+            },
+            {
+              address: contractAddress,
+              abi: BECP_CREDENTIAL_ABI,
+              functionName: "hasRole",
+              args: [CONTRACT_ROLES.ISSUER as `0x${string}`, address],
+            },
+          ]
+        : [],
     query: {
       enabled: !!address && !!contractAddress,
       staleTime: 30_000,
-    }
-  })
+    },
+  });
 
   const isDefaultAdmin = data?.[0]?.result === true;
   const isUniversityAdmin = data?.[1]?.result === true || isDefaultAdmin;
-  const isOrganizer = data?.[2]?.result === true
+  const isOrganizer = data?.[2]?.result === true;
 
   // Role precedence: admin > organizer > student
   // University admins do not also show as organize even if they hold both roles
@@ -76,5 +79,5 @@ export function useRole(): UseRoleResult {
     isStudent: role === "student",
     isLoading: isReconnecting || isConnecting || (isLoading && !!address),
     isConnected,
-  }
+  };
 }

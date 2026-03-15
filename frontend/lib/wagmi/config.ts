@@ -8,7 +8,7 @@ export const wagmiConfig = getDefaultConfig({
   chains: [optimism, optimismSepolia],
   ssr: true,
   transports: {
-    [optimism.id]:         http("/api/rpc/optimism"),
-    [optimismSepolia.id]:  http("/api/rpc/optimism-sepolia"),
+    [optimism.id]: http("/api/rpc/optimism"),
+    [optimismSepolia.id]: http("/api/rpc/optimism-sepolia"),
   },
 });

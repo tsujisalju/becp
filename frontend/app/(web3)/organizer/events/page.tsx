@@ -11,11 +11,11 @@ import { Plus } from "lucide-react";
 export default function OrganizerEventsPage() {
   return (
     <div className="px-6 flex flex-col space-y-4">
-      <PageHeader
-        title="My Events"
-        desc="Events you have created and their credential issuance status."
-      />
-      <Button className="w-max"><Plus />Create Event</Button>
+      <PageHeader title="My Events" desc="Events you have created and their credential issuance status." />
+      <Button className="w-max">
+        <Plus />
+        Create Event
+      </Button>
     </div>
-  )
+  );
 }

@@ -13,16 +13,13 @@ import { wagmiConfig } from "@/lib/wagmi/config";
 import dynamic from "next/dynamic";
 
 export default function Web3Providers({ children }: { children: ReactNode }) {
-
   const ClientRainbowKitProvider = dynamic(() => import("./client-rainbowkit-provider"), { ssr: false });
   const queryClient = new QueryClient();
 
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <ClientRainbowKitProvider>
-          {children}
-        </ClientRainbowKitProvider>
+        <ClientRainbowKitProvider>{children}</ClientRainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

@@ -12,7 +12,6 @@ import Link from "next/link";
 import VerifyForm from "./verify-form";
 
 export default function VerifyPage() {
-
   return (
     <div className="relative grid w-screen h-screen place-items-center bg-chart-1">
       <div className="noise-overlay"></div>
@@ -21,18 +20,28 @@ export default function VerifyPage() {
         <Card className="w-full relative">
           <CardHeader>
             <CardTitle>Verify a Credential</CardTitle>
-            <CardDescription>Enter the token ID and wallet address to verify a BECP credential on-chain. No wallet required.</CardDescription>
+            <CardDescription>
+              Enter the token ID and wallet address to verify a BECP credential on-chain. No wallet required.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <VerifyForm />
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <div className="w-full text-center text-muted-foreground text-xs">
-              Verification reads directly on the Optimism blockchain. <Link href="https://sepolia-optimism.etherscan.io" target="_blank" rel="noopener noreferrer" className="underline">View on explorer →</Link>
+              Verification reads directly on the Optimism blockchain.{" "}
+              <Link
+                href="https://sepolia-optimism.etherscan.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                View on explorer →
+              </Link>
             </div>
           </CardFooter>
         </Card>
       </div>
     </div>
-  )
+  );
 }

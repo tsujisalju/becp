@@ -5,7 +5,7 @@ import { useRole } from "@/hooks/useRole";
 // Program Name     : frontend/components/auth/RoleGuard.tsx
 // Description      : Prevent unauthorized role from accessing certain pages
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on : Thursday, 12-Mar-2026
+// Last Modified on : Sunday, 15-Mar-2026
 
 import { ROUTES, UserRole } from "@becp/shared";
 import { useRouter } from "next/navigation";
@@ -18,23 +18,23 @@ const ROLE_HOME: Record<UserRole, string> = {
   organizer: ROUTES.ORGANIZER_PORTAL,
   university_admin: ROUTES.ADMIN,
   recruiter: ROUTES.VERIFY,
-}
+};
 
 interface RoleGuardProps {
-  allowedRoles: UserRole[]
-  children: React.ReactNode
+  allowedRoles: UserRole[];
+  children: React.ReactNode;
 }
 
 function PortalSkeleton() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <div className="flex min-h-screen items-center justify-center bg-sidebar">
       <div className="flex flex-col items-center gap-4">
-        <BECPLogo className="w-48" />
+        <BECPLogo className="w-48 animate-bounce" />
         <Spinner />
         <p className="text-sm text-muted-foreground font-medium">Verifying credentials…</p>
       </div>
     </div>
-  )
+  );
 }
 
 export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
@@ -43,13 +43,18 @@ export function RoleGuard({ allowedRoles, children }: RoleGuardProps) {
 
   useEffect(() => {
     if (isLoading) return;
-    if (!isConnected) { router.replace(ROUTES.CONNECT); return };
-    if (!allowedRoles.includes(role)) { router.replace(ROLE_HOME[role]) };
+    if (!isConnected) {
+      router.replace(ROUTES.CONNECT);
+      return;
+    }
+    if (!allowedRoles.includes(role)) {
+      router.replace(ROLE_HOME[role]);
+    }
   }, [isConnected, isLoading, role, allowedRoles, router]);
 
   if (isLoading || !isConnected || !allowedRoles.includes(role)) {
-    return <PortalSkeleton />
+    return <PortalSkeleton />;
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }

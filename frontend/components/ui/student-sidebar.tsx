@@ -7,7 +7,15 @@
 // Last Modified on : Saturday, 14-Mar-2026
 
 import BECPLogo from "@/components/logo/becp-logo";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import { ROUTES } from "@becp/shared";
 import { CalendarFold, CircleUser, FileBadge, SquareChartGantt } from "lucide-react";
 import Link from "next/link";
@@ -27,14 +35,14 @@ const items = [
   {
     title: "Events",
     url: ROUTES.EVENTS,
-    icon: <CalendarFold />
+    icon: <CalendarFold />,
   },
   {
     title: "Profile",
     url: ROUTES.PROFILE,
-    icon: <CircleUser />
+    icon: <CircleUser />,
   },
-]
+];
 
 export function StudentSidebar() {
   return (
@@ -66,5 +74,5 @@ export function StudentSidebar() {
         <ConnectWalletSidebar />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

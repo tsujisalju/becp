@@ -4,40 +4,27 @@
 // First Written on : Friday, 13-Mar-2026
 // Last Modified on : Friday, 13-Mar-2026
 
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Button } from './button';
-import Image from 'next/image';
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { Button } from "./button";
+import Image from "next/image";
 
 export default function ConnectWallet() {
   return (
     <ConnectButton.Custom>
-      {({
-        account,
-        chain,
-        openAccountModal,
-        openChainModal,
-        openConnectModal,
-        authenticationStatus,
-        mounted,
-      }) => {
+      {({ account, chain, openAccountModal, openChainModal, openConnectModal, authenticationStatus, mounted }) => {
         // Note: If your app doesn't use authentication, you
         // can remove all 'authenticationStatus' checks
-        const ready = mounted && authenticationStatus !== 'loading';
-        const connected =
-          ready &&
-          account &&
-          chain &&
-          (!authenticationStatus ||
-            authenticationStatus === 'authenticated');
+        const ready = mounted && authenticationStatus !== "loading";
+        const connected = ready && account && chain && (!authenticationStatus || authenticationStatus === "authenticated");
 
         return (
           <div
             {...(!ready && {
-              'aria-hidden': true,
-              'style': {
+              "aria-hidden": true,
+              style: {
                 opacity: 0,
-                pointerEvents: 'none',
-                userSelect: 'none',
+                pointerEvents: "none",
+                userSelect: "none",
               },
             })}
           >
@@ -60,9 +47,7 @@ export default function ConnectWallet() {
 
               return (
                 <div className="flex flex-row space-x-1">
-                  <Button
-                    onClick={openChainModal}
-                  >
+                  <Button onClick={openChainModal}>
                     {chain.hasIcon && (
                       <div
                         style={{
@@ -70,18 +55,11 @@ export default function ConnectWallet() {
                           width: 12,
                           height: 12,
                           borderRadius: 999,
-                          overflow: 'hidden',
+                          overflow: "hidden",
                           marginRight: 4,
                         }}
                       >
-                        {chain.iconUrl && (
-                          <Image
-                            alt={chain.name ?? 'Chain icon'}
-                            src={chain.iconUrl}
-                            height={12}
-                            width={12}
-                          />
-                        )}
+                        {chain.iconUrl && <Image alt={chain.name ?? "Chain icon"} src={chain.iconUrl} height={12} width={12} />}
                       </div>
                     )}
                     {chain.name}
@@ -98,4 +76,4 @@ export default function ConnectWallet() {
       }}
     </ConnectButton.Custom>
   );
-};
+}

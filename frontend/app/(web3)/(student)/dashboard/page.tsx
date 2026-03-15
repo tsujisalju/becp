@@ -35,50 +35,50 @@ const QUICK_STATS = [
     label: "Events joined",
     value: "-",
     icon: <CalendarCheck2 />,
-    note: "Registered"
-  }
-]
+    note: "Registered",
+  },
+];
 
 function RandomGreeting(displayName: string) {
   const greetings = [
     `Welcome, ${displayName}!`,
     `Hello, ${displayName}!`,
     `What's good, ${displayName}?`,
-    `Ready or not, ${displayName}?`
-  ]
+    `Ready or not, ${displayName}?`,
+  ];
   return greetings[Math.floor(Math.random() * greetings.length)];
 }
 
 export default function DashboardPage() {
   const { profile } = useStudentProfile();
   const { address } = useConnection();
-  const displayName = profile?.displayName ?? `${address?.slice(0, 4)}...${address?.slice(-4)}`
+  const displayName = profile?.displayName ?? `${address?.slice(0, 4)}...${address?.slice(-4)}`;
 
   return (
     <div className="px-6 flex flex-col space-y-4">
       <PageHeader title={RandomGreeting(displayName)} desc="View your skill portfolio and credentials at a glance." />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {
-          QUICK_STATS.map((stat) => (
-            <Card key={`overview-${stat.label}`}>
-              <CardHeader>
-                <CardTitle>{stat.label}</CardTitle>
-                <CardDescription>{stat.note}</CardDescription>
-                <CardAction>{stat.icon}</CardAction>
-              </CardHeader>
-              <CardContent>
-                <span className="font-bold text-2xl">{stat.value}</span>
-              </CardContent>
-            </Card>
-          ))
-        }
+        {QUICK_STATS.map((stat) => (
+          <Card key={`overview-${stat.label}`}>
+            <CardHeader>
+              <CardTitle>{stat.label}</CardTitle>
+              <CardDescription>{stat.note}</CardDescription>
+              <CardAction>{stat.icon}</CardAction>
+            </CardHeader>
+            <CardContent>
+              <span className="font-bold text-2xl">{stat.value}</span>
+            </CardContent>
+          </Card>
+        ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Skill Progress</CardTitle>
             <CardDescription>Based on Career Goals</CardDescription>
-            <CardAction><Target /></CardAction>
+            <CardAction>
+              <Target />
+            </CardAction>
           </CardHeader>
           <CardContent>
             <span className="text-muted-foreground">Coming soon</span>
@@ -87,7 +87,9 @@ export default function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Recent Credentials</CardTitle>
-            <CardAction><GalleryVertical /></CardAction>
+            <CardAction>
+              <GalleryVertical />
+            </CardAction>
           </CardHeader>
           <CardContent>
             <span className="text-muted-foreground">Coming soon</span>
@@ -95,5 +97,5 @@ export default function DashboardPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

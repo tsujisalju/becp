@@ -31,38 +31,35 @@ const QUICK_STATS = [
     label: "Pending approvals",
     value: "-",
     icon: <CalendarClock />,
-    note: "Awaiting review"
-  }
+    note: "Awaiting review",
+  },
 ];
 
 export default function AdminPage() {
   return (
     <div className="px-6 flex flex-col space-y-4">
-      <PageHeader
-        title="University Admin"
-        desc="Manage organizer approvals, oversight, and platform configuration"
-      />
+      <PageHeader title="University Admin" desc="Manage organizer approvals, oversight, and platform configuration" />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        {
-          QUICK_STATS.map((stat) => (
-            <Card key={`overview-${stat.label}`}>
-              <CardHeader>
-                <CardTitle>{stat.label}</CardTitle>
-                <CardDescription>{stat.note}</CardDescription>
-                <CardAction>{stat.icon}</CardAction>
-              </CardHeader>
-              <CardContent>
-                <span className="font-bold text-2xl">{stat.value}</span>
-              </CardContent>
-            </Card>
-          ))
-        }
+        {QUICK_STATS.map((stat) => (
+          <Card key={`overview-${stat.label}`}>
+            <CardHeader>
+              <CardTitle>{stat.label}</CardTitle>
+              <CardDescription>{stat.note}</CardDescription>
+              <CardAction>{stat.icon}</CardAction>
+            </CardHeader>
+            <CardContent>
+              <span className="font-bold text-2xl">{stat.value}</span>
+            </CardContent>
+          </Card>
+        ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Organizer Management</CardTitle>
-            <CardAction><FileClock /></CardAction>
+            <CardAction>
+              <FileClock />
+            </CardAction>
           </CardHeader>
           <CardContent>
             <span className="text-muted-foreground">Coming soon</span>
@@ -71,7 +68,9 @@ export default function AdminPage() {
         <Card>
           <CardHeader>
             <CardTitle>Platform Activity</CardTitle>
-            <CardAction><FilePlus /></CardAction>
+            <CardAction>
+              <FilePlus />
+            </CardAction>
           </CardHeader>
           <CardContent>
             <span className="text-muted-foreground">Coming soon</span>
@@ -79,5 +78,5 @@ export default function AdminPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

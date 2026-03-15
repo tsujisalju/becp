@@ -20,7 +20,7 @@ export function useBECPContract(): BECPContractConfig | null {
     return {
       address: getContractAddress(chainId),
       abi: BECP_CREDENTIAL_ABI,
-    }
+    };
   } catch {
     return null;
   }

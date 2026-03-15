@@ -23,6 +23,6 @@ export default function OrganizerLayout({ children }: { children: ReactNode }) {
           </SidebarInset>
         </SidebarProvider>
       </TooltipProvider>
-    </RoleGuard >
-  )
+    </RoleGuard>
+  );
 }

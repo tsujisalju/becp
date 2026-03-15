@@ -23,6 +23,6 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </SidebarInset>
         </SidebarProvider>
       </TooltipProvider>
-    </RoleGuard >
-  )
+    </RoleGuard>
+  );
 }

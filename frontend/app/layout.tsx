@@ -8,10 +8,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Roboto_Slab } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import '@rainbow-me/rainbowkit/styles.css';
+import "@rainbow-me/rainbowkit/styles.css";
 
-
-const robotoSlab = Roboto_Slab({subsets:['latin'],variable:'--font-serif'});
+const robotoSlab = Roboto_Slab({
+  subsets: ["latin"],
+  variable: "--font-serif",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,11 +37,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn("font-serif", robotoSlab.variable)}>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-          {children}
-      </body>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
     </html>
   );
 }
