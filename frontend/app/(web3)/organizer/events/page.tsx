@@ -6,7 +6,7 @@
 //                    form → metadata build → IPFS upload → contract write →
 //                    wait for confirmation → extract tokenId from logs.
 // First Written on : Saturday, 14-Mar-2026
-// Last Modified on : Tuesday, 17-Mar-2026
+// Last Modified on : Wednesday, 18-Mar-2026
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -28,7 +28,7 @@ export default function OrganizerEventsPage() {
   const { address } = useConnection();
   const contract = useBECPContract();
   const publicClient = usePublicClient();
-  const { writeContractAsync } = useWriteContract();
+  const { mutateAsync } = useWriteContract(); //writeContractAsync is deprecated, use mutateAsync instead
 
   async function handleRegister(values: CredentialTypeFormValues) {
     if (!address) {
@@ -69,7 +69,7 @@ export default function OrganizerEventsPage() {
     let txHash: `0x${string}`;
     try {
       toast.loading("Waiting for wallet signature...", { id: "register" });
-      txHash = await writeContractAsync({
+      txHash = await mutateAsync({
         ...contract,
         functionName: "registerCredentialType",
         args: [ipfsUri],
