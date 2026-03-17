@@ -1,10 +1,10 @@
 "use client";
 
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
-// Program Name     : frontend/app/(web3)/verify/page.tsx
+// Program Name     : frontend/app/verify/page.tsx
 // Description      : Public verify page for anyone to verify a credential on the blockchain.
 // First Written on : Saturday, 14-Mar-2026
-// Last Modified on : Sunday, 15-Mar-2026
+// Last Modified on : Tuesday, 17-Mar-2026
 
 import BECPLogo from "@/components/logo/becp-logo";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";

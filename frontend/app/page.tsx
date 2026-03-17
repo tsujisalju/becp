@@ -2,7 +2,7 @@
 // Program Name     : frontend/app/layout.tsx
 // Description      : Page contents for landing page.
 // First Written on : Saturday, 7-Mar-2026
-// Last Modified on : Sunday, 15-Mar-2026
+// Last Modified on : Tuesday, 17-Mar-2026
 
 import BECPLogo from "@/components/logo/becp-logo";
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,7 @@ const ROLES = [
   {
     icon: <UserSearch />,
     title: "Recruiters",
-    desc: "Instantly verify your candidates&apos; credentials and skillsets using direct QR codes to on-chain proof. No account needed.",
+    desc: "Instantly verify your candidates' credentials and skillsets using direct QR codes to on-chain proof. No account needed.",
     href: ROUTES.VERIFY,
     cta: "Verify a credential",
   },
