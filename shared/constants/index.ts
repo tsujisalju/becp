@@ -43,7 +43,7 @@ export const CONTRACT_ROLES = {
 
 export const IPFS = {
   /** Public gateway for resolving ipfs:// URIs in the browser */
-  PUBLIC_GATEWAY: 'https://gateway.pinata.cloud/ipfs/',
+  PUBLIC_GATEWAY: process.env.NEXT_PUBLIC_GATEWAY_URL ? `https://${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/` : 'https://gateway.pinata.cloud/ipfs/',
   /** Cloudflare's IPFS gateway as fallback */
   CLOUDFLARE_GATEWAY: 'https://cloudflare-ipfs.com/ipfs/',
 } as const

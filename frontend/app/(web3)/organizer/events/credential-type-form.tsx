@@ -8,7 +8,7 @@
 //                    Skill tags are selected from a predefined list; AI inferencing
 //                    will replace this in Phase 4.
 // First Written on : Tuesday, 17-Mar-2026
-// Last Modified on : Tuesday, 17-Mar-2026
+// Last Modified on : Wednesday, 18-Mar-2026
 
 import { Calendar } from "@/components/ui/calendar";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -120,7 +120,7 @@ function SkillPicker({ selected, onChange }: { selected: SkillTag[]; onChange: (
               aria-label={`Remove ${skill.label}`}
             >
               {skill.label}
-              <span className="text-muted-foreground tabular-nums ml-0.5">x{skill.weight}</span>
+              <span className="ml-1 opacity-60 tabular-nums">x{skill.weight}</span>
               <XCircle />
             </Button>
           ))}

@@ -5,13 +5,15 @@
 // Description      : Organizer events page. Full credential type registration flow:
 //                    form → metadata build → IPFS upload → contract write →
 //                    wait for confirmation → extract tokenId from logs.
+//                    List view shows all credential types registered by the connected
+//                    organizer, hydrated with IPFS metadata.
 // First Written on : Saturday, 14-Mar-2026
 // Last Modified on : Wednesday, 18-Mar-2026
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import PageHeader from "@/components/ui/page-header";
-import { ChevronLeft, FileQuestionMark, Plus } from "lucide-react";
+import { ChevronLeft, FileQuestionMark, Plus, RefreshCw } from "lucide-react";
 import { useState } from "react";
 import CredentialTypeForm, { CredentialTypeFormValues } from "./credential-type-form";
 import { toast } from "sonner";
@@ -20,6 +22,9 @@ import { buildCredentialTypeMetadata, uploadCredentialTypeMetadata } from "@/lib
 import { useBECPContract } from "@/hooks/useBECPContract";
 import { parseEventLogs } from "viem";
 import { BECP_CREDENTIAL_ABI } from "@becp/shared";
+import { useOrganizerCredentialTypes } from "@/hooks/useOrganizerCredentialTypes";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { CredentialTypeCard, CredentialTypeCardSkeleton } from "./credential-type-card";
 
 type View = "list" | "create";
 
@@ -29,6 +34,16 @@ export default function OrganizerEventsPage() {
   const contract = useBECPContract();
   const publicClient = usePublicClient();
   const { mutateAsync } = useWriteContract(); //writeContractAsync is deprecated, use mutateAsync instead
+  const { credentialTypes, isLoading, isError, refetch } = useOrganizerCredentialTypes();
+  const [isRefetching, setIsRefetching] = useState<boolean>(false); //fake refetching state for input feedback
+
+  function handleRefetch() {
+    refetch();
+    setIsRefetching(true);
+    setTimeout(() => {
+      setIsRefetching(false);
+    }, 1000);
+  }
 
   async function handleRegister(values: CredentialTypeFormValues) {
     if (!address) {
@@ -131,22 +146,60 @@ export default function OrganizerEventsPage() {
   return (
     <div className="px-6 flex flex-col space-y-4">
       <PageHeader title="My Events" desc="Events you have created and their credential issuance status." />
-      <Button className="w-max" onClick={() => setView("create")}>
-        <Plus />
-        Create Credential Type
-      </Button>
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant={"icon"}>
-            <FileQuestionMark />
-          </EmptyMedia>
-          <EmptyTitle>No Credential Types Yet</EmptyTitle>
-          <EmptyDescription>No credential types registered yet. Create one to get started.</EmptyDescription>
-        </EmptyHeader>
-        <EmptyContent className="flex flex-row space-x-2 justify-center">
-          <Button onClick={() => setView("create")}>Create Credential Type</Button>
-        </EmptyContent>
-      </Empty>
+      <div className="flex gap-2">
+        <Button className="w-max" onClick={() => setView("create")}>
+          <Plus />
+          Create Credential Type
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={handleRefetch}
+          disabled={isLoading || isRefetching}
+          aria-label="Refresh"
+        >
+          <RefreshCw className={isLoading || isRefetching ? "animate-spin" : ""} />
+        </Button>
+      </div>
+      {isError && (
+        <Alert variant="destructive">
+          <AlertTitle>Failed to load credential types</AlertTitle>
+          <AlertDescription className="text-xs">
+            Could not read from the contract. Check your network connection and try refreshing.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {isLoading && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[1, 2, 3].map((i) => (
+            <CredentialTypeCardSkeleton key={i} />
+          ))}
+        </div>
+      )}
+
+      {!isLoading && !isError && credentialTypes.length === 0 && (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant={"icon"}>
+              <FileQuestionMark />
+            </EmptyMedia>
+            <EmptyTitle>No Credential Types Yet</EmptyTitle>
+            <EmptyDescription>No credential types registered yet. Create one to get started.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent className="flex flex-row space-x-2 justify-center">
+            <Button onClick={() => setView("create")}>Create Credential Type</Button>
+          </EmptyContent>
+        </Empty>
+      )}
+
+      {!isLoading && credentialTypes.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {credentialTypes.map((ct) => (
+            <CredentialTypeCard key={ct.tokenId.toString()} credentialType={ct} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
