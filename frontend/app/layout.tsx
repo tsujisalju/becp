@@ -10,7 +10,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import "@rainbow-me/rainbowkit/styles.css";
 import { Toaster } from "@/components/ui/sonner";
-import { Analytics } from "@vercel/analytics";
+import { Analytics } from "@vercel/analytics/next";
 
 const robotoSlab = Roboto_Slab({
   subsets: ["latin"],
