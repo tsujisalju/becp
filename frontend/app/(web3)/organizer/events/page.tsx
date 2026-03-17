@@ -2,7 +2,9 @@
 
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
 // Program Name     : frontend/app/(web3).organizer/events/page.tsx
-// Description      : Page contents for organizer portal - events
+// Description      : Organizer events page. Full credential type registration flow:
+//                    form → metadata build → IPFS upload → contract write →
+//                    wait for confirmation → extract tokenId from logs.
 // First Written on : Saturday, 14-Mar-2026
 // Last Modified on : Tuesday, 17-Mar-2026
 
@@ -13,19 +15,34 @@ import { ChevronLeft, FileQuestionMark, Plus } from "lucide-react";
 import { useState } from "react";
 import CredentialTypeForm, { CredentialTypeFormValues } from "./credential-type-form";
 import { toast } from "sonner";
-import { useConnection } from "wagmi";
+import { useConnection, usePublicClient, useWriteContract } from "wagmi";
 import { buildCredentialTypeMetadata, uploadCredentialTypeMetadata } from "@/lib/credential/metadata";
+import { useBECPContract } from "@/hooks/useBECPContract";
+import { parseEventLogs } from "viem";
+import { BECP_CREDENTIAL_ABI } from "@becp/shared";
 
 type View = "list" | "create";
 
 export default function OrganizerEventsPage() {
   const [view, setView] = useState<View>("list");
   const { address } = useConnection();
+  const contract = useBECPContract();
+  const publicClient = usePublicClient();
+  const { writeContractAsync } = useWriteContract();
 
   async function handleRegister(values: CredentialTypeFormValues) {
     if (!address) {
       toast.error("Wallet not connected.");
-      return;
+      throw new Error("Wallet not connected");
+    }
+    if (!contract) {
+      toast.error("Contract not available on this network.");
+      throw new Error("Contract not available");
+    }
+
+    if (!publicClient) {
+      toast.error("Public client not available.");
+      throw new Error("Public client not available");
     }
 
     const metadata = buildCredentialTypeMetadata({
@@ -49,7 +66,48 @@ export default function OrganizerEventsPage() {
       toast.error(e instanceof Error ? e.message : "IPFS upload failed. Please try again.", { id: "ipfs-upload" });
       throw e;
     }
-    // call registerCredentialType from deployed contract
+    let txHash: `0x${string}`;
+    try {
+      toast.loading("Waiting for wallet signature...", { id: "register" });
+      txHash = await writeContractAsync({
+        ...contract,
+        functionName: "registerCredentialType",
+        args: [ipfsUri],
+      });
+    } catch (e) {
+      toast.error(
+        e instanceof Error && e.message.includes("User rejected")
+          ? "Transaction rejected."
+          : "Transaction failed. Please try again.",
+        { id: "register" },
+      );
+      throw e;
+    }
+
+    try {
+      toast.loading("Confirming transaction...", { id: "register" });
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+
+      const logs = parseEventLogs({
+        abi: BECP_CREDENTIAL_ABI,
+        eventName: "CredentialTypeRegistered",
+        logs: receipt.logs,
+      });
+
+      const tokenId = logs[0]?.args?.tokenId;
+
+      toast.success(
+        tokenId !== undefined
+          ? `Credential type registered - Token ID #${tokenId}`
+          : "Credential type registered successfully.",
+        { id: "register" },
+      );
+    } catch {
+      toast.warning(
+        `Transaction submitted (${txHash.slice(0, 10)}...) but confirmation could not be read. Check the explorer.`,
+        { id: "register" },
+      );
+    }
     setView("list");
   }
 
