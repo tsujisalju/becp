@@ -13,15 +13,43 @@ import { ChevronLeft, FileQuestionMark, Plus } from "lucide-react";
 import { useState } from "react";
 import CredentialTypeForm, { CredentialTypeFormValues } from "./credential-type-form";
 import { toast } from "sonner";
+import { useConnection } from "wagmi";
+import { buildCredentialTypeMetadata, uploadCredentialTypeMetadata } from "@/lib/credential/metadata";
 
 type View = "list" | "create";
 
 export default function OrganizerEventsPage() {
   const [view, setView] = useState<View>("list");
+  const { address } = useConnection();
 
   async function handleRegister(values: CredentialTypeFormValues) {
-    console.log("Credential type values ready for IPFS + contract:", values);
-    toast.info("IPFS upload and contract call will be wired in Phase 3B.");
+    if (!address) {
+      toast.error("Wallet not connected.");
+      return;
+    }
+
+    const metadata = buildCredentialTypeMetadata({
+      name: values.name,
+      description: values.description,
+      activityCategory: values.activityCategory as Parameters<typeof buildCredentialTypeMetadata>[0]["activityCategory"],
+      activityDate: values.activityDate!,
+      durationHours: Number(values.durationHours),
+      issuerName: values.issuerName,
+      externalUrl: values.externalUrl,
+      skills: values.skills,
+      issuerAddress: address as `0x${string}`,
+    });
+
+    let ipfsUri: string;
+    try {
+      toast.loading("Uploading metadata to IPFS...", { id: "ipfs-upload" });
+      ipfsUri = await uploadCredentialTypeMetadata(metadata);
+      toast.success(`Metadata pinned: ${ipfsUri}`, { id: "ipfs-upload" });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "IPFS upload failed. Please try again.", { id: "ipfs-upload" });
+      throw e;
+    }
+    // call registerCredentialType from deployed contract
     setView("list");
   }
 
