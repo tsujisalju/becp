@@ -123,6 +123,7 @@ export default function OrganizerEventsPage() {
         { id: "register" },
       );
     }
+    refetch();
     setView("list");
   }
 

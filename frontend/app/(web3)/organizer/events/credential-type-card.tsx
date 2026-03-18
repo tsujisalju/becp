@@ -125,7 +125,7 @@ export function CredentialTypeCard({ credentialType }: CredentialTypeCardProps) 
             </span>
           </div>
           {metadata?.becp_skills && metadata.becp_skills.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
+            <div className="-ml-1 flex flex-wrap gap-1.5">
               {metadata.becp_skills.map((skill) => (
                 <Badge
                   key={skill.id}
@@ -140,19 +140,26 @@ export function CredentialTypeCard({ credentialType }: CredentialTypeCardProps) 
         </div>
       </CardContent>
       <CardFooter>
-        <div className="w-full flex flex-row space-x-2">
-          <Button asChild variant="outline" size="sm">
-            <Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
-              Explorer
-              <ExternalLink />
+        <div className="w-full flex flex-row justify-between">
+          <Button asChild size="sm">
+            <Link href={"#"} target="_blank" rel="noopener noreferrer">
+              Issue Credential
             </Link>
           </Button>
-          <Button asChild variant="outline" size="sm">
-            <Link href={ipfsUrl} target="_blank" rel="noopener noreferrer">
-              Metadata (IPFS)
-              <ExternalLink />
-            </Link>
-          </Button>
+          <div className="flex flex-row space-x-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
+                Explorer
+                <ExternalLink />
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href={ipfsUrl} target="_blank" rel="noopener noreferrer">
+                Metadata (IPFS)
+                <ExternalLink />
+              </Link>
+            </Button>
+          </div>
         </div>
       </CardFooter>
     </Card>
