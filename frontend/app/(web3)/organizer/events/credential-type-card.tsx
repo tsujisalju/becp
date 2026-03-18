@@ -89,19 +89,22 @@ export function CredentialTypeCard({ credentialType }: CredentialTypeCardProps) 
           </div>
         </CardDescription>
         <CardAction>
-          <span className={`inline-flex items-center gap-1 ${active ? "text-emerald-600" : "text-muted-foreground"}`}>
-            {active ? (
-              <>
-                <CheckCircle className="size-3" />
-                Active
-              </>
-            ) : (
-              <>
-                <XCircle className="size-3" />
-                Inactive
-              </>
-            )}
-          </span>
+          <div className="flex flex-row space-x-2 items-center">
+            <Badge className={`${active ? "bg-emerald-50 text-emerald-700" : "bg-muted"}`}>
+              {active ? (
+                <>
+                  <CheckCircle className="size-3" />
+                  Active
+                </>
+              ) : (
+                <>
+                  <XCircle className="size-3" />
+                  Inactive
+                </>
+              )}
+            </Badge>
+            <Badge variant="secondary">Credentials issued: {"-"}</Badge>
+          </div>
         </CardAction>
       </CardHeader>
       <CardContent>
@@ -139,12 +142,10 @@ export function CredentialTypeCard({ credentialType }: CredentialTypeCardProps) 
           )}
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="grow items-end">
         <div className="w-full flex flex-row justify-between">
           <Button asChild size="sm">
-            <Link href={"#"} target="_blank" rel="noopener noreferrer">
-              Issue Credential
-            </Link>
+            <Link href={`/organizer/issue?tokenId=${tokenId.toString()}`}>Issue Credential</Link>
           </Button>
           <div className="flex flex-row space-x-2">
             <Button asChild variant="outline" size="sm">

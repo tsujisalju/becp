@@ -41,7 +41,7 @@ export default function RootLayout({
     <html lang="en" className={cn("font-serif", robotoSlab.variable)}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
-        <Toaster />
+        <Toaster position="top-center" />
         <Analytics />
       </body>
     </html>
