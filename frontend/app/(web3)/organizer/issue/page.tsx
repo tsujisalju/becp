@@ -7,7 +7,7 @@
 //                    2. Add recipient wallet addresses (one per line, validated)
 //                    3. Review and call batchIssueCredential on the contract
 // First Written on : Saturday, 14-Mar-2026
-// Last Modified on : Wednesday, 18-Mar-2026
+// Last Modified on : Thursday, 19-Mar-2026
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +21,7 @@ import { useBECPContract } from "@/hooks/useBECPContract";
 import { HydratedCredentialType, useOrganizerCredentialTypes } from "@/hooks/useOrganizerCredentialTypes";
 import { BECP_CREDENTIAL_ABI, CHAIN } from "@becp/shared";
 import { format } from "date-fns";
-import { CalendarDays, CheckCircle, ChevronLeft, ChevronRight, Clock, FileCog, Info, Users, XCircle } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, CircleCheck, Clock, FileCog, Info, Users, XCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -51,18 +51,18 @@ const SKILL_CATEGORY_COLOURS: Record<string, string> = {
 
 function StepIndicator({ current, steps }: { current: number; steps: string[] }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 w-full max-w-2xl">
       {steps.map((label, i) => {
         const stepNum = i + 1;
         const isDone = stepNum < current;
         const isActive = stepNum === current;
         return (
-          <div key={label} className="flex items-center gap-2">
+          <div key={label} className={`flex items-center gap-2 ${i + 1 < steps.length ? "grow" : ""}`}>
             <div
               className={`flex items-center gap-1.5 text-sm font-medium ${isActive ? "text-foreground" : isDone ? "text-emerald-600" : "text-muted-foreground"}`}
             >
               <span
-                className={`flex items-center justify-center rounded-full text-xs font-bold h-5 w-5 ${
+                className={`flex items-center justify-center rounded-full text-xs font-bold h-5 w-5 shrink-0 ${
                   isActive
                     ? "bg-primary text-primary-foreground"
                     : isDone
@@ -70,11 +70,13 @@ function StepIndicator({ current, steps }: { current: number; steps: string[] })
                       : "bg-muted text-muted-foreground"
                 }`}
               >
-                {isDone ? <CheckCircle className="size-3.5" /> : stepNum}
+                {isDone ? <CircleCheck /> : stepNum}
               </span>
-              <span className="hidden sm:inline">{label}</span>
+              <span className="hidden sm:inline w-max">{label}</span>
             </div>
-            {i < steps.length - 1 && <div className={`h-px w-8 ${stepNum < current ? "bg-emerald-400" : "bg-border"}`}></div>}
+            {i < steps.length - 1 && (
+              <div className={`h-px w-full ${stepNum < current ? "bg-emerald-400" : "bg-border"}`}></div>
+            )}
           </div>
         );
       })}
@@ -136,7 +138,7 @@ function CredentialTypeSelector({
                 : "border-border hover:border-muted-foreground/40 hover:bg-muted/40"
             }`}
           >
-            <div className="flex items-start justify-between gap-2">
+            <div className="flex items-center justify-between gap-2">
               <div className="space-y-1.5 min-w-0">
                 <p className="font-medium text-sm truncate">{ct.metadata?.name ?? `Credential Type #${ct.tokenId}`}</p>
                 <div className="flex items-center gap-2 flex-wrap text-xs text-muted-foreground">
@@ -163,7 +165,7 @@ function CredentialTypeSelector({
                   )}
                 </div>
               </div>
-              {isSelected && <CheckCircle className="size-5 text-primary shrink-0 mt-0.5" />}
+              {isSelected && <CircleCheck />}
             </div>
           </button>
         );
@@ -413,7 +415,7 @@ export default function OrganizerIssuePage() {
   const canProceedStep2 = validRecipients.length > 0 && !hasInvalidLines;
 
   return (
-    <div className="px-6 flex flex-col space-y-4">
+    <div className="px-6 flex flex-col space-y-6">
       <PageHeader
         title="Issue Credentials"
         desc="Mint credentials to event participants directly on the Optimism blockchain."

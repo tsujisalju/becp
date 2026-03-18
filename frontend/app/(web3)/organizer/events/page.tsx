@@ -8,7 +8,7 @@
 //                    List view shows all credential types registered by the connected
 //                    organizer, hydrated with IPFS metadata.
 // First Written on : Saturday, 14-Mar-2026
-// Last Modified on : Wednesday, 18-Mar-2026
+// Last Modified on : Thursday, 19-Mar-2026
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -25,11 +25,15 @@ import { BECP_CREDENTIAL_ABI } from "@becp/shared";
 import { useOrganizerCredentialTypes } from "@/hooks/useOrganizerCredentialTypes";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CredentialTypeCard, CredentialTypeCardSkeleton } from "./credential-type-card";
+import { useSearchParams } from "next/navigation";
 
 type View = "list" | "create";
 
 export default function OrganizerEventsPage() {
-  const [view, setView] = useState<View>("list");
+  const searchParams = useSearchParams();
+  const viewParam = searchParams.get("view") ?? "";
+  const viewSet: Set<string> = new Set(["list", "create"]);
+  const [view, setView] = useState<View>(viewSet.has(viewParam) ? (viewParam as View) : "list");
   const { address } = useConnection();
   const contract = useBECPContract();
   const publicClient = usePublicClient();
@@ -145,7 +149,7 @@ export default function OrganizerEventsPage() {
   }
 
   return (
-    <div className="px-6 flex flex-col space-y-4">
+    <div className="px-6 flex flex-col space-y-6">
       <PageHeader title="My Events" desc="Events you have created and their credential issuance status." />
       <div className="flex gap-2">
         <Button className="w-max" onClick={() => setView("create")}>

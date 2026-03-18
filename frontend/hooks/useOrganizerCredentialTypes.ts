@@ -2,14 +2,16 @@
 
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
 // Program Name     : frontend/hooks/useOrganizerCredentialTypes.ts
-// Description      : Fetches all credential types registered by the connected organizer wallet.
+// Description      : Fetches all credential types registered by the connected organizer wallet,
+//                    including the totalSupply (issued count) per token ID and aggregate stats.
 //                    Strategy:
 //                      1. Read totalCredentialTypes() to know the token ID range (1..N)
-//                      2. Batch read getCredentialType(id) for all IDs via useReadContracts
+//                      2. Batch read getCredentialType(id) for all IDs
 //                      3. Filter to those where issuer === connected address
-//                      4. Fetch IPFS metadata for each matching type via TanStack Query
+//                      4. Batch read totalSupply(id) for each owned type
+//                      5. Fetch IPFS metadata for each owned type via TanStack Query
 // First Written on : Wednesday, 18-Mar-2026
-// Last Modified on : Wednesday, 18-Mar-2026
+// Last Modified on : Thursday, 19-Mar-2026
 
 import { CredentialTypeMetadata } from "@/lib/credential/metadata";
 import { ipfsToHttp } from "@becp/shared";
@@ -29,6 +31,13 @@ export interface OnChainCredentialType {
 export interface HydratedCredentialType extends OnChainCredentialType {
   metadata: CredentialTypeMetadata | null;
   isMetadataLoading: boolean;
+  issuedCount: bigint;
+}
+
+export interface OrganizerStats {
+  totalTypes: number;
+  activeTypes: number;
+  totalIssued: bigint;
 }
 
 async function fetchIpfsMetadata(uri: string): Promise<CredentialTypeMetadata> {
@@ -40,6 +49,7 @@ async function fetchIpfsMetadata(uri: string): Promise<CredentialTypeMetadata> {
 
 export interface UseOrganizerCredentialTypesResult {
   credentialTypes: HydratedCredentialType[];
+  stats: OrganizerStats;
   isLoading: boolean;
   isError: boolean;
   refetch: () => void;
@@ -106,7 +116,22 @@ export function useOrganizerCredentialTypes(): UseOrganizerCredentialTypesResult
     });
   }, [credentialTypeResults, tokenIds, address]);
 
-  //5. Fetch metadata for owned types
+  //5. Batch read totalSupply for owned types
+  const {
+    data: supplyResults,
+    isLoading: isSupplyLoading,
+    isError: isSupplyError,
+    refetch: refetchSupply,
+  } = useReadContracts({
+    contracts: ownedTypes.map((ct) => ({
+      ...contract!,
+      functionName: "totalSupply" as const,
+      args: [ct.tokenId] as const,
+    })),
+    query: { enabled: !!contract && ownedTypes.length > 0, staleTime: 30_000 },
+  });
+
+  //6. Fetch metadata for owned types
   const metadataQueries = useQueries({
     queries: ownedTypes.map((ct) => ({
       queryKey: ["credential-type-metadata", ct.metadataURI],
@@ -116,26 +141,38 @@ export function useOrganizerCredentialTypes(): UseOrganizerCredentialTypesResult
     })),
   });
 
-  //6. Combine owned types with metadata
+  //7. Combine owned types, metadata and supply
   const credentialTypes = useMemo<HydratedCredentialType[]>(() => {
     return ownedTypes.map((ct, i) => ({
       ...ct,
       metadata: metadataQueries[i]?.data ?? null,
       isMetadataLoading: metadataQueries[i]?.isLoading ?? false,
+      issuedCount: supplyResults?.[i]?.status === "success" ? (supplyResults[i].result as bigint) : 0n,
     }));
-  }, [ownedTypes, metadataQueries]);
+  }, [ownedTypes, metadataQueries, supplyResults]);
+
+  const stats = useMemo<OrganizerStats>(
+    () => ({
+      totalTypes: credentialTypes.length,
+      activeTypes: credentialTypes.filter((ct) => ct.active).length,
+      totalIssued: credentialTypes.reduce((sum, ct) => sum + ct.issuedCount, 0n),
+    }),
+    [credentialTypes],
+  );
 
   const isAnyMetadataLoading = metadataQueries.some((q) => q.isLoading);
 
   function refetch() {
     refetchTotal();
     refetchTypes();
+    refetchSupply();
   }
 
   return {
     credentialTypes,
-    isLoading: isTotalLoading || isTypesLoading || isAnyMetadataLoading,
-    isError: isTotalError || isTypesError,
+    stats,
+    isLoading: isTotalLoading || isTypesLoading || isAnyMetadataLoading || isSupplyLoading,
+    isError: isTotalError || isTypesError || isSupplyError,
     refetch,
   };
 }

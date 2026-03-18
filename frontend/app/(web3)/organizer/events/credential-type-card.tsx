@@ -5,7 +5,7 @@
 // Description      : Card component displaying a single registered credential type
 //                    in the organizer events list view.
 // First Written on : Wednesday, 18-Mar-2026
-// Last Modified on : Wednesday, 18-Mar-2026
+// Last Modified on : Thursday, 19-Mar-2026
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -103,7 +103,7 @@ export function CredentialTypeCard({ credentialType }: CredentialTypeCardProps) 
                 </>
               )}
             </Badge>
-            <Badge variant="secondary">Credentials issued: {"-"}</Badge>
+            <Badge variant="secondary">Credentials issued: {credentialType.issuedCount.toString()}</Badge>
           </div>
         </CardAction>
       </CardHeader>
