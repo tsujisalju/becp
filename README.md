@@ -7,7 +7,7 @@
 A blockchain-based platform for issuing, owning, and verifying credentials for
 university extracurricular activities. Built on Optimism (OP Stack), with
 NFT-based micro-credentials, an AI-powered skill inferencing engine, and a
-gamified student skill dashboard.
+gamified student skill development dashboard.
 
 ---
 
@@ -22,7 +22,7 @@ becp/
 │   │   └── libraries/              ← Shared Solidity libraries
 │   ├── scripts/                    ← Deployment scripts
 │   └── test/                       ← Hardhat tests (Chai + Mocha)
-├── frontend/
+├── frontend/               ← Front facing web application (Next.js)
 │   ├── app/
 │   │   ├── (web3)/
 │   │   └── api/
@@ -41,11 +41,11 @@ becp/
 | Layer | Technology |
 |---|---|
 | Frontend Framework | Next.js 16 (App Router, PWA) |
-| UI Components | ShadCN UI + Tailwind CSS |
+| UI Components | shadcn/ui + Tailwind CSS v4 |
 | Charts / Dashboard | Recharts |
 | Blockchain Client | Wagmi v3 + Viem |
 | Wallet Integration | RainbowKit v2 |
-| Smart Contract Language | Solidity 0.8.28 |
+| Smart Contract Language | Solidity 0.8.34 |
 | Contract Framework | Hardhat v3 + OpenZeppelin v5 |
 | Token Standard | ERC-1155 (multi-token, soulbound) |
 | Blockchain Network | Optimism / OP Sepolia (testnet) |
