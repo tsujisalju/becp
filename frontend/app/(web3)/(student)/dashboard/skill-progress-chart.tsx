@@ -13,7 +13,7 @@
 import { AggregatedSkillScore } from "@/hooks/useStudentCredentials";
 import { SKILL_LEVELS } from "@becp/shared";
 import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { Bar, BarChart, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, BarProps, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
 
 type ChartEntry = AggregatedSkillScore & {
   score: number;
@@ -77,6 +77,13 @@ export function SkillProgressChart({ skillScores, maxSkills = 8 }: SkillProgress
     ]),
   );
 
+  const barShape = (props: BarProps) => {
+    const { x, y, width, height, index } = props;
+    const entry = data[index as number];
+    const fill = entry ? `var(--color-${entry.skillKey})` : "hsl(var(--muted))";
+    return <rect x={x} y={y} width={width} height={height} fill={fill} fillOpacity={0.9} rx={4} ry={4} />;
+  };
+
   const refLineValue = data[0].nextLevelThreshold ?? undefined;
 
   return (
@@ -100,15 +107,7 @@ export function SkillProgressChart({ skillScores, maxSkills = 8 }: SkillProgress
             }}
           />
         )}
-        <Bar
-          dataKey="score"
-          shape={(props: { x?: number; y?: number; width?: number; height?: number; index?: number }) => {
-            const { x = 0, y = 0, width = 0, height = 0, index = 0 } = props;
-            const entry = data[index];
-            const fill = entry ? `var(--color-${entry.skillKey})` : "hsl(var(--muted))";
-            return <rect x={x} y={y} width={width} height={height} fill={fill} fillOpacity={0.9} rx={4} ry={4} />;
-          }}
-        />
+        <Bar dataKey="score" shape={barShape} />
       </BarChart>
     </ChartContainer>
   );
