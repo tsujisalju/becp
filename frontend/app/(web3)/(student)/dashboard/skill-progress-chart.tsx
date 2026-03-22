@@ -79,7 +79,6 @@ export function SkillProgressChart({ skillScores, maxSkills = 8 }: SkillProgress
 
   const refLineValue = data[0].nextLevelThreshold ?? undefined;
 
-  console.log(refLineValue);
   return (
     <ChartContainer config={chartConfig} className="h-65 w-full">
       <BarChart accessibilityLayer data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }} barSize={28}>
