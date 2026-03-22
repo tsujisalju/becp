@@ -45,7 +45,7 @@ function LevelLegend() {
     <div className="flex flex-wrap gap-3 text-xs">
       {Object.entries(SKILL_LEVELS).map(([key, cfg]) => (
         <span key={key} className="flex items-center gap-1.5">
-          <span className={`size-2.5 rounded-full ${cfg.color}`} />
+          <span className="size-2.5 rounded-full" style={{ backgroundColor: cfg.color }} />
           <span className="text-muted-foreground">
             {cfg.label}{" "}
             <span className="text-foreground/50">

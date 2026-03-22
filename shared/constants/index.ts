@@ -60,10 +60,10 @@ export function ipfsToHttp(uri: string, gateway = IPFS.PUBLIC_GATEWAY): string {
 // Thresholds for the RPG-style level progression on the student dashboard.
 
 export const SKILL_LEVELS = {
-  beginner: { min: 0, max: 99, label: 'Beginner', color: 'bg-slate-100', colorHex: "#f1f5f9" },
-  intermediate: { min: 100, max: 299, label: 'Intermediate', color: 'bg-blue-100', colorHex: "#dbeafe" },
-  advanced: { min: 300, max: 699, label: 'Advanced', color: 'bg-violet-100', colorHex: "#ede9fe" },
-  expert: { min: 700, max: Infinity, label: 'Expert', color: 'bg-amber-100', colorHex: "#fef3c7" },
+  beginner: { min: 0, max: 99, label: 'Beginner', color: "#a7f3d0" },
+  intermediate: { min: 100, max: 299, label: 'Intermediate', color: "#bfdbfe" },
+  advanced: { min: 300, max: 699, label: 'Advanced', color: "#e9d5ff"},
+  expert: { min: 700, max: Infinity, label: 'Expert', color: "#fde68a" },
 } as const
 
 /**

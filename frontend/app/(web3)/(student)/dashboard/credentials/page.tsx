@@ -81,7 +81,7 @@ function SkillScoreSummary() {
     {
       icon: <Trophy className="text-amber-600" />,
       value: skillScores.filter((s) => s.level === "expert" || s.level === "advanced").length,
-      label: "Advanced+ skills",
+      label: "Advanced and higher skills",
     },
   ];
 
@@ -115,7 +115,7 @@ function TopSkillsPreview() {
       <div className="flex flex-wrap gap-2">
         {topSkills.map(({ skill, level, totalScore }) => (
           <div key={skill.id} className="flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs">
-            <span className={`size-2 rounded-full ${SKILL_LEVELS[level].color}`} />
+            <span className="size-2 rounded-full" style={{ backgroundColor: SKILL_LEVELS[level].color }} />
             <span className="font-medium">{skill.label}</span>
             <Award className={`rounded-full size-4 ${LEVEL_BADGE_COLOURS[level] ?? ""}`} />
             <span className="text-muted-foreground">{Math.round(totalScore)}pts</span>
