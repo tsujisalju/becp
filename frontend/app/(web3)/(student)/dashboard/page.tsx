@@ -10,6 +10,7 @@ import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader,
 import {
   Award,
   BadgeQuestionMark,
+  BrainCircuit,
   CalendarCheck2,
   FileBadge,
   Footprints,
@@ -20,8 +21,8 @@ import {
 import { useStudentProfile } from "@/hooks/useStudentProfile";
 import { useConnection } from "wagmi";
 import PageHeader from "@/components/ui/page-header";
-import { ROUTES, SKILL_LEVELS } from "@becp/shared";
-import { ReactNode } from "react";
+import { getPrioritySkillIds, ROUTES, SKILL_LEVELS } from "@becp/shared";
+import { ReactNode, useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useStudentCredentials } from "@/hooks/useStudentCredentials";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -29,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { RecentCredentialsList } from "./recent-credentials-list";
 import { SkillProgressChart } from "./skill-progress-chart";
+import { SoftSkillsRadarChart } from "./soft-skills-radar-chart";
 
 function randomGreeting(displayName: string) {
   const greetings = [
@@ -82,11 +84,28 @@ function StatCard({ label, value, note, icon, isLoading }: StatCardProps) {
   );
 }
 
+// Skill categories shown in the bar chart (everything except soft)
+const TECHNICAL_CATEGORIES = new Set(["technical", "leadership", "creative", "domain"]);
+
 export default function DashboardPage() {
   const { profile } = useStudentProfile();
   const { address } = useConnection();
   const { credentials, skillScores, stats, isLoading } = useStudentCredentials();
   const displayName = profile?.displayName ?? `${address?.slice(0, 4)}...${address?.slice(-4)}`;
+
+  const technicalSkillScores = useMemo(
+    () => skillScores.filter((s) => TECHNICAL_CATEGORIES.has(s.skill.category)),
+    [skillScores],
+  );
+  const softSkillScores = useMemo(() => skillScores.filter((s) => s.skill.category === "soft"), [skillScores]);
+
+  const prioritySkillIds = useMemo(() => getPrioritySkillIds(profile?.careerGoal), [profile?.careerGoal]);
+
+  const hasCareerGoal = !!profile?.careerGoal && profile.careerGoal !== "Other";
+
+  const barChartDescription = hasCareerGoal
+    ? `Priority skills towards ${profile.careerGoal}`
+    : `Technical skills from your credentials`;
 
   return (
     <div className="px-6 flex flex-col space-y-4">
@@ -125,9 +144,7 @@ export default function DashboardPage() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Skill Progress</CardTitle>
-            <CardDescription>
-              {profile?.careerGoal ? `towards your goal as a ${profile.careerGoal}` : "Aggregated from your credentials"}
-            </CardDescription>
+            <CardDescription>{barChartDescription}</CardDescription>
             <CardAction>
               <Target />
             </CardAction>
@@ -146,7 +163,7 @@ export default function DashboardPage() {
                 </EmptyHeader>
               </Empty>
             ) : (
-              <SkillProgressChart skillScores={skillScores} />
+              <SkillProgressChart skillScores={skillScores} prioritySkillIds={prioritySkillIds} />
             )}
           </CardContent>
           {skillScores.length > 0 && (
@@ -173,6 +190,31 @@ export default function DashboardPage() {
           <CardContent>
             <RecentCredentialsList credentials={credentials} isLoading={isLoading} maxItems={5} />
           </CardContent>
+        </Card>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle>Soft Skills</CardTitle>
+            <CardDescription>Interpersonal and transferable skills applicable across any career</CardDescription>
+            <CardAction>
+              <BrainCircuit />
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? <Skeleton className="h-65 w-full" /> : <SoftSkillsRadarChart skillScores={softSkillScores} />}
+          </CardContent>
+          {!isLoading && !profile?.careerGoal && (
+            <CardFooter>
+              <p className="text-xs text-muted-foreground">
+                Set a{" "}
+                <Link href={ROUTES.PROFILE} className="underline underline-offset-2">
+                  career goal
+                </Link>{" "}
+                to see priority technical skills tailored to your path.
+              </p>
+            </CardFooter>
+          )}
         </Card>
       </div>
     </div>

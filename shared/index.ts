@@ -1,3 +1,5 @@
 export * from './constants/index'
+export * from './constants/career-goals'
+export * from './constants/skill-pool'
 export * from './types/credential'
 export * from './contract/index'

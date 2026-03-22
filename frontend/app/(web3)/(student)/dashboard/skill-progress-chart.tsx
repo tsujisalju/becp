@@ -11,7 +11,7 @@
 //
 
 import { AggregatedSkillScore } from "@/hooks/useStudentCredentials";
-import { SKILL_LEVELS } from "@becp/shared";
+import { scoreToLevel, SKILL_LEVELS, SKILL_POOL_BY_ID } from "@becp/shared";
 import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { Bar, BarChart, BarProps, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
 
@@ -19,10 +19,11 @@ type ChartEntry = AggregatedSkillScore & {
   score: number;
   name: string;
   skillKey: string;
+  isPriority: boolean;
 };
 
 interface TooltipPayloadItem {
-  payload: AggregatedSkillScore & { score: number };
+  payload: ChartEntry;
 }
 
 function SkillTooltipContent({ active, payload }: { active?: boolean; payload?: TooltipPayloadItem[] }) {
@@ -52,20 +53,55 @@ function SkillTooltipContent({ active, payload }: { active?: boolean; payload?: 
   );
 }
 
+function zeroScore(skillId: string): AggregatedSkillScore | null {
+  const skill = SKILL_POOL_BY_ID.get(skillId);
+  if (!skill) return null;
+  return {
+    skill,
+    totalScore: 0,
+    credentialCount: 0,
+    level: scoreToLevel(0),
+    nextLevelThreshold: SKILL_LEVELS.intermediate.min,
+    progressPercent: 0,
+  };
+}
+
 interface SkillProgressChartProps {
   skillScores: AggregatedSkillScore[];
+  prioritySkillIds?: string[];
   maxSkills?: number;
 }
 
-export function SkillProgressChart({ skillScores, maxSkills = 8 }: SkillProgressChartProps) {
-  const data: ChartEntry[] = skillScores.slice(0, maxSkills).map((s) => ({
+export function SkillProgressChart({ skillScores, prioritySkillIds = [], maxSkills = 8 }: SkillProgressChartProps) {
+  const hasPriority = prioritySkillIds.length > 0;
+
+  let ordered: (AggregatedSkillScore & { isPriority: boolean })[];
+
+  if (hasPriority) {
+    const earnedById = new Map(skillScores.map((s) => [s.skill.id, s]));
+    const priorityEntries = prioritySkillIds.flatMap((id) => {
+      const earned = earnedById.get(id);
+      if (earned) return [{ ...earned, isPriority: true }];
+      const placeholder = zeroScore(id);
+      return placeholder ? [{ ...placeholder, isPriority: true }] : [];
+    });
+
+    const prioritySet = new Set(prioritySkillIds);
+    const rest = skillScores.filter((s) => !prioritySet.has(s.skill.id)).map((s) => ({ ...s, isPriority: false }));
+    ordered = [...priorityEntries, ...rest];
+  } else {
+    ordered = skillScores.map((s) => ({ ...s, isPriority: false }));
+  }
+
+  const data: ChartEntry[] = ordered.slice(0, maxSkills).map((s) => ({
     ...s,
     score: Math.round(s.totalScore),
-    name: s.skill.label.length > 14 ? s.skill.label.slice(0, 13) + "..." : s.skill.label,
+    name:
+      (prioritySkillIds.includes(s.skill.id) ? "◎ " : "") +
+      (s.skill.label.length > 14 ? s.skill.label.slice(0, 13) + "..." : s.skill.label),
     skillKey: s.skill.id.replace(/[^a-z0-9-]/gi, "-"),
+    isPriority: prioritySkillIds.includes(s.skill.id),
   }));
-
-  if (data.length === 0) return null;
 
   const chartConfig: ChartConfig = Object.fromEntries(
     data.map((entry) => [
@@ -81,7 +117,8 @@ export function SkillProgressChart({ skillScores, maxSkills = 8 }: SkillProgress
     const { x, y, width, height, index } = props;
     const entry = data[index as number];
     const fill = entry ? `var(--color-${entry.skillKey})` : "hsl(var(--muted))";
-    return <rect x={x} y={y} width={width} height={height} fill={fill} fillOpacity={0.9} rx={4} ry={4} />;
+    const opacity = hasPriority && entry && !entry.isPriority ? 0.45 : 0.9;
+    return <rect x={x} y={y} width={width} height={height} fill={fill} fillOpacity={opacity} rx={4} ry={4} />;
   };
 
   const refLineValue = data[0].nextLevelThreshold ?? undefined;
@@ -96,13 +133,13 @@ export function SkillProgressChart({ skillScores, maxSkills = 8 }: SkillProgress
         {refLineValue && (
           <ReferenceLine
             y={refLineValue}
-            stroke="hsl(var(--mutef-foreground))"
+            stroke="black"
             strokeDasharray="4 4"
             strokeOpacity={0.5}
             label={{
               value: "Next Level",
               fontSize: 10,
-              fill: "hsl(--var(--muted-foreground))",
+              fill: "hsl(var(--muted-foreground))",
               position: "insideTopRight",
             }}
           />
