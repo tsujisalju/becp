@@ -7,7 +7,7 @@
 //                    2. Add recipient wallet addresses (one per line, validated)
 //                    3. Review and call batchIssueCredential on the contract
 // First Written on : Saturday, 14-Mar-2026
-// Last Modified on : Thursday, 19-Mar-2026
+// Last Modified on : Sunday, 22-Mar-2026
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useBECPContract } from "@/hooks/useBECPContract";
 import { HydratedCredentialType, useOrganizerCredentialTypes } from "@/hooks/useOrganizerCredentialTypes";
-import { BECP_CREDENTIAL_ABI, CHAIN } from "@becp/shared";
+import { BECP_CREDENTIAL_ABI, CATEGORY_LABELS, CHAIN, SKILL_CATEGORY_COLOURS } from "@becp/shared";
 import { format } from "date-fns";
 import { CalendarDays, ChevronLeft, ChevronRight, CircleCheck, Clock, FileCog, Info, Users, XCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
@@ -27,27 +27,6 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { isAddress, parseEventLogs } from "viem";
 import { useConnection, usePublicClient, useWriteContract } from "wagmi";
-
-const CATEGORY_LABELS: Record<string, string> = {
-  hackathon: "Hackathon",
-  workshop: "Workshop",
-  competition: "Competition",
-  volunteer: "Volunteer Work",
-  club_leadership: "Club Leadership",
-  conference: "Conference",
-  bootcamp: "Bootcamp",
-  sports: "Sports",
-  community_service: "Community Service",
-  other: "Other",
-};
-
-const SKILL_CATEGORY_COLOURS: Record<string, string> = {
-  technical: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300",
-  soft: "bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300",
-  leadership: "bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300",
-  creative: "bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-300",
-  domain: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
-};
 
 function StepIndicator({ current, steps }: { current: number; steps: string[] }) {
   return (

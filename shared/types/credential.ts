@@ -45,16 +45,37 @@ export interface SkillTag {
 
 /** Activity categories recognized by the BECP platform. */
 export type ActivityCategory =
-  | 'hackathon'
-  | 'workshop'
-  | 'competition'
-  | 'volunteer'
-  | 'club_leadership'
-  | 'conference'
-  | 'bootcamp'
-  | 'sports'
-  | 'community_service'
-  | 'other'
+    | 'hackathon'
+    | 'workshop'
+    | 'competition'
+    | 'volunteer'
+    | 'club_leadership'
+    | 'conference'
+    | 'bootcamp'
+    | 'sports'
+    | 'community_service'
+    | 'other';
+
+export const CATEGORY_LABELS: Record<string, string> = {
+  hackathon: "Hackathon",
+  workshop: "Workshop",
+  competition: "Competition",
+  volunteer: "Volunteer Work",
+  club_leadership: "Club Leadership",
+  conference: "Conference",
+  bootcamp: "Bootcamp",
+  sports: "Sports",
+  community_service: "Community Service",
+  other: "Other",
+};
+
+export const SKILL_CATEGORY_COLOURS: Record<string, string> = {
+  technical: "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300",
+  soft: "bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300",
+  leadership: "bg-violet-100 text-violet-800 dark:bg-violet-950 dark:text-violet-300",
+  creative: "bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-300",
+  domain: "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300",
+};
 
 /**
  * NFT metadata schema for a BECP credential.
