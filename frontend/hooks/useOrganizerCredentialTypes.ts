@@ -11,7 +11,7 @@
 //                      4. Batch read totalSupply(id) for each owned type
 //                      5. Fetch IPFS metadata for each owned type via TanStack Query
 // First Written on : Wednesday, 18-Mar-2026
-// Last Modified on : Thursday, 19-Mar-2026
+// Last Modified on : Wednesday, 25-Mar-2026
 
 import { CredentialTypeMetadata } from "@/lib/credential/metadata";
 import { ipfsToHttp } from "@becp/shared";
@@ -110,7 +110,7 @@ export function useOrganizerCredentialTypes(): UseOrganizerCredentialTypesResult
         registeredAt: bigint;
       };
 
-      if (issuer.toLowerCase() !== address.toLowerCase()) return [];
+      if (!issuer || issuer.toLowerCase() !== address.toLowerCase()) return [];
 
       return [{ tokenId, issuer, metadataURI, active, registeredAt }];
     });

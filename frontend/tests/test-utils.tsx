@@ -5,7 +5,7 @@
 //                    QueryClient and mocked Wagmi context so individual test files
 //                    don't need to repeat provider boilerplate.
 // First Written on : Saturday, 14-Mar-2026
-// Last Written on  : Sunday, 15-Mar-2026
+// Last Written on  : Wednesday, 25-Mar-2026
 
 import React from "react";
 import { render, type RenderOptions } from "@testing-library/react";
@@ -16,10 +16,10 @@ import { vi } from "vitest";
 // Each test gets a fresh QueryClient with retries disabled so failed queries
 // fail immediately rather than retrying three times and slowing down the suite.
 
-export function makeQueryClient() {
+export function makeQueryClient(overrides?: { queries?: { retry?: number } }) {
   return new QueryClient({
     defaultOptions: {
-      queries: { retry: false, gcTime: 0 },
+      queries: { retry: false, gcTime: 0, ...overrides?.queries },
       mutations: { retry: false },
     },
   });

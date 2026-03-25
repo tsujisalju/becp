@@ -8,15 +8,15 @@
 //                      4. IPFS metadata fetch via MSW → hydrated credential types
 //                    Also tests aggregate stat computation and loading/error states.
 // First Written on : Tuesday, 24-Mar-2026
-// Last Written on  : Tuesday, 24-Mar-2026
+// Last Written on  : Wednesday, 25-Mar-2026
 
-import { useOrganizerCredentialTypes } from "@/hooks/useOrganizerCredentialTypes";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { makeQueryClient, MOCK_ADDRESS, MOCK_ADDRESS_2, MOCK_CONTRACT, TestProviders } from "../test-utils";
-import { setupServer } from "msw/node";
-import { http, HttpResponse } from "msw";
-import { createElement, ReactNode } from "react";
+import { describe, it, expect, vi, beforeAll, afterAll, afterEach, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
+import { MOCK_ADDRESS, MOCK_ADDRESS_2, MOCK_CONTRACT, makeQueryClient, TestProviders } from "../test-utils";
+import React from "react";
+import { useOrganizerCredentialTypes } from "@/hooks/useOrganizerCredentialTypes";
 
 // ── Wagmi mock ────────────────────────────────────────────────────────────────
 
@@ -28,7 +28,7 @@ const mockUseChainId = vi.fn();
 vi.mock("wagmi", () => ({
   useConnection: () => mockUseConnection(),
   useReadContract: () => mockUseReadContract(),
-  useReadContracts: () => mockUseReadContracts(),
+  useReadContracts: (config: unknown) => mockUseReadContracts(config),
   useChainId: () => mockUseChainId(),
 }));
 
@@ -81,8 +81,8 @@ function makeCredentialTypeResult(
   };
 }
 
-function wrapper({ children }: { children: ReactNode }) {
-  return createElement(TestProviders, { queryClient: makeQueryClient() }, children);
+function wrapper({ children }: { children: React.ReactNode }) {
+  return React.createElement(TestProviders, { queryClient: makeQueryClient() }, children);
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -99,6 +99,7 @@ describe("useOrganizerCredentialTypes", () => {
   describe("loading states", () => {
     it("isLoading is true while totalCredentialTypes is in flight", () => {
       mockUseReadContract.mockReturnValue({ data: undefined, isLoading: true, isError: false, refetch: vi.fn() });
+
       const { result } = renderHook(() => useOrganizerCredentialTypes(), { wrapper });
 
       expect(result.current.isLoading).toBe(true);
@@ -282,25 +283,42 @@ describe("useOrganizerCredentialTypes", () => {
   });
 
   describe("IPFS metadata hydration", () => {
-    it("fetches and attaches IPFS metadata for owned credential types", async () => {
-      mockUseReadContract.mockReturnValue({ data: 1n, isLoading: false, isError: false, refetch: vi.fn() });
-      mockUseReadContracts
-        .mockReturnValueOnce({
-          data: [makeCredentialTypeResult(MOCK_ADDRESS, MOCK_METADATA_URI)],
-          isLoading: false,
-          isError: false,
-          refetch: vi.fn(),
-        })
-        .mockReturnValue({
+    // Both tests need useReadContracts to consistently return the right data for
+    // BOTH calls the hook makes (getCredentialType batch AND totalSupply batch)
+    // across all re-renders. mockReturnValueOnce desynchronises when the hook
+    // re-renders: the credential type result is consumed and replaced by the
+    // supply result on subsequent renders, emptying ownedTypes and making
+    // credentialTypes[0] undefined. Instead we inspect the contracts array to
+    // determine which batch call is being made and return the appropriate data.
+    function setupContractMocks(issuer: `0x${string}` = MOCK_ADDRESS) {
+      mockUseReadContracts.mockImplementation(({ contracts }: { contracts?: { functionName?: string }[] }) => {
+        if (!contracts?.length) return { data: undefined, isLoading: false, isError: false, refetch: vi.fn() };
+        const fn = contracts[0]?.functionName;
+        if (fn === "getCredentialType") {
+          return {
+            data: [makeCredentialTypeResult(issuer, MOCK_METADATA_URI)],
+            isLoading: false,
+            isError: false,
+            refetch: vi.fn(),
+          };
+        }
+        // totalSupply call
+        return {
           data: [{ status: "success", result: 3n }],
           isLoading: false,
           isError: false,
           refetch: vi.fn(),
-        });
+        };
+      });
+    }
+
+    it("fetches and attaches IPFS metadata for owned credential types", async () => {
+      mockUseReadContract.mockReturnValue({ data: 1n, isLoading: false, isError: false, refetch: vi.fn() });
+      setupContractMocks();
 
       const { result } = renderHook(() => useOrganizerCredentialTypes(), { wrapper });
 
-      await waitFor(() => expect(result.current.credentialTypes[0].metadata).not.toBeNull());
+      await waitFor(() => expect(result.current.credentialTypes[0]?.metadata).not.toBeNull(), { timeout: 5000 });
 
       const meta = result.current.credentialTypes[0].metadata;
       expect(meta?.name).toBe("DevMatch 2024 Hackathon");
@@ -312,23 +330,22 @@ describe("useOrganizerCredentialTypes", () => {
       server.use(http.get(MOCK_METADATA_URL, () => HttpResponse.json({ error: "Not found" }, { status: 404 })));
 
       mockUseReadContract.mockReturnValue({ data: 1n, isLoading: false, isError: false, refetch: vi.fn() });
-      mockUseReadContracts
-        .mockReturnValueOnce({
-          data: [makeCredentialTypeResult(MOCK_ADDRESS, MOCK_METADATA_URI)],
-          isLoading: false,
-          isError: false,
-          refetch: vi.fn(),
-        })
-        .mockReturnValue({
-          data: [{ status: "success", result: 0n }],
-          isLoading: false,
-          isError: false,
-          refetch: vi.fn(),
-        });
+      setupContractMocks();
 
       const { result } = renderHook(() => useOrganizerCredentialTypes(), { wrapper });
 
-      await waitFor(() => expect(result.current.isLoading).toBe(false), { timeout: 3000 });
+      // Wait for ownedTypes to populate (credentialTypes[0] exists), then wait
+      // for the metadata query to settle after exhausting its retries (retry: 2
+      // in the hook) — isMetadataLoading becomes false when TanStack Query
+      // reaches error status.
+      await waitFor(
+        () => {
+          const ct = result.current.credentialTypes[0];
+          expect(ct).toBeDefined();
+          expect(ct.isMetadataLoading).toBe(false);
+        },
+        { timeout: 15000 },
+      );
 
       expect(result.current.credentialTypes[0].metadata).toBeNull();
     });
