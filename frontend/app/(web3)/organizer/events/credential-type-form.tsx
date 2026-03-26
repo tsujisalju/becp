@@ -209,14 +209,14 @@ export default function CredentialTypeForm({ onSubmit, onCancel }: CredentialTyp
             onChange: ({ value }) => {
               if (!value.trim()) return { message: "Description is required" };
               if (value.trim().length < 20) return { message: "Description must be at least 20 characters" };
-              if (value.trim().length > 500) return { message: "Description must be 500 characters or fewer" };
+              if (value.trim().length > 1000) return { message: "Description must be 1000 characters or fewer" };
               return undefined;
             },
           }}
         >
           {(field) => {
             const isInvalid = (field.state.meta.isTouched || hasSubmitted) && field.state.meta.errors.length > 0;
-            const maxLength = 500;
+            const maxLength = 1000;
             return (
               <Field data-invalid={isInvalid}>
                 <FieldLabel htmlFor={field.name}>Description</FieldLabel>
