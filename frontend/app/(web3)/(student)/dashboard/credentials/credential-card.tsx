@@ -1,22 +1,26 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { HydratedCredential } from "@/hooks/useStudentCredentials";
-import { CATEGORY_LABELS, CHAIN, ipfsToHttp, SKILL_CATEGORY_COLOURS } from "@becp/shared";
-import { format } from "date-fns";
-import { Award, CalendarDays, Clock, ExternalLink } from "lucide-react";
-import Link from "next/link";
-
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
 // Program Name     : frontend/app/(web3)/(student)/dashboard/credentials/credential-card.tsx
 // Description      : Card component that displays a single BECP credential owned by the student.
 //                    Shows credential name, activity metadata, skill tags, and links to
-//                    the block explorer and IPFS metadata.
+//                    the block explorer and IPFS metadata. Includes a Share dialog that
+//                    generates a QR code for the recruiter verification link.
 // First Written on : Thursday, 20-Mar-2026
-// Last Modified on : Sunday, 22-Mar-2026
+// Last Modified on : Wednesday, 26-Mar-2026
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
+import { HydratedCredential } from "@/hooks/useStudentCredentials";
+import { CATEGORY_LABELS, CHAIN, ipfsToHttp, ROUTES, SKILL_CATEGORY_COLOURS } from "@becp/shared";
+import { format } from "date-fns";
+import { Award, CalendarDays, Check, Clock, Copy, ExternalLink, Share2 } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import QRCode from "react-qr-code";
 
 export function CredentialCardSkeleton() {
   return (
@@ -43,9 +47,65 @@ export function CredentialCardSkeleton() {
 
 interface CredentialCardProps {
   credential: HydratedCredential;
+  holderAddress?: `0x${string}`;
 }
 
-export function CredentialCard({ credential }: CredentialCardProps) {
+function ShareDialog({ tokenId, holderAddress }: { tokenId: bigint; holderAddress?: `0x${string}` }) {
+  const [copied, setCopied] = useState(false);
+
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const verifyUrl = holderAddress
+    ? `${origin}${ROUTES.VERIFY}?tokenId=${tokenId.toString()}&holder=${holderAddress}`
+    : `${origin}${ROUTES.VERIFY}?tokenId=${tokenId.toString()}`;
+
+  function handleCopy() {
+    navigator.clipboard.writeText(verifyUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Share2 />
+          Share
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Share Credential</DialogTitle>
+          <DialogDescription>
+            Recruiters can scan this QR code or open the link to verify this credential on-chain — no wallet required.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex flex-col items-center gap-4 py-2">
+          <div className="rounded-lg border bg-white p-4">
+            <QRCode value={verifyUrl} size={200} />
+          </div>
+          <div className="w-full space-y-2">
+            <p className="text-xs text-muted-foreground break-all font-mono bg-muted rounded-md px-3 py-2">{verifyUrl}</p>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" className="flex-1" onClick={handleCopy}>
+                {copied ? <Check className="text-emerald-600" /> : <Copy />}
+                {copied ? "Copied!" : "Copy link"}
+              </Button>
+              <Button asChild size="sm" className="flex-1">
+                <Link href={verifyUrl} target="_blank" rel="noopener noreferrer">
+                  Verify now
+                  <ExternalLink />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function CredentialCard({ credential, holderAddress }: CredentialCardProps) {
   const { tokenId, tokenURI, metadata, isMetadataLoading } = credential;
 
   if (isMetadataLoading) {
@@ -112,9 +172,7 @@ export function CredentialCard({ credential }: CredentialCardProps) {
       </CardContent>
       <CardFooter className="grow items-end">
         <div className="w-full flex flex-row justify-between">
-          <Button asChild size="sm">
-            <Link href={`/verify?tokenId=${tokenId.toString()}`}>Verify</Link>
-          </Button>
+          <ShareDialog tokenId={tokenId} holderAddress={holderAddress} />
           <div className="flex flex-row space-x-2">
             <Button asChild variant="ghost" size="sm">
               <Link href={explorerUrl} target="_blank" rel="noopener noreferrer">

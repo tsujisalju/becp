@@ -2,7 +2,7 @@
 // Program Name     : frontend/app/verify/verify-form.tsx
 // Description      : Form component for verifiying a credential on the blockchain.
 // First Written on : Saturday, 14-Mar-2026
-// Last Modified on : Tuesday, 17-Mar-2026
+// Last Modified on : Wednesday, 26-Mar-2026
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import { BECP_CREDENTIAL_ABI, CHAIN, ipfsToHttp } from "@becp/shared";
 import { useForm } from "@tanstack/react-form";
 import { CircleAlert, CircleCheck, CircleX, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { isAddress } from "viem";
 import { useReadContracts } from "wagmi";
 import { optimismSepolia } from "wagmi/chains";
@@ -50,7 +50,7 @@ function VerifySuccess({ result }: { result: VerifyResult }) {
   const ipfsUrl = result.tokenUri.startsWith("ipfs://") ? ipfsToHttp(result.tokenUri) : result.tokenUri;
 
   return (
-    <>
+    <div className="mt-2 space-y-2">
       <Alert className="border-emerald-200 bg-emerald-50">
         <CircleCheck />
         <AlertTitle className="text-emerald-800">Credential Verified</AlertTitle>
@@ -80,7 +80,7 @@ function VerifySuccess({ result }: { result: VerifyResult }) {
           </div>
         </CardFooter>
       </Card>
-    </>
+    </div>
   );
 }
 
@@ -94,6 +94,16 @@ export default function VerifyForm({ initialTokenId, initialAddress }: VerifyFor
   });
 
   const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
+
+  // Auto-submit when both params arrive via QR code URL (?tokenId=X&holder=0x...)
+  const autoSubmitted = useRef(false);
+  useEffect(() => {
+    if (autoSubmitted.current) return;
+    if (initialTokenId && initialAddress && isAddress(initialAddress)) {
+      autoSubmitted.current = true;
+      setHasSubmitted(true);
+    }
+  }, [initialTokenId, initialAddress]);
   const submittedValues = hasSubmitted && form.state.isValid ? form.state.values : null;
 
   const parsedTokenId = submittedValues?.tokenId ? BigInt(submittedValues.tokenId.trim()) : undefined;
@@ -239,7 +249,7 @@ export default function VerifyForm({ initialTokenId, initialAddress }: VerifyFor
       {status === "valid" && result && <VerifySuccess result={result} />}
 
       {status === "invalid" && submittedValues && (
-        <Alert variant="destructive" className="border-destructive/30 bg-destructive/5">
+        <Alert variant="destructive" className="mt-2 border-destructive/30 bg-destructive/5">
           <CircleX />
           <AlertTitle>Credential Not Found</AlertTitle>
           <AlertDescription className="text-xs">
@@ -249,7 +259,7 @@ export default function VerifyForm({ initialTokenId, initialAddress }: VerifyFor
       )}
 
       {status === "error" && (
-        <Alert className="border-amber-200 bg-amber-50 text-amber-900">
+        <Alert className="mt-2 border-amber-200 bg-amber-50 text-amber-900">
           <CircleAlert />
           <AlertTitle>Network error</AlertTitle>
           <AlertDescription className="text-xs">

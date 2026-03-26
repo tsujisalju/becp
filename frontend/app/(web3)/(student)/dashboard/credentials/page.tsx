@@ -1,6 +1,5 @@
 "use client";
 
-import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
 // Program Name     : frontend/app/(web3)/dashboard/credentials/page.tsx
 // Description      : Student credential gallery page. Reads all credential token IDs from
@@ -8,7 +7,7 @@ import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/u
 //                    IPFS metadata for each, and renders them as filterable cards.
 //                    Also displays a skill score summary and top skills preview at the top.
 // First Written on : Wednesday, 11-Mar-2026
-// Last Modified on : Sunday, 22-Mar-2026
+// Last Modified on : Wednesday, 26-Mar-2026
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,10 +16,15 @@ import PageHeader from "@/components/ui/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useStudentCredentials } from "@/hooks/useStudentCredentials";
 import { ROUTES, SKILL_LEVELS } from "@becp/shared";
-import { AlertCircle, Award, Clock, FileBadge, FileQuestionMark, RefreshCw, Trophy } from "lucide-react";
+import { useConnection } from "wagmi";
+import { AlertCircle, Award, Clock, Download, FileBadge, FileQuestionMark, RefreshCw, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { CredentialCard, CredentialCardSkeleton } from "./credential-card";
+import { useStudentProfile } from "@/hooks/useStudentProfile";
+import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { PortfolioPDFDocument } from "./portfolio-pdf";
 
 type FilterOption = "all" | string;
 
@@ -157,7 +161,10 @@ function EmptyState({ filtered, onClear }: { filtered: boolean; onClear: () => v
 
 export default function CredentialsPage() {
   const [activeFilter, setActiveFilter] = useState<FilterOption>("all");
-  const { credentials, isLoading, isError, refetch } = useStudentCredentials();
+  const { credentials, skillScores, stats, isLoading, isError, refetch } = useStudentCredentials();
+  const { address } = useConnection();
+  const { profile } = useStudentProfile();
+  const displayName = profile?.displayName ?? (address ? `${address.slice(0, 6)}…${address.slice(-4)}` : "Student");
 
   const filtered = credentials.filter((c) => {
     if (activeFilter === "all") return true;
@@ -175,6 +182,29 @@ export default function CredentialsPage() {
   return (
     <div className="px-6 flex flex-col space-y-4">
       <PageHeader title="My Credentials" desc="Your on-chain extracurricular certificates, owned in your wallet." />
+      {!isLoading && credentials.length > 0 && address && (
+        <Button asChild className="w-max">
+          <PDFDownloadLink
+            document={
+              <PortfolioPDFDocument
+                displayName={displayName}
+                address={address}
+                credentials={credentials}
+                skillScores={skillScores}
+                stats={stats}
+              />
+            }
+            fileName={`becp-portfolio-${address.slice(0, 8)}.pdf`}
+          >
+            {({ loading }) => (
+              <>
+                <Download />
+                <span>{loading ? "Preparing..." : "Download Portfolio"}</span>
+              </>
+            )}
+          </PDFDownloadLink>
+        </Button>
+      )}
 
       <SkillScoreSummary />
       <TopSkillsPreview />
@@ -233,7 +263,7 @@ export default function CredentialsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filtered.map((credential) => (
-            <CredentialCard key={credential.tokenId.toString()} credential={credential} />
+            <CredentialCard key={credential.tokenId.toString()} credential={credential} holderAddress={address} />
           ))}
         </div>
       )}
