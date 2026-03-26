@@ -1,3 +1,5 @@
+"use client";
+
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
 // Program Name     : frontend/app/verify/verify-form.tsx
 // Description      : Form component for verifiying a credential on the blockchain.
@@ -14,6 +16,7 @@ import { BECP_CREDENTIAL_ABI, CHAIN, ipfsToHttp } from "@becp/shared";
 import { useForm } from "@tanstack/react-form";
 import { CircleAlert, CircleCheck, CircleX, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { isAddress } from "viem";
 import { useReadContracts } from "wagmi";
@@ -84,7 +87,11 @@ function VerifySuccess({ result }: { result: VerifyResult }) {
   );
 }
 
-export default function VerifyForm({ initialTokenId, initialAddress }: VerifyFormProps) {
+export default function VerifyForm() {
+  const searchParams = useSearchParams();
+  const initialTokenId = searchParams.get("tokenId");
+  const initialAddress = searchParams.get("holder");
+
   const form = useForm({
     defaultValues: {
       tokenId: initialTokenId ?? "",

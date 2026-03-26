@@ -15,12 +15,9 @@ import VerifyForm from "./verify-form";
 import { WagmiProvider } from "wagmi";
 import { wagmiConfig } from "@/lib/wagmi/config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 export default function VerifyPage() {
-  const searchParams = useSearchParams();
-  const tokenId = searchParams.get("tokenId");
-  const holder = searchParams.get("holder");
   const queryClient = new QueryClient();
   return (
     <WagmiProvider config={wagmiConfig}>
@@ -37,7 +34,9 @@ export default function VerifyPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <VerifyForm initialTokenId={tokenId ?? ""} initialAddress={holder ?? ""} />
+                <Suspense>
+                  <VerifyForm />
+                </Suspense>
               </CardContent>
               <CardFooter className="flex flex-col space-y-4">
                 <div className="w-full text-center text-muted-foreground text-xs">
