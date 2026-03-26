@@ -1,0 +1,18 @@
+[
+  {
+    "address": "0x2ba6d259e8a02191310c146afb4940fe18a4d1b9",
+    "displayName": "Chen Huang",
+    "organization": "APU Google Developer Student Club",
+    "reason": "AGDC would like to host a hackathon that uses Google Cloud to build cloud applications.",
+    "requestedAt": "2026-03-26T16:27:42.387Z",
+    "status": "revoked"
+  },
+  {
+    "address": "0x6ff22017feb7b903e6c18dfdf72dbe4ee911ecc7",
+    "displayName": "0x6Ff2…EcC7",
+    "organization": "—",
+    "reason": "Directly approved by admin",
+    "requestedAt": "2026-03-26T16:49:01.855Z",
+    "status": "approved"
+  }
+]

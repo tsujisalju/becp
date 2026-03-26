@@ -4,8 +4,8 @@
 //                    Uses @react-pdf/renderer primitives (Document, Page, View, Text) to produce
 //                    a properly formatted PDF — not a browser screenshot. Must be loaded via
 //                    next/dynamic with { ssr: false } as react-pdf does not support SSR.
-// First Written on : Wednesday, 26-Mar-2026
-// Last Modified on : Wednesday, 26-Mar-2026
+// First Written on : Thursday, 26-Mar-2026
+// Last Modified on : Thursday, 26-Mar-2026
 
 import { AggregatedSkillScore, HydratedCredential, StudentStats } from "@/hooks/useStudentCredentials";
 import { CATEGORY_LABELS, SKILL_LEVELS } from "@becp/shared";

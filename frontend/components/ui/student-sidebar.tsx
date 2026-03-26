@@ -4,7 +4,7 @@
 // Program Name     : frontend/components/ui/student-sidebar.tsx
 // Description      : Sidebar component for student dashboard. Provide navigation and wallet connection status.
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on : Saturday, 14-Mar-2026
+// Last Modified on : Friday, 27-Mar-2026
 
 import BECPLogo from "@/components/logo/becp-logo";
 import {
@@ -17,7 +17,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { ROUTES } from "@becp/shared";
-import { CalendarFold, CircleUser, FileBadge, SquareChartGantt } from "lucide-react";
+import { CalendarFold, CircleUser, FileBadge, SquareChartGantt, UserPlus } from "lucide-react";
 import Link from "next/link";
 import ConnectWalletSidebar from "./connect-wallet-sidebar";
 
@@ -41,6 +41,11 @@ const items = [
     title: "Profile",
     url: ROUTES.PROFILE,
     icon: <CircleUser />,
+  },
+  {
+    title: "Apply as Organizer",
+    url: ROUTES.APPLY_ORGANIZER,
+    icon: <UserPlus />,
   },
 ];
 

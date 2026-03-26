@@ -34,7 +34,7 @@ export const CONTRACT_ROLES = {
   /** bytes32(0) — the default admin role in OpenZeppelin AccessControl */
   DEFAULT_ADMIN: '0x0000000000000000000000000000000000000000000000000000000000000000',
   /** keccak256("ISSUER_ROLE") */
-  ISSUER: '0x114e74f6ea3bd819998f3d08537d1a8c0499cf2d8581bca18dae0498d5e74e73',
+  ISSUER: '0x114e74f6ea3bd819998f78687bfcb11b140da08e9b7d222fa9c1f1ba1f2aa122',
   /** keccak256("UNIVERSITY_ADMIN_ROLE") */
   UNIVERSITY_ADMIN: '0x4a0a6d86122c7bd7083e83912c312adabf207f986f5f674c45fb05012cff44c7',
 } as const
@@ -105,7 +105,12 @@ export const ROUTES = {
 
   // Admin
   ADMIN: '/admin',
+  ADMIN_ORGANIZERS: '/admin/organizers',
+  ADMIN_CREDENTIALS: '/admin/credentials',
 
   // Auth
   CONNECT: '/connect',
+
+  // Organizer application (student-accessible)
+  APPLY_ORGANIZER: '/apply-organizer',
 } as const

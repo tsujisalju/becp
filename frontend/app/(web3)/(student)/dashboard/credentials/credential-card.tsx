@@ -7,7 +7,7 @@
 //                    the block explorer and IPFS metadata. Includes a Share dialog that
 //                    generates a QR code for the recruiter verification link.
 // First Written on : Thursday, 20-Mar-2026
-// Last Modified on : Wednesday, 26-Mar-2026
+// Last Modified on : Thursday, 26-Mar-2026
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
