@@ -5,7 +5,7 @@
 //                    and all three result states (valid / invalid / error).
 //                    useReadContracts is mocked per-test to control chain responses.
 // First Written on : Saturday, 14-Mar-2026
-// Last Written on  : Sunday, 15-Mar-2026
+// Last Modified on : Friday, 27-Mar-2026
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
@@ -91,7 +91,7 @@ describe("VerifyForm", () => {
     });
 
     it("pre-fills fields from initialTokenId and initialAddress props", () => {
-      renderWithProviders(<VerifyForm initialTokenId="42" initialAddress={VALID_ADDRESS} />);
+      renderWithProviders(<VerifyForm />);
 
       expect(screen.getByLabelText(/token id/i)).toHaveValue("42");
       expect(screen.getByLabelText(/holder wallet address/i)).toHaveValue(VALID_ADDRESS);

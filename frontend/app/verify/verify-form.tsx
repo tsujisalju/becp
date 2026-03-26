@@ -4,7 +4,7 @@
 // Program Name     : frontend/app/verify/verify-form.tsx
 // Description      : Form component for verifiying a credential on the blockchain.
 // First Written on : Saturday, 14-Mar-2026
-// Last Modified on : Thursday, 26-Mar-2026
+// Last Modified on : Friday, 27-Mar-2026
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -32,11 +32,6 @@ interface VerifyResult {
   holderAddress: `0x${string}`;
   tokenUri: string;
   balance: bigint;
-}
-
-interface VerifyFormProps {
-  initialTokenId?: string;
-  initialAddress?: string;
 }
 
 function Row({ label, value, mono }: { label: string; value: string; mono?: boolean }) {

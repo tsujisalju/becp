@@ -4,7 +4,7 @@
 // Program Name     : frontend/app/(web3)/dashboard/layout.tsx
 // Description      : Page contents for dashboard overview. Shows quick statistics on credentials and activity participation.
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on : Sunday, 22-Mar-2026
+// Last Modified on : Friday, 27-Mar-2026
 
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -84,19 +84,12 @@ function StatCard({ label, value, note, icon, isLoading }: StatCardProps) {
   );
 }
 
-// Skill categories shown in the bar chart (everything except soft)
-const TECHNICAL_CATEGORIES = new Set(["technical", "leadership", "creative", "domain"]);
-
 export default function DashboardPage() {
   const { profile } = useStudentProfile();
   const { address } = useConnection();
   const { credentials, skillScores, stats, isLoading } = useStudentCredentials();
   const displayName = profile?.displayName ?? `${address?.slice(0, 4)}...${address?.slice(-4)}`;
 
-  const technicalSkillScores = useMemo(
-    () => skillScores.filter((s) => TECHNICAL_CATEGORIES.has(s.skill.category)),
-    [skillScores],
-  );
   const softSkillScores = useMemo(() => skillScores.filter((s) => s.skill.category === "soft"), [skillScores]);
 
   const prioritySkillIds = useMemo(() => getPrioritySkillIds(profile?.careerGoal), [profile?.careerGoal]);
