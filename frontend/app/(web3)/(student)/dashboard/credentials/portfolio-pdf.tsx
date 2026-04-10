@@ -5,12 +5,14 @@
 //                    a properly formatted PDF — not a browser screenshot. Must be loaded via
 //                    next/dynamic with { ssr: false } as react-pdf does not support SSR.
 // First Written on : Thursday, 26-Mar-2026
-// Last Modified on : Thursday, 26-Mar-2026
+// Last Modified on : Friday, 10-Apr-2026
 
+import React from "react";
 import { AggregatedSkillScore, HydratedCredential, StudentStats } from "@/hooks/useStudentCredentials";
-import { CATEGORY_LABELS, SKILL_LEVELS } from "@becp/shared";
-import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import { CATEGORY_LABELS, ROUTES, SKILL_LEVELS } from "@becp/shared";
+import { Document, Page, Rect, StyleSheet, Svg, Text, View } from "@react-pdf/renderer";
 import { format } from "date-fns";
+import { encode } from "uqr";
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 
@@ -138,6 +140,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: BORDER,
     borderStyle: "solid",
+    flexDirection: "row",
+    gap: 8,
+  },
+  credentialInfo: {
+    flex: 1,
   },
   credentialName: {
     fontSize: 10,
@@ -178,6 +185,33 @@ const styles = StyleSheet.create({
   },
 });
 
+// ── QR Code ───────────────────────────────────────────────────────────────────
+
+function QRCodePDF({ value, size = 60 }: { value: string; size?: number }) {
+  const qr = encode(value);
+  const moduleSize = size / qr.size;
+  return (
+    <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      {qr.data.flatMap((row, y) =>
+        row
+          .map((cell, x) =>
+            cell ? (
+              <Rect
+                key={`${x}-${y}`}
+                x={x * moduleSize}
+                y={y * moduleSize}
+                width={moduleSize}
+                height={moduleSize}
+                fill="black"
+              />
+            ) : null
+          )
+          .filter((el): el is React.JSX.Element => el !== null)
+      )}
+    </Svg>
+  );
+}
+
 // ── Props ─────────────────────────────────────────────────────────────────────
 
 interface PortfolioPDFDocumentProps {
@@ -194,6 +228,7 @@ export function PortfolioPDFDocument({ displayName, address, credentials, skillS
   const generatedDate = format(new Date(), "d MMMM yyyy");
   const topSkills = skillScores.slice(0, 10);
   const readyCredentials = credentials.filter((c) => c.metadata !== null);
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
 
   return (
     <Document
@@ -259,20 +294,24 @@ export function PortfolioPDFDocument({ displayName, address, credentials, skillS
               const category = m.becp_activity_category
                 ? (CATEGORY_LABELS[m.becp_activity_category] ?? m.becp_activity_category)
                 : null;
+              const verifyUrl = `${origin}${ROUTES.VERIFY}?tokenId=${cred.tokenId.toString()}&holder=${address}`;
               return (
                 <View key={cred.tokenId.toString()} style={styles.credentialRow}>
-                  <Text style={styles.credentialName}>{m.name}</Text>
-                  <View style={styles.credentialMeta}>
-                    {category && <Text style={styles.credentialMetaItem}>{category}</Text>}
-                    {m.becp_activity_date && (
-                      <Text style={styles.credentialMetaItem}>{format(new Date(m.becp_activity_date), "d MMM yyyy")}</Text>
-                    )}
-                    {m.becp_activity_duration_hours != null && (
-                      <Text style={styles.credentialMetaItem}>{m.becp_activity_duration_hours}h</Text>
-                    )}
-                    {m.becp_issuer_name && <Text style={styles.credentialMetaItem}>Issued by {m.becp_issuer_name}</Text>}
+                  <View style={styles.credentialInfo}>
+                    <Text style={styles.credentialName}>{m.name}</Text>
+                    <View style={styles.credentialMeta}>
+                      {category && <Text style={styles.credentialMetaItem}>{category}</Text>}
+                      {m.becp_activity_date && (
+                        <Text style={styles.credentialMetaItem}>{format(new Date(m.becp_activity_date), "d MMM yyyy")}</Text>
+                      )}
+                      {m.becp_activity_duration_hours != null && (
+                        <Text style={styles.credentialMetaItem}>{m.becp_activity_duration_hours}h</Text>
+                      )}
+                      {m.becp_issuer_name && <Text style={styles.credentialMetaItem}>Issued by {m.becp_issuer_name}</Text>}
+                    </View>
+                    <Text style={styles.credentialSkills}>Skills: {skillLabels}</Text>
                   </View>
-                  <Text style={styles.credentialSkills}>Skills: {skillLabels}</Text>
+                  <QRCodePDF value={verifyUrl} size={60} />
                 </View>
               );
             })}

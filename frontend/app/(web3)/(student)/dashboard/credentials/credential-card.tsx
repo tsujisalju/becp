@@ -7,7 +7,7 @@
 //                    the block explorer and IPFS metadata. Includes a Share dialog that
 //                    generates a QR code for the recruiter verification link.
 // First Written on : Thursday, 20-Mar-2026
-// Last Modified on : Thursday, 26-Mar-2026
+// Last Modified on : Friday, 10-Apr-2026
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,10 +17,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { HydratedCredential } from "@/hooks/useStudentCredentials";
 import { CATEGORY_LABELS, CHAIN, ipfsToHttp, ROUTES, SKILL_CATEGORY_COLOURS } from "@becp/shared";
 import { format } from "date-fns";
+import { encode } from "uqr";
 import { Award, CalendarDays, Check, Clock, Copy, ExternalLink, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import QRCode from "react-qr-code";
 
 export function CredentialCardSkeleton() {
   return (
@@ -48,6 +48,35 @@ export function CredentialCardSkeleton() {
 interface CredentialCardProps {
   credential: HydratedCredential;
   holderAddress?: `0x${string}`;
+}
+
+function QRCodeSVG({ value, size = 200 }: { value: string; size?: number }) {
+  const qr = encode(value);
+  const moduleSize = size / qr.size;
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      style={{ display: "block" }}
+    >
+      {qr.data.map((row, y) =>
+        row.map((cell, x) =>
+          cell ? (
+            <rect
+              key={`${x}-${y}`}
+              x={x * moduleSize}
+              y={y * moduleSize}
+              width={moduleSize}
+              height={moduleSize}
+              fill="black"
+            />
+          ) : null
+        )
+      )}
+    </svg>
+  );
 }
 
 function ShareDialog({ tokenId, holderAddress }: { tokenId: bigint; holderAddress?: `0x${string}` }) {
@@ -82,7 +111,7 @@ function ShareDialog({ tokenId, holderAddress }: { tokenId: bigint; holderAddres
         </DialogHeader>
         <div className="flex flex-col items-center gap-4 py-2">
           <div className="rounded-lg border bg-white p-4">
-            <QRCode value={verifyUrl} size={200} />
+            <QRCodeSVG value={verifyUrl} size={200} />
           </div>
           <div className="w-full space-y-2">
             <p className="text-xs text-muted-foreground break-all font-mono bg-muted rounded-md px-3 py-2">{verifyUrl}</p>

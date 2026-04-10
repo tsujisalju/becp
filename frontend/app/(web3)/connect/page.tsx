@@ -92,9 +92,9 @@ export default function ConnectPage() {
                       {connectedRole.icon} <span>Proceed as {connectedRole.label}</span>
                     </Link>
                   ) : (
-                    <>
+                    <Link className="flex flex-row space-x-2 items-center" href="#">
                       <Spinner data-icon="inline-start" /> Detecting role
-                    </>
+                    </Link>
                   )}
                 </Button>
               )}
