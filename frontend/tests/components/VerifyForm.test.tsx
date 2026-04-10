@@ -28,6 +28,18 @@ vi.mock("next/link", () => ({
     React.createElement("a", { href, ...props }, children),
 }));
 
+// ── next/navigation stub ──────────────────────────────────────────────────────
+// useSearchParams is called by VerifyForm to pre-fill fields from query params.
+// mockSearchParams is overridable per-test; defaults to empty (no pre-fill).
+
+const mockSearchParams = vi.fn(() => new URLSearchParams());
+
+vi.mock("next/navigation", () => ({
+  useSearchParams: () => mockSearchParams(),
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
+  usePathname: () => "/verify",
+}));
+
 // ── Component under test ──────────────────────────────────────────────────────
 
 import VerifyForm from "@/app/verify/verify-form";
@@ -79,6 +91,8 @@ describe("VerifyForm", () => {
   beforeEach(() => {
     idleContracts();
     vi.clearAllMocks();
+    // Restore the default useSearchParams implementation after clearAllMocks wipes it.
+    mockSearchParams.mockImplementation(() => new URLSearchParams());
   });
 
   describe("initial render", () => {
@@ -91,6 +105,7 @@ describe("VerifyForm", () => {
     });
 
     it("pre-fills fields from initialTokenId and initialAddress props", () => {
+      mockSearchParams.mockImplementation(() => new URLSearchParams(`tokenId=42&holder=${VALID_ADDRESS}`));
       renderWithProviders(<VerifyForm />);
 
       expect(screen.getByLabelText(/token id/i)).toHaveValue("42");
