@@ -6,7 +6,7 @@
 //                    Submits an off-chain request to /api/organizer-request that the university
 //                    admin reviews. On approval the admin calls approveOrganizer(address) on-chain.
 // First Written on : Friday, 27-Mar-2026
-// Last Modified on : Friday, 27-Mar-2026
+// Last Modified on : Friday, 10-Apr-2026
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -140,7 +140,7 @@ export default function ApplyOrganizerPage() {
         desc="Request the ISSUER_ROLE to register credential types and issue credentials to students."
       />
 
-      <Alert className="bg-muted max-w-lg">
+      <Alert className="bg-muted max-w-lg mx-auto">
         <Info />
         <AlertTitle>What happens after you apply?</AlertTitle>
         <AlertDescription className="text-xs">
@@ -151,7 +151,7 @@ export default function ApplyOrganizerPage() {
         </AlertDescription>
       </Alert>
 
-      <Card className="max-w-lg">
+      <Card className="w-full max-w-lg mx-auto">
         <CardHeader>
           <CardTitle>Organizer Application</CardTitle>
           <CardDescription>

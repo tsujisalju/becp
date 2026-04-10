@@ -4,7 +4,7 @@
 // Program Name     : frontend/app/(web3)/connect/page.tsx
 // Description      : Connect page for connecting wallet and redirecting to role-specific home pages
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on : Friday, 13-Mar-2026
+// Last Modified on : Friday, 10-Apr-2026
 
 import BECPLogo from "@/components/logo/becp-logo";
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,7 @@ export default function ConnectPage() {
   return (
     <div className="relative grid w-screen h-screen place-items-center bg-chart-1">
       <div className="noise-overlay"></div>
-      <div className="w-full max-w-lg flex flex-col items-center space-y-4">
+      <div className="w-full max-w-md flex flex-col items-center space-y-4">
         <BECPLogo className="w-48 z-10" />
         <Card className="relative">
           <CardHeader>
@@ -69,24 +69,24 @@ export default function ConnectPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <h2 className="font-bold">Who is this for?</h2>
+            <h2 className="font-semibold">Who is this for?</h2>
             <div className="flex flex-row">
               {ROLE_ITEMS.map((role) => (
                 <div key={role.label}>
-                  <div className="flex flex-col space-y-2 justify-center items-center p-4 text-center">
+                  <div className="flex flex-col gap-2 justify-center items-center p-4 text-center">
                     {cloneElement(role.icon, { className: "w-8 h-8" })}
-                    <p className="font-bold">{role.label}</p>
-                    <p>{role.desc}</p>
+                    <p className="font-semibold">{role.label}</p>
+                    <p className="text-muted-foreground">{role.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <div className="w-full flex flex-row justify-around">
+            <div className="w-full flex flex-col gap-2">
               <ConnectWallet />
               {isConnected && (
-                <Button disabled={isLoading}>
+                <Button disabled={isLoading} asChild>
                   {!isLoading && connectedRole ? (
                     <Link className="flex flex-row space-x-2 items-center" href={ROLE_HOME[role]}>
                       {connectedRole.icon} <span>Proceed as {connectedRole.label}</span>

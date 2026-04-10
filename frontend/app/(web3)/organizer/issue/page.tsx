@@ -7,7 +7,7 @@
 //                    2. Add recipient wallet addresses (one per line, validated)
 //                    3. Review and call batchIssueCredential on the contract
 // First Written on : Saturday, 14-Mar-2026
-// Last Modified on : Sunday, 22-Mar-2026
+// Last Modified on : Friday, 10-Apr-2026
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +30,7 @@ import { useConnection, usePublicClient, useWriteContract } from "wagmi";
 
 function StepIndicator({ current, steps }: { current: number; steps: string[] }) {
   return (
-    <div className="flex items-center gap-2 w-full max-w-2xl">
+    <div className="flex items-center gap-2 w-full max-w-3xl mx-auto">
       {steps.map((label, i) => {
         const stepNum = i + 1;
         const isDone = stepNum < current;
@@ -402,7 +402,7 @@ export default function OrganizerIssuePage() {
       <StepIndicator current={step} steps={STEPS} />
 
       {step === 1 && (
-        <div className="space-y-4 max-w-2xl">
+        <div className="space-y-4 w-full max-w-3xl mx-auto">
           <h2 className="font-semibold text-lg">Select a credential type to issue</h2>
           <CredentialTypeSelector
             credentialTypes={credentialTypes}
@@ -419,7 +419,7 @@ export default function OrganizerIssuePage() {
       )}
 
       {step === 2 && (
-        <div className="space-y-4 max-w-2xl">
+        <div className="space-y-4 w-full max-w-3xl mx-auto">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-lg">Enter recipient wallet addresses</h2>
             <Badge variant="secondary" className="text-xs font-mono">
@@ -442,7 +442,7 @@ export default function OrganizerIssuePage() {
       )}
 
       {step === 3 && selectedType && (
-        <div className="space-y-4 max-w-2xl">
+        <div className="space-y-4 w-full max-w-3xl mx-auto">
           <h2 className="font-semibold text-lg">Review and confirm issuance</h2>
           <ReviewPanel credentialType={selectedType} recipients={validRecipients} />
           <Alert className="border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">

@@ -9,7 +9,7 @@
 //                    Note: there is no on-chain event registration — students attend events
 //                    and organizers issue credentials afterwards via batchIssueCredential.
 // First Written on : Wednesday, 11-Mar-2026
-// Last Modified on : Wednesday, 25-Mar-2026
+// Last Modified on : Friday, 10-Apr-2026
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -129,15 +129,6 @@ export default function EventsPage() {
     <div className="px-6 flex flex-col space-y-4">
       <div className="flex items-start justify-between gap-3">
         <PageHeader title="Events" desc="Discover extracurricular events and the credentials you can earn by participating." />
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={handleRefetch}
-          disabled={isLoading || isRefetching}
-          aria-label="Refresh"
-        >
-          <RefreshCw className={isLoading || isRefetching ? "animate-spin" : ""} />
-        </Button>
       </div>
 
       <StatsBar
@@ -160,14 +151,25 @@ export default function EventsPage() {
       {!isError && (
         <>
           {/* Search */}
-          <div className="relative max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input
-              placeholder="Search events or organizers…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
-            />
+          <div className="flex flex-row gap-4 items-center">
+            <div className="relative w-full max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <Input
+                placeholder="Search events or organizers…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={handleRefetch}
+              disabled={isLoading || isRefetching}
+              aria-label="Refresh"
+            >
+              <RefreshCw className={isLoading || isRefetching ? "animate-spin" : ""} />
+            </Button>
           </div>
 
           {/* Category filter pills */}

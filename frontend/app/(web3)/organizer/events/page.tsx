@@ -8,7 +8,7 @@
 //                    List view shows all credential types registered by the connected
 //                    organizer, hydrated with IPFS metadata.
 // First Written on : Saturday, 14-Mar-2026
-// Last Modified on : Thursday, 19-Mar-2026
+// Last Modified on : Friday, 10-Apr-2026
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -143,7 +143,9 @@ export default function OrganizerEventsPage() {
             desc="Define the information for a new on-chain credential type for your event."
           />
         </div>
-        <CredentialTypeForm onSubmit={handleRegister} onCancel={() => setView("list")} />
+        <div className="w-full max-w-4xl mx-auto">
+          <CredentialTypeForm onSubmit={handleRegister} onCancel={() => setView("list")} />
+        </div>
       </div>
     );
   }

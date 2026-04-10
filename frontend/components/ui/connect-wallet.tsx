@@ -2,7 +2,7 @@
 // Program Name     : frontend/components/ui/connect-wallet.tsx
 // Description      : Custom connect wallet button component.
 // First Written on : Friday, 13-Mar-2026
-// Last Modified on : Friday, 13-Mar-2026
+// Last Modified on : Friday, 10-Apr-2026
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Button } from "./button";
@@ -27,11 +27,12 @@ export default function ConnectWallet() {
                 userSelect: "none",
               },
             })}
+            className="w-full"
           >
             {(() => {
               if (!connected) {
                 return (
-                  <Button onClick={openConnectModal} type="button">
+                  <Button onClick={openConnectModal} type="button" className="w-full">
                     Connect Wallet
                   </Button>
                 );
@@ -47,7 +48,7 @@ export default function ConnectWallet() {
 
               return (
                 <div className="flex flex-row space-x-1">
-                  <Button onClick={openChainModal}>
+                  <Button onClick={openChainModal} variant="outline">
                     {chain.hasIcon && (
                       <div
                         style={{
@@ -65,7 +66,7 @@ export default function ConnectWallet() {
                     {chain.name}
                   </Button>
 
-                  <Button onClick={openAccountModal} type="button">
+                  <Button onClick={openAccountModal} type="button" variant="outline" className="shrink w-full">
                     {account.displayName}
                   </Button>
                 </div>

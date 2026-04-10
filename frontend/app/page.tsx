@@ -2,13 +2,14 @@
 // Program Name     : frontend/app/layout.tsx
 // Description      : Page contents for landing page.
 // First Written on : Saturday, 7-Mar-2026
-// Last Modified on : Tuesday, 17-Mar-2026
+// Last Modified on : Friday, 10-Apr-2026
 
 import BECPLogo from "@/components/logo/becp-logo";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ROUTES } from "@becp/shared";
-import { ArrowRightIcon, BookOpenText, Calendars, University, UserSearch } from "lucide-react";
+import { ArrowDown, ArrowRight, BookOpenText, Calendars, University, UserSearch } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { cloneElement } from "react";
 
@@ -57,11 +58,11 @@ export default function Home() {
         <div className="noise-overlay"></div>
         <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 justify-center items-center space-y-4 rounded-lg z-10">
           <div className="grid place-items-center w-full h-full m-0">
-            <BECPLogo className="w-100 h-auto" />
+            <BECPLogo className="w-80 lg:w-100 h-auto" />
           </div>
           <div className="flex flex-col space-y-8 p-16">
             <p className="font-bold mb-2">Blockchain Extracurricular Credentials Platform</p>
-            <h1 className="text-5xl font-bold">Your extracurricular achievements, verified on-chain</h1>
+            <h1 className="text-4xl lg:text-5xl font-bold">Your extracurricular achievements, verified on-chain</h1>
             <div className="flex flex-wrap items-center gap-4 md:flex-row">
               <Button size={"lg"} asChild>
                 <Link href={ROUTES.CONNECT}>Connect Wallet</Link>
@@ -74,7 +75,7 @@ export default function Home() {
         </div>
       </div>
       <div className="w-full flex justify-center items-center bg-accent">
-        <div className="w-full max-w-6xl flex flex-row justify-around items-center py-4">
+        <div className="w-full max-w-6xl flex flex-wrap justify-around items-center py-4 gap-4">
           {STATS.map((stat) => (
             <div key={stat.label} className="flex flex-col justify-center items-center">
               <h2 className="text-xl font-bold">{stat.value}</h2>
@@ -83,9 +84,27 @@ export default function Home() {
           ))}
         </div>
       </div>
-      <div className="w-full flex flex-col justify-center items-center space-y-8 py-32">
+      <div className="w-full flex flex-col justify-center items-center space-y-8 pt-32">
+        <div className="grid grid-cols-1 lg:grid-cols-2 max-w-6xl">
+          <div className="flex relative h-100">
+            <Image src="/becp-credential.webp" alt="BECP credential showing skills gained" fill className="object-contain" />
+          </div>
+          <div className="flex flex-col gap-4 justify-center">
+            <h2 className="text-3xl font-bold">More than just credentials</h2>
+            <p className="text-muted-foreground">
+              Credentials on BECP contain special skills metadata that tell exactly what you gained from extracurricular
+              participation. Built on open standards such as IMS Open Badges 3.0 and W3C Verifiable Credentials so your
+              credentials work with any ecosystem.
+            </p>
+            <p className="text-muted-foreground">
+              No more fluff and rambling to interviewers, let your credentials do the talking for you.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="w-full flex flex-col justify-center items-center space-y-8 pt-32">
         <h2 className="text-3xl font-bold">Who is BECP for?</h2>
-        <div className="w-max grid grid-cols-2 grid-rows-2 place-items-center gap-4">
+        <div className="w-max grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-2 place-items-center gap-4">
           {ROLES.map((role, index) => (
             <div className="w-sm" key={index}>
               <Card className="relative">
@@ -106,7 +125,7 @@ export default function Home() {
       </div>
       <div className="w-full flex flex-col justify-center items-center space-y-8 py-32">
         <h2 className="text-3xl font-bold">How it works</h2>
-        <div className="w-full flex flex-row justify-center items-center space-x-4">
+        <div className="w-full flex flex-col lg:flex-row justify-center items-center gap-4">
           <div className="w-full max-w-sm">
             <Card>
               <CardHeader>
@@ -119,7 +138,8 @@ export default function Home() {
             </Card>
           </div>
           <div className="rounded-full border p-1">
-            <ArrowRightIcon />
+            <ArrowRight className="hidden lg:inline" />
+            <ArrowDown className="inline lg:hidden" />
           </div>
           <div className="w-full max-w-sm">
             <Card>
@@ -134,7 +154,8 @@ export default function Home() {
             <div></div>
           </div>
           <div className="rounded-full border p-1">
-            <ArrowRightIcon />
+            <ArrowRight className="hidden lg:inline" />
+            <ArrowDown className="inline lg:hidden" />
           </div>
           <div className="w-full max-w-sm">
             <Card>
@@ -151,7 +172,7 @@ export default function Home() {
         </div>
       </div>
       <div className="w-full flex justify-center items-center bg-accent">
-        <div className="w-full max-w-6xl flex flex-row justify-around items-center py-4">
+        <div className="w-full max-w-6xl flex flex-row justify-around items-center py-4 text-center">
           <small>BECP - Final Year Project | Muhammad Qayyum Bin Mahamad Yazid - TP075129</small>
         </div>
       </div>

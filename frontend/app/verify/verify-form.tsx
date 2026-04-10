@@ -4,17 +4,18 @@
 // Program Name     : frontend/app/verify/verify-form.tsx
 // Description      : Form component for verifiying a credential on the blockchain.
 // First Written on : Saturday, 14-Mar-2026
-// Last Modified on : Friday, 27-Mar-2026
+// Last Modified on : Friday, 10-Apr-2026
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@/components/ui/empty";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { BECP_CREDENTIAL_ABI, CHAIN, ipfsToHttp } from "@becp/shared";
 import { useForm } from "@tanstack/react-form";
-import { CircleAlert, CircleCheck, CircleX, ExternalLink } from "lucide-react";
+import { CircleAlert, CircleCheck, CircleX, ExternalLink, ScanSearch } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -158,117 +159,149 @@ export default function VerifyForm() {
       : null;
 
   return (
-    <>
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          setHasSubmitted(true);
-          await form.handleSubmit();
-        }}
-      >
-        <FieldGroup>
-          <form.Field
-            name="tokenId"
-            validators={{
-              onChange: ({ value }) => {
-                if (!value.trim()) return { message: "Token ID is required" };
-                if (!/^\d+$/.test(value.trim())) return { message: "Token ID must be a number" };
-                return undefined;
-              },
+    <div className="w-full grid grid-cols-1 lg:grid-cols-2 max-w-4xl gap-2 px-2">
+      <Card className="w-full relative">
+        <CardHeader>
+          <CardTitle>Verify a Credential</CardTitle>
+          <CardDescription>
+            Enter the token ID and wallet address to verify a BECP credential on-chain. No wallet required.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setHasSubmitted(true);
+              await form.handleSubmit();
             }}
           >
-            {(field) => {
-              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Token ID</FieldLabel>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="text"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder={"e.g. 1"}
-                  />
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                  <FieldDescription className="text-xs">The ERC-1155 token type ID for this credential.</FieldDescription>
-                </Field>
-              );
-            }}
-          </form.Field>
-          <form.Field
-            name="address"
-            validators={{
-              onChange: ({ value }) => {
-                if (!value.trim()) return { message: "Wallet address is required" };
-                if (!isAddress(value.trim())) return { message: "Invalid Ethereum address" };
-                return undefined;
-              },
-            }}
-          >
-            {(field) => {
-              const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-              return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Holder Wallet Address</FieldLabel>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="text"
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder={"0x..."}
-                  />
-                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
-                  <FieldDescription className="text-xs">The wallet address of the credential holder.</FieldDescription>
-                </Field>
-              );
-            }}
-          </form.Field>
-          <form.Subscribe
-            selector={(s) => ({
-              canSubmit: s.canSubmit,
-              isSubmitting: s.isSubmitting,
-            })}
-          >
-            {({ canSubmit, isSubmitting }) => (
-              <Button type="submit" disabled={!canSubmit || isSubmitting || status === "loading"}>
-                {status === "loading" ? (
-                  <>
-                    <Spinner></Spinner>Verifying...
-                  </>
-                ) : (
-                  "Verify on-chain"
+            <FieldGroup>
+              <form.Field
+                name="tokenId"
+                validators={{
+                  onChange: ({ value }) => {
+                    if (!value.trim()) return { message: "Token ID is required" };
+                    if (!/^\d+$/.test(value.trim())) return { message: "Token ID must be a number" };
+                    return undefined;
+                  },
+                }}
+              >
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Token ID</FieldLabel>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        type="text"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        placeholder={"e.g. 1"}
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                      <FieldDescription className="text-xs">The ERC-1155 token type ID for this credential.</FieldDescription>
+                    </Field>
+                  );
+                }}
+              </form.Field>
+              <form.Field
+                name="address"
+                validators={{
+                  onChange: ({ value }) => {
+                    if (!value.trim()) return { message: "Wallet address is required" };
+                    if (!isAddress(value.trim())) return { message: "Invalid Ethereum address" };
+                    return undefined;
+                  },
+                }}
+              >
+                {(field) => {
+                  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Holder Wallet Address</FieldLabel>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        type="text"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        placeholder={"0x..."}
+                      />
+                      {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                      <FieldDescription className="text-xs">The wallet address of the credential holder.</FieldDescription>
+                    </Field>
+                  );
+                }}
+              </form.Field>
+              <form.Subscribe
+                selector={(s) => ({
+                  canSubmit: s.canSubmit,
+                  isSubmitting: s.isSubmitting,
+                })}
+              >
+                {({ canSubmit, isSubmitting }) => (
+                  <Button type="submit" disabled={!canSubmit || isSubmitting || status === "loading"}>
+                    {status === "loading" ? (
+                      <>
+                        <Spinner></Spinner>Verifying...
+                      </>
+                    ) : (
+                      "Verify on-chain"
+                    )}
+                  </Button>
                 )}
-              </Button>
-            )}
-          </form.Subscribe>
-        </FieldGroup>
-      </form>
-      {status === "valid" && result && <VerifySuccess result={result} />}
+              </form.Subscribe>
+            </FieldGroup>
+          </form>
+        </CardContent>
+        <CardFooter className="flex flex-col space-y-4">
+          <div className="w-full text-center text-muted-foreground text-xs">
+            Verification reads directly on the Optimism blockchain.{" "}
+            <Link href="https://sepolia-optimism.etherscan.io" target="_blank" rel="noopener noreferrer" className="underline">
+              View on explorer →
+            </Link>
+          </div>
+        </CardFooter>
+      </Card>
+      <Card className="w-full relative">
+        <CardContent>
+          {status === "idle" && (
+            <Empty className="border">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <ScanSearch />
+                </EmptyMedia>
+                <EmptyDescription>Verification results will appear here</EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          )}
+          {status === "valid" && result && <VerifySuccess result={result} />}
 
-      {status === "invalid" && submittedValues && (
-        <Alert variant="destructive" className="mt-2 border-destructive/30 bg-destructive/5">
-          <CircleX />
-          <AlertTitle>Credential Not Found</AlertTitle>
-          <AlertDescription className="text-xs">
-            This wallet does not hold token #{submittedValues.tokenId}, or the credential has been revoked.
-          </AlertDescription>
-        </Alert>
-      )}
+          {status === "invalid" && submittedValues && (
+            <Alert variant="destructive" className="mt-2 border-destructive/30 bg-destructive/5">
+              <CircleX />
+              <AlertTitle>Credential Not Found</AlertTitle>
+              <AlertDescription className="text-xs">
+                This wallet does not hold token #{submittedValues.tokenId}, or the credential has been revoked.
+              </AlertDescription>
+            </Alert>
+          )}
 
-      {status === "error" && (
-        <Alert className="mt-2 border-amber-200 bg-amber-50 text-amber-900">
-          <CircleAlert />
-          <AlertTitle>Network error</AlertTitle>
-          <AlertDescription className="text-xs">
-            Could not connect to the blockchain. Please check your connection and try again
-          </AlertDescription>
-        </Alert>
-      )}
-    </>
+          {status === "error" && (
+            <Alert className="mt-2 border-amber-200 bg-amber-50 text-amber-900">
+              <CircleAlert />
+              <AlertTitle>Network error</AlertTitle>
+              <AlertDescription className="text-xs">
+                Could not connect to the blockchain. Please check your connection and try again
+              </AlertDescription>
+            </Alert>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }
