@@ -7,7 +7,7 @@
 //                    the block explorer and IPFS metadata. Includes a Share dialog that
 //                    generates a QR code for the recruiter verification link.
 // First Written on : Thursday, 20-Mar-2026
-// Last Modified on : Friday, 10-Apr-2026
+// Last Modified on : Sunday, 19-Apr-2026
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,8 @@ import { HydratedCredential } from "@/hooks/useStudentCredentials";
 import { CATEGORY_LABELS, CHAIN, ipfsToHttp, ROUTES, SKILL_CATEGORY_COLOURS } from "@becp/shared";
 import { format } from "date-fns";
 import { encode } from "uqr";
-import { Award, CalendarDays, Check, Clock, Copy, ExternalLink, Share2 } from "lucide-react";
+import { Award, CalendarDays, Check, Clock, Copy, ExternalLink, FileBadge, Share2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -64,16 +65,9 @@ function QRCodeSVG({ value, size = 200 }: { value: string; size?: number }) {
       {qr.data.map((row, y) =>
         row.map((cell, x) =>
           cell ? (
-            <rect
-              key={`${x}-${y}`}
-              x={x * moduleSize}
-              y={y * moduleSize}
-              width={moduleSize}
-              height={moduleSize}
-              fill="black"
-            />
-          ) : null
-        )
+            <rect key={`${x}-${y}`} x={x * moduleSize} y={y * moduleSize} width={moduleSize} height={moduleSize} fill="black" />
+          ) : null,
+        ),
       )}
     </svg>
   );
@@ -145,7 +139,17 @@ export function CredentialCard({ credential, holderAddress }: CredentialCardProp
   const ipfsUrl = tokenURI ? ipfsToHttp(tokenURI) : null;
 
   return (
-    <Card>
+    <Card className={"relative overflow-hidden pt-0"}>
+      <>
+        <div className="absolute inset-0 z-30 aspect-3/1" />
+        <div className="relative z-20 aspect-3/1 w-full flex items-center justify-center bg-black/5">
+          {metadata?.becp_certificate_image ? (
+            <Image src={ipfsToHttp(metadata.becp_certificate_image)} alt={metadata.name} fill className="object-cover" />
+          ) : (
+            <FileBadge className="size-8 opacity-50" />
+          )}
+        </div>
+      </>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Award />

@@ -8,7 +8,7 @@
 //                    List view shows all credential types registered by the connected
 //                    organizer, hydrated with IPFS metadata.
 // First Written on : Saturday, 14-Mar-2026
-// Last Modified on : Friday, 10-Apr-2026
+// Last Modified on : Sunday, 19-Apr-2026
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -49,6 +49,18 @@ export default function OrganizerEventsPage() {
     }, 1000);
   }
 
+  async function uploadImage(file: File): Promise<string> {
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch("/api/upload-image", { method: "POST", body: fd });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error((err as { error?: string }).error ?? "Failed to upload image to IPFS");
+    }
+    const { uri } = (await res.json()) as { uri: string };
+    return uri;
+  }
+
   async function handleRegister(values: CredentialTypeFormValues) {
     if (!address) {
       toast.error("Wallet not connected.");
@@ -64,6 +76,25 @@ export default function OrganizerEventsPage() {
       throw new Error("Public client not available");
     }
 
+    let certificateImageUri: string | undefined;
+    let eventImageUri: string | undefined;
+
+    if (values.certificateImage || values.eventImage) {
+      try {
+        toast.loading("Uploading images to IPFS...", { id: "image-upload" });
+        const uploads = await Promise.all([
+          values.certificateImage ? uploadImage(values.certificateImage) : Promise.resolve(undefined),
+          values.eventImage ? uploadImage(values.eventImage) : Promise.resolve(undefined),
+        ]);
+        certificateImageUri = uploads[0];
+        eventImageUri = uploads[1];
+        toast.success("Images uploaded.", { id: "image-upload" });
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : "Image upload failed. Please try again.", { id: "image-upload" });
+        throw e;
+      }
+    }
+
     const metadata = buildCredentialTypeMetadata({
       name: values.name,
       description: values.description,
@@ -74,6 +105,8 @@ export default function OrganizerEventsPage() {
       externalUrl: values.externalUrl,
       skills: values.skills,
       issuerAddress: address as `0x${string}`,
+      certificateImageUri,
+      eventImageUri,
     });
 
     let ipfsUri: string;

@@ -5,12 +5,12 @@
 //                    a properly formatted PDF — not a browser screenshot. Must be loaded via
 //                    next/dynamic with { ssr: false } as react-pdf does not support SSR.
 // First Written on : Thursday, 26-Mar-2026
-// Last Modified on : Friday, 10-Apr-2026
+// Last Modified on : Sunday, 19-Apr-2026
 
 import React from "react";
 import { AggregatedSkillScore, HydratedCredential, StudentStats } from "@/hooks/useStudentCredentials";
-import { CATEGORY_LABELS, ROUTES, SKILL_LEVELS } from "@becp/shared";
-import { Document, Page, Rect, StyleSheet, Svg, Text, View } from "@react-pdf/renderer";
+import { CATEGORY_LABELS, ipfsToHttp, ROUTES, SKILL_LEVELS } from "@becp/shared";
+import { Document, Image, Page, Rect, StyleSheet, Svg, Text, View } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { encode } from "uqr";
 
@@ -204,9 +204,9 @@ function QRCodePDF({ value, size = 60 }: { value: string; size?: number }) {
                 height={moduleSize}
                 fill="black"
               />
-            ) : null
+            ) : null,
           )
-          .filter((el): el is React.JSX.Element => el !== null)
+          .filter((el): el is React.JSX.Element => el !== null),
       )}
     </Svg>
   );
@@ -297,6 +297,10 @@ export function PortfolioPDFDocument({ displayName, address, credentials, skillS
               const verifyUrl = `${origin}${ROUTES.VERIFY}?tokenId=${cred.tokenId.toString()}&holder=${address}`;
               return (
                 <View key={cred.tokenId.toString()} style={styles.credentialRow}>
+                  {m.becp_certificate_image && (
+                    /* eslint-disable-next-line jsx-a11y/alt-text */
+                    <Image src={ipfsToHttp(m.becp_certificate_image)} style={{ width: 48, height: 48, borderRadius: 4 }} />
+                  )}
                   <View style={styles.credentialInfo}>
                     <Text style={styles.credentialName}>{m.name}</Text>
                     <View style={styles.credentialMeta}>

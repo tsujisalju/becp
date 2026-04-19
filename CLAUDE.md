@@ -68,14 +68,13 @@ becp-main/
 | ------- | ----------- | ---------------------------------------------------------------------------------- | ------------ |
 | R1      | Phase 0+1   | Monorepo scaffold + ERC-1155 soulbound contract + 52 passing tests                 | **DONE**     |
 | R2      | Phase 2     | Next.js frontend skeleton, wallet auth, role detection, verify page, 58 tests      | **DONE**     |
-| R3      | Phase 3A–3B | Credential issuance flow + student credential dashboard                            | **DONE**     |
-| R4      | Phase 3C–3D | Gamified skill progression + events marketplace                                    | **DONE**     |
-| R5      | Phase 3E–3G | Recruiter QR share + portfolio PDF export + admin portal + 177 tests               | **DONE**     |
-| R6      | Phase 4     | Centralized DB + credential/event images + event detail page + UX polish           | **NEXT**     |
+| R3      | Phase 3A–3D | Credential registration and issuance flow + student credential dashboard           | **DONE**     |
+| R4      | Phase 3E–3G | Recruiter QR share + portfolio PDF export + admin portal + 177 tests               | **DONE**     |
+| R5      | Phase 4     | Centralized DB + credential/event images + event detail page + UX polish           | **NEXT**     |
 
 ---
 
-## Completed Features (R1–R5)
+## Completed Features (R1–R4)
 
 ### Phase 3A — Organizer credential type registration
 

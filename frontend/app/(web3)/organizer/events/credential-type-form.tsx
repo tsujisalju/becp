@@ -8,7 +8,7 @@
 //                    Skill tags are selected from a predefined list; AI inferencing
 //                    will replace this in Phase 4.
 // First Written on : Tuesday, 17-Mar-2026
-// Last Modified on : Sunday, 22-Mar-2026
+// Last Modified on : Sunday, 19-Apr-2026
 
 import { Calendar } from "@/components/ui/calendar";
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -58,6 +58,8 @@ export interface CredentialTypeFormValues {
   durationHours: string;
   issuerName: string;
   externalUrl: string;
+  certificateImage: File | null;
+  eventImage: File | null;
   skills: SkillTag[];
 }
 
@@ -148,6 +150,8 @@ export default function CredentialTypeForm({ onSubmit, onCancel }: CredentialTyp
       durationHours: "",
       issuerName: "",
       externalUrl: "",
+      certificateImage: null,
+      eventImage: null,
       skills: [],
     } as CredentialTypeFormValues,
     onSubmit: async ({ value }) => {
@@ -438,6 +442,111 @@ export default function CredentialTypeForm({ onSubmit, onCancel }: CredentialTyp
             );
           }}
         </form.Field>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <form.Field
+            name="certificateImage"
+            validators={{
+              onChange: ({ value }) => {
+                if (!value) return undefined;
+                if (!["image/jpeg", "image/png", "image/webp"].includes(value.type))
+                  return { message: "Only JPEG, PNG, or WebP files are allowed" };
+                if (value.size > 2 * 1024 * 1024) return { message: "Image must be 2 MB or smaller" };
+                return undefined;
+              },
+            }}
+          >
+            {(field) => {
+              const isInvalid = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+              const preview = field.state.value ? URL.createObjectURL(field.state.value) : null;
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor={field.name}>
+                    Certificate Image{" "}
+                    <Badge variant="secondary" className="ml-1">
+                      Optional
+                    </Badge>
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onBlur={field.handleBlur}
+                    onChange={(e) => {
+                      field.handleChange(e.target.files?.[0] ?? null);
+                      field.handleBlur();
+                    }}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  {preview && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={preview}
+                      alt="Certificate preview"
+                      className="mt-2 h-20 w-20 rounded-md object-cover border border-input"
+                    />
+                  )}
+                  <FieldDescription className="text-xs">
+                    Badge or certificate artwork. Also used as the NFT token image visible in wallets and block explorers. Max 2
+                    MB.
+                  </FieldDescription>
+                </Field>
+              );
+            }}
+          </form.Field>
+
+          <form.Field
+            name="eventImage"
+            validators={{
+              onChange: ({ value }) => {
+                if (!value) return undefined;
+                if (!["image/jpeg", "image/png", "image/webp"].includes(value.type))
+                  return { message: "Only JPEG, PNG, or WebP files are allowed" };
+                if (value.size > 2 * 1024 * 1024) return { message: "Image must be 2 MB or smaller" };
+                return undefined;
+              },
+            }}
+          >
+            {(field) => {
+              const isInvalid = field.state.meta.isTouched && field.state.meta.errors.length > 0;
+              const preview = field.state.value ? URL.createObjectURL(field.state.value) : null;
+              return (
+                <Field data-invalid={isInvalid}>
+                  <FieldLabel htmlFor={field.name}>
+                    Event Cover Image{" "}
+                    <Badge variant="secondary" className="ml-1">
+                      Optional
+                    </Badge>
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onBlur={field.handleBlur}
+                    onChange={(e) => {
+                      field.handleChange(e.target.files?.[0] ?? null);
+                      field.handleBlur();
+                    }}
+                  />
+                  {isInvalid && <FieldError errors={field.state.meta.errors} />}
+                  {preview && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={preview}
+                      alt="Event cover preview"
+                      className="mt-2 h-20 w-full rounded-md object-cover border border-input"
+                    />
+                  )}
+                  <FieldDescription className="text-xs">
+                    Banner or cover photo shown on the event marketplace card. Max 2 MB.
+                  </FieldDescription>
+                </Field>
+              );
+            }}
+          </form.Field>
+        </div>
+
         <form.Field
           name="skills"
           validators={{

@@ -4,7 +4,7 @@
 // Program Name     : frontend/app/(web3)/(student)/dashboard/profile/profile-edit-form.tsx
 // Description      : Form component for editing profile information
 // First Written on : Thursday, 12-Mar-2026
-// Last Modified on : Saturday, 14-Mar-2026
+// Last Modified on : Sunday, 19-Apr-2026
 
 import { useForm } from "@tanstack/react-form";
 import { useEffect } from "react";
@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { GlobeLock } from "lucide-react";
+import { useConnection } from "wagmi";
 
 const CAREER_GOALS = [
   "Software Engineer",
@@ -42,6 +43,7 @@ const CAREER_GOAL_NONE = "__none__" as const;
 
 export default function ProfileEditForm() {
   const { profile, isLoading, saveProfile, displayName } = useStudentProfile();
+  const { address } = useConnection();
 
   const form = useForm({
     defaultValues: {
@@ -195,7 +197,13 @@ export default function ProfileEditForm() {
               Read-only
             </Badge>
           </FieldLabel>
-          <Input id="walletAddress" type="text" value={profile?.address ?? "-"} placeholder={"-"} disabled />
+          <Input
+            id="walletAddress"
+            type="text"
+            value={profile?.address ?? address?.toLowerCase()}
+            placeholder={address?.toLowerCase()}
+            disabled
+          />
           <FieldDescription className="text-xs">
             Your on-chain identity. Cannot be changed as this is your wallet address.
           </FieldDescription>

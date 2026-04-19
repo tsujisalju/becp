@@ -4,7 +4,7 @@
 // Program Name     : frontend/app/(web3)/dashboard/layout.tsx
 // Description      : Page contents for dashboard overview. Shows quick statistics on credentials and activity participation.
 // First Written on : Tuesday, 10-Mar-2026
-// Last Modified on : Friday, 27-Mar-2026
+// Last Modified on : Sunday, 19-Apr-2026
 
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -22,7 +22,7 @@ import { useStudentProfile } from "@/hooks/useStudentProfile";
 import { useConnection } from "wagmi";
 import PageHeader from "@/components/ui/page-header";
 import { getPrioritySkillIds, ROUTES, SKILL_LEVELS } from "@becp/shared";
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useStudentCredentials } from "@/hooks/useStudentCredentials";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -90,6 +90,8 @@ export default function DashboardPage() {
   const { credentials, skillScores, stats, isLoading } = useStudentCredentials();
   const displayName = profile?.displayName ?? `${address?.slice(0, 4)}...${address?.slice(-4)}`;
 
+  const [greeting] = useState(() => randomGreeting(displayName));
+
   const softSkillScores = useMemo(() => skillScores.filter((s) => s.skill.category === "soft"), [skillScores]);
 
   const prioritySkillIds = useMemo(() => getPrioritySkillIds(profile?.careerGoal), [profile?.careerGoal]);
@@ -102,7 +104,7 @@ export default function DashboardPage() {
 
   return (
     <div className="px-6 flex flex-col space-y-4">
-      <PageHeader title={randomGreeting(displayName)} desc="View your skill portfolio and credentials at a glance." />
+      <PageHeader title={greeting} desc="View your skill portfolio and credentials at a glance." />
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <StatCard
           label="Credentials"

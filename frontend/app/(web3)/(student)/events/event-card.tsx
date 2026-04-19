@@ -8,16 +8,17 @@
 //                    Displays an "Already Earned" badge when the connected student
 //                    already holds this credential type.
 // First Written on : Wednesday, 25-Mar-2026
-// Last Modified on : Wednesday, 25-Mar-2026
+// Last Modified on : Sunday, 19-Apr-2026
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MarketplaceEvent } from "@/hooks/useAllCredentialTypes";
-import { CATEGORY_LABELS, SKILL_CATEGORY_COLOURS } from "@becp/shared";
+import { CATEGORY_LABELS, ipfsToHttp, SKILL_CATEGORY_COLOURS } from "@becp/shared";
 import { format } from "date-fns";
-import { Award, CalendarDays, CircleCheck, Clock, ExternalLink, Users } from "lucide-react";
+import { Award, Calendar, CalendarDays, CircleCheck, Clock, ExternalLink, Users } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export function EventCardSkeleton() {
@@ -59,7 +60,18 @@ export function EventCard({ event }: EventCardProps) {
   }
 
   return (
-    <Card className={isEarned ? "ring-2 ring-emerald-400/60 border-emerald-200" : ""}>
+    <Card className={`relative overflow-hidden pt-0 ${isEarned ? "ring-2 ring-emerald-400/60 border-emerald-200" : ""}`}>
+      <>
+        <div className="absolute inset-0 z-30 aspect-3/1" />
+        <div className="relative z-20 aspect-3/1 w-full flex items-center justify-center bg-black/5">
+          {metadata?.becp_event_image ? (
+            <Image src={ipfsToHttp(metadata.becp_event_image)} alt={metadata.name} fill className="object-cover" />
+          ) : (
+            <Calendar className="size-8 opacity-50" />
+          )}
+        </div>
+      </>
+
       <CardHeader>
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-base leading-snug">{metadata?.name ?? `Credential Type #${event.tokenId}`}</CardTitle>

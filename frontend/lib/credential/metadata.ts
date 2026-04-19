@@ -6,7 +6,7 @@
 //                    Per-recipient fields (becp_recipient_address, becp_issued_date,
 //                    becp_tx_hash) are added separately when batchIssueCredential is called.
 // First Written on : Tuesday, 17-Mar-2026
-// Last Modified on : Tuesday, 17-Mar-2026
+// Last Modified on : Sunday, 19-Apr-2026
 
 import { ActivityCategory, BECP_METADATA_VERSION, SkillTag } from "@becp/shared";
 import { format } from "date-fns";
@@ -31,6 +31,8 @@ export interface CredentialTypeMetadata {
   becp_activity_duration_hours: number;
   becp_soulbound: true;
   becp_skills: SkillTag[];
+  becp_certificate_image?: string; // IPFS URI for the badge/certificate artwork (also mirrors ERC-1155 image)
+  becp_event_image?: string; // IPFS URI for the event banner/cover
 }
 
 export interface BuildMetadataInput {
@@ -43,15 +45,17 @@ export interface BuildMetadataInput {
   issuerAddress: `0x${string}`;
   externalUrl?: string;
   skills: SkillTag[];
+  certificateImageUri?: string;
+  eventImageUri?: string;
 }
 
 export function buildCredentialTypeMetadata(input: BuildMetadataInput): CredentialTypeMetadata {
   return {
     name: input.name,
     description: input.description,
-    // Placeholder badge image — organizers can update this in Phase 4 when
-    // badge artwork upload is implemented.
-    image: "ipfs://bafkreihdwdcefgh4dqkjv67uzcmw37rwez4ecd1tizuish5yynpuad624u",
+    // ERC-1155 image field: use the uploaded certificate image if provided,
+    // otherwise fall back to the placeholder so existing metadata stays valid.
+    image: input.certificateImageUri ?? "ipfs://bafkreihdwdcefgh4dqkjv67uzcmw37rwez4ecd1tizuish5yynpuad624u",
     ...(input.externalUrl ? { external_url: input.externalUrl } : {}),
 
     achievementType: "Extracurricular",
@@ -67,6 +71,8 @@ export function buildCredentialTypeMetadata(input: BuildMetadataInput): Credenti
     becp_activity_duration_hours: input.durationHours,
     becp_soulbound: true,
     becp_skills: input.skills,
+    ...(input.certificateImageUri ? { becp_certificate_image: input.certificateImageUri } : {}),
+    ...(input.eventImageUri ? { becp_event_image: input.eventImageUri } : {}),
   };
 }
 
