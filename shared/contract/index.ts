@@ -5,4 +5,4 @@
 // Last Modified on :
 
 export { BECP_CREDENTIAL_ABI } from "./abi";
-export { getContractAddress, DEPLOYED_ADDRESSES } from "./addresses";
+export { getContractAddress, nftExplorerUrl, addressExplorerUrl, DEPLOYED_ADDRESSES } from "./addresses";

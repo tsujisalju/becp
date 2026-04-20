@@ -9,6 +9,7 @@
 
 import { Fragment } from "react";
 import { usePathname } from "next/navigation";
+import { useBreadcrumbLabel } from "@/components/ui/breadcrumb-label-context";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -93,6 +94,7 @@ function buildCrumbs(pathname: string): Crumb[] {
 export default function DashboardHeader() {
   const pathname = usePathname();
   const crumbs = buildCrumbs(pathname);
+  const { leafLabel } = useBreadcrumbLabel();
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2">
@@ -108,7 +110,7 @@ export default function DashboardHeader() {
 
                 {/* Ancestor items collapse on small screens; the current page is always visible */}
                 <BreadcrumbItem className={!isLeaf ? "hidden md:block" : undefined}>
-                  {isLeaf ? <BreadcrumbPage>{label}</BreadcrumbPage> : <BreadcrumbLink href={href}>{label}</BreadcrumbLink>}
+                  {isLeaf ? <BreadcrumbPage>{isLeaf && leafLabel ? leafLabel : label}</BreadcrumbPage> : <BreadcrumbLink href={href}>{label}</BreadcrumbLink>}
                 </BreadcrumbItem>
               </Fragment>
             ))}

@@ -258,9 +258,9 @@ task({ id: "taskName", description: "...", action: async (args, hre) => {} });
 
 ---
 
-## R6 — What's Next
+## R5 — What's Next
 
-### R6.1 — Centralized database (replace JSON file stores)
+### R5.1 — Centralized database (replace JSON file stores)
 
 Currently, two off-chain stores use local JSON files:
 - `/api/profile/[address]` — student/organizer/admin profiles (`displayName`, `bio`, `careerGoal`, `avatarUri`)
@@ -270,7 +270,7 @@ Replace both with a proper database. Selection criteria: easy setup, reasonable 
 
 **Also in scope:** Profile edit pages for organizer and university admin roles (student profile edit already exists).
 
-### R6.2 — Credential and event images
+### R5.2 — Credential and event images
 
 Extend `CredentialTypeMetadata` in `shared/types/credential.ts` to include:
 - `becp_certificate_image` — image shown on the credential card / PDF certificate
@@ -278,11 +278,11 @@ Extend `CredentialTypeMetadata` in `shared/types/credential.ts` to include:
 
 Update the organizer credential type registration form to accept image uploads (upload to IPFS via Pinata, same pattern as existing metadata upload). Show image covers in `credential-card.tsx` and the events marketplace card component.
 
-### R6.3 — Event detail page
+### R5.3 — Event detail page
 
 Clicking an event card in the student events marketplace should navigate to a dedicated event detail page (`/events/[tokenId]` or similar) showing full event information: description, criteria, skills awarded, organizer info, issue count, and a claim/verify CTA.
 
-### R6.4 — UX polish
+### R5.4 — UX polish
 
 - Fix random greeting in student dashboard re-generating on every re-render — should be stable after first mount (use `useRef` or `useState` with a stable initial value, not a `useMemo` that depends on render state)
 

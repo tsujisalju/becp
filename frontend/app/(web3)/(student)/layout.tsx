@@ -7,6 +7,7 @@
 // Last Modified on : Saturday, 14-Mar-2026
 
 import { RoleGuard } from "@/components/auth/RoleGuard";
+import { BreadcrumbLabelProvider } from "@/components/ui/breadcrumb-label-context";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { StudentSidebar } from "@/components/ui/student-sidebar";
 import { ReactNode } from "react";
@@ -17,13 +18,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <RoleGuard allowedRoles={["student"]}>
       <TooltipProvider>
-        <SidebarProvider>
-          <StudentSidebar />
-          <SidebarInset>
-            <DashboardHeader />
-            {children}
-          </SidebarInset>
-        </SidebarProvider>
+        <BreadcrumbLabelProvider>
+          <SidebarProvider>
+            <StudentSidebar />
+            <SidebarInset>
+              <DashboardHeader />
+              {children}
+            </SidebarInset>
+          </SidebarProvider>
+        </BreadcrumbLabelProvider>
       </TooltipProvider>
     </RoleGuard>
   );

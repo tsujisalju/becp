@@ -13,7 +13,7 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@/components/u
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { BECP_CREDENTIAL_ABI, CHAIN, ipfsToHttp } from "@becp/shared";
+import { addressExplorerUrl, BECP_CREDENTIAL_ABI, ipfsToHttp, nftExplorerUrl } from "@becp/shared";
 import { useForm } from "@tanstack/react-form";
 import { CircleAlert, CircleCheck, CircleX, ExternalLink, ScanSearch } from "lucide-react";
 import Link from "next/link";
@@ -45,7 +45,7 @@ function Row({ label, value, mono }: { label: string; value: string; mono?: bool
 }
 
 function VerifySuccess({ result }: { result: VerifyResult }) {
-  const explorerUrl = `${CHAIN.OP_SEPOLIA.blockExplorer}/address/${result.holderAddress}`;
+  const explorerUrl = addressExplorerUrl(result.holderAddress);
   const ipfsUrl = result.tokenUri.startsWith("ipfs://") ? ipfsToHttp(result.tokenUri) : result.tokenUri;
 
   return (

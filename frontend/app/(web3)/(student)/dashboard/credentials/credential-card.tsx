@@ -13,12 +13,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HydratedCredential } from "@/hooks/useStudentCredentials";
-import { CATEGORY_LABELS, CHAIN, ipfsToHttp, ROUTES, SKILL_CATEGORY_COLOURS } from "@becp/shared";
+import { CATEGORY_LABELS, ipfsToHttp, nftExplorerUrl, ROUTES, SKILL_CATEGORY_COLOURS } from "@becp/shared";
 import { format } from "date-fns";
 import { encode } from "uqr";
-import { Award, CalendarDays, Check, Clock, Copy, ExternalLink, FileBadge, Share2 } from "lucide-react";
+import { Award, CalendarDays, Check, Clock, Copy, ExternalLink, Share2, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -130,48 +131,129 @@ function ShareDialog({ tokenId, holderAddress }: { tokenId: bigint; holderAddres
 
 export function CredentialCard({ credential, holderAddress }: CredentialCardProps) {
   const { tokenId, tokenURI, metadata, isMetadataLoading } = credential;
+  const [open, setOpen] = useState(false);
 
   if (isMetadataLoading) {
     return <CredentialCardSkeleton />;
   }
 
-  const explorerUrl = `${CHAIN.OP_SEPOLIA.blockExplorer}/token/${tokenId.toString()}`;
+  const explorerUrl = nftExplorerUrl(tokenId);
   const ipfsUrl = tokenURI ? ipfsToHttp(tokenURI) : null;
 
   return (
-    <Card className={"relative overflow-hidden pt-0"}>
-      <>
-        <div className="absolute inset-0 z-30 aspect-3/1" />
-        <div className="relative z-20 aspect-3/1 w-full flex items-center justify-center bg-black/5">
-          {metadata?.becp_certificate_image ? (
-            <Image src={ipfsToHttp(metadata.becp_certificate_image)} alt={metadata.name} fill className="object-cover" />
-          ) : (
-            <FileBadge className="size-8 opacity-50" />
+    <Drawer direction="right" open={open} onOpenChange={setOpen}>
+      <Card
+        className="relative overflow-hidden pt-0 cursor-pointer hover:shadow-md transition-shadow"
+        onClick={() => setOpen(true)}
+      >
+        <div className="relative aspect-2/1 w-full flex items-center justify-center bg-muted">
+          {metadata?.becp_certificate_image && (
+            <>
+              <Image src={ipfsToHttp(metadata.becp_certificate_image)} alt={metadata.name} fill className="object-cover opacity-50 blur-sm" />
+              <Image src={ipfsToHttp(metadata.becp_certificate_image)} alt={metadata.name} fill className="object-contain" />
+            </>
           )}
         </div>
-      </>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Award />
-          <span>{metadata?.name ?? `Credential #${tokenId}`}</span>
-        </CardTitle>
-        <CardDescription>
-          <div className="flex items-center gap-2 flex-wrap -ml-1">
-            <Badge variant="secondary" className="font-mono">
-              Token #{tokenId.toString()}
-            </Badge>
-            {metadata?.becp_activity_category && (
-              <Badge variant="outline">
-                {CATEGORY_LABELS[metadata.becp_activity_category] ?? metadata.becp_activity_category}
-              </Badge>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Award />
+            <span>{metadata?.name ?? `Credential #${tokenId}`}</span>
+          </CardTitle>
+          <CardDescription>
+            <div className="flex items-center gap-2 flex-wrap -ml-1">
+              <Badge variant="secondary" className="font-mono">Token #{tokenId.toString()}</Badge>
+              {metadata?.becp_activity_category && (
+                <Badge variant="outline">
+                  {CATEGORY_LABELS[metadata.becp_activity_category] ?? metadata.becp_activity_category}
+                </Badge>
+              )}
+            </div>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col space-y-3">
+            {metadata?.description && <p className="text-sm text-muted-foreground line-clamp-2">{metadata.description}</p>}
+            <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+              {metadata?.becp_activity_date && (
+                <span className="flex items-center gap-1">
+                  <CalendarDays className="size-3.5" />
+                  {format(new Date(metadata.becp_activity_date), "d MMM yyyy")}
+                </span>
+              )}
+              {metadata?.becp_activity_duration_hours != null && (
+                <span className="flex items-center gap-1">
+                  <Clock className="size-3.5" />
+                  {metadata.becp_activity_duration_hours}h
+                </span>
+              )}
+              {metadata?.becp_issuer_name && (
+                <span className="text-muted-foreground">
+                  Issued by <span className="font-medium text-foreground">{metadata.becp_issuer_name}</span>
+                </span>
+              )}
+            </div>
+            {metadata?.becp_skills && metadata.becp_skills.length > 0 && (
+              <div className="-ml-1 flex flex-wrap gap-1.5">
+                {metadata.becp_skills.map((skill) => (
+                  <Badge key={skill.id} className={SKILL_CATEGORY_COLOURS[skill.category] ?? "bg-muted text-muted-foreground"}>
+                    {skill.label}
+                    <span className="ml-1 opacity-60">×{skill.weight}</span>
+                  </Badge>
+                ))}
+              </div>
             )}
           </div>
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col space-y-3">
-          {metadata?.description && <p className="text-sm text-muted-foreground line-clamp-2">{metadata.description}</p>}
+        </CardContent>
+        {/* stopPropagation on the footer prevents any button click from opening the drawer */}
+        <CardFooter className="grow items-end" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full flex flex-row justify-between">
+            <ShareDialog tokenId={tokenId} holderAddress={holderAddress} />
+            <div className="flex flex-row space-x-2">
+              <Button asChild variant="ghost" size="sm">
+                <Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
+                  Explorer <ExternalLink />
+                </Link>
+              </Button>
+              {ipfsUrl && (
+                <Button asChild variant="ghost" size="sm">
+                  <Link href={ipfsUrl} target="_blank" rel="noopener noreferrer">
+                    Metadata (IPFS) <ExternalLink />
+                  </Link>
+                </Button>
+              )}
+            </div>
+          </div>
+        </CardFooter>
+      </Card>
 
+      <DrawerContent>
+        <DrawerHeader className="flex flex-row items-start justify-between border-b pb-4">
+          <div>
+            <DrawerTitle>{metadata?.name ?? `Credential #${tokenId}`}</DrawerTitle>
+            <div className="flex items-center gap-2 flex-wrap mt-1.5">
+              <Badge variant="secondary" className="font-mono">Token #{tokenId.toString()}</Badge>
+              {metadata?.becp_activity_category && (
+                <Badge variant="outline">
+                  {CATEGORY_LABELS[metadata.becp_activity_category] ?? metadata.becp_activity_category}
+                </Badge>
+              )}
+            </div>
+          </div>
+          <DrawerClose asChild>
+            <Button variant="ghost" size="icon-sm" className="shrink-0"><X /></Button>
+          </DrawerClose>
+        </DrawerHeader>
+
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {metadata?.becp_certificate_image && (
+            <div className="relative w-full aspect-2/1 rounded-lg overflow-hidden bg-muted">
+              <Image src={ipfsToHttp(metadata.becp_certificate_image)} alt={metadata.name} fill className="object-cover opacity-50 blur-sm" />
+              <Image src={ipfsToHttp(metadata.becp_certificate_image)} alt={metadata.name} fill className="object-contain" />
+            </div>
+          )}
+          {metadata?.description && (
+            <p className="text-sm leading-relaxed">{metadata.description}</p>
+          )}
           <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
             {metadata?.becp_activity_date && (
               <span className="flex items-center gap-1">
@@ -186,44 +268,40 @@ export function CredentialCard({ credential, holderAddress }: CredentialCardProp
               </span>
             )}
             {metadata?.becp_issuer_name && (
-              <span className="text-muted-foreground">
-                Issued by <span className="font-medium text-foreground">{metadata.becp_issuer_name}</span>
-              </span>
+              <span>Issued by <span className="font-medium text-foreground">{metadata.becp_issuer_name}</span></span>
             )}
           </div>
           {metadata?.becp_skills && metadata.becp_skills.length > 0 && (
-            <div className="-ml-1 flex flex-wrap gap-1.5">
-              {metadata.becp_skills.map((skill) => (
-                <Badge key={skill.id} className={SKILL_CATEGORY_COLOURS[skill.category] ?? "bg-muted text-muted-foreground"}>
-                  {skill.label}
-                  <span className="ml-1 opacity-60">×{skill.weight}</span>
-                </Badge>
-              ))}
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Skills</p>
+              <div className="flex flex-wrap gap-1.5">
+                {metadata.becp_skills.map((skill) => (
+                  <Badge key={skill.id} className={SKILL_CATEGORY_COLOURS[skill.category] ?? "bg-muted text-muted-foreground"}>
+                    {skill.label}
+                    <span className="ml-1 opacity-60">×{skill.weight}</span>
+                  </Badge>
+                ))}
+              </div>
             </div>
           )}
         </div>
-      </CardContent>
-      <CardFooter className="grow items-end">
-        <div className="w-full flex flex-row justify-between">
+
+        <DrawerFooter className="border-t flex-row flex-wrap gap-2 items-center">
           <ShareDialog tokenId={tokenId} holderAddress={holderAddress} />
-          <div className="flex flex-row space-x-2">
+          <Button asChild variant="outline" size="sm">
+            <Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
+              Explorer <ExternalLink />
+            </Link>
+          </Button>
+          {ipfsUrl && (
             <Button asChild variant="ghost" size="sm">
-              <Link href={explorerUrl} target="_blank" rel="noopener noreferrer">
-                Explorer
-                <ExternalLink />
+              <Link href={ipfsUrl} target="_blank" rel="noopener noreferrer">
+                Metadata (IPFS) <ExternalLink />
               </Link>
             </Button>
-            {ipfsUrl && (
-              <Button asChild variant="ghost" size="sm">
-                <Link href={ipfsUrl} target="_blank" rel="noopener noreferrer">
-                  Metadata (IPFS)
-                  <ExternalLink />
-                </Link>
-              </Button>
-            )}
-          </div>
-        </div>
-      </CardFooter>
-    </Card>
+          )}
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }
