@@ -58,22 +58,19 @@ export function EventCard({ event }: EventCardProps) {
   return (
     <Link href={ROUTES.EVENT_DETAIL(event.tokenId.toString())} className="block">
       <Card
-        className={`relative overflow-hidden pt-0 cursor-pointer hover:shadow-md transition-shadow ${isEarned ? "ring-2 ring-emerald-400/60 border-emerald-200" : ""}`}
+        className={`relative overflow-hidden ${metadata?.becp_certificate_image && "pt-0"} cursor-pointer hover:shadow-md transition-shadow ${isEarned ? "ring-2 ring-emerald-400/60 border-emerald-200" : ""}`}
       >
-        <div className="relative aspect-2/1 w-full flex items-center justify-center bg-muted">
-          {metadata?.becp_event_image && (
-            <>
-              <Image
-                src={ipfsToHttp(metadata.becp_event_image)}
-                alt={metadata.name}
-                fill
-                className="object-cover opacity-50 blur-sm"
-              />
-              <Image src={ipfsToHttp(metadata.becp_event_image)} alt={metadata.name} fill className="object-contain" />
-            </>
-          )}
-        </div>
-
+        {metadata?.becp_event_image && (
+          <div className="relative aspect-2/1 w-full flex items-center justify-center bg-muted">
+            <Image
+              src={ipfsToHttp(metadata.becp_event_image)}
+              alt={metadata.name}
+              fill
+              className="object-cover opacity-50 blur-sm"
+            />
+            <Image src={ipfsToHttp(metadata.becp_event_image)} alt={metadata.name} fill className="object-contain" />
+          </div>
+        )}
         <CardHeader>
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="text-base leading-snug">{metadata?.name ?? `Credential Type #${event.tokenId}`}</CardTitle>

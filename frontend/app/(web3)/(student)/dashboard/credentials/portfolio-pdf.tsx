@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12,
     marginBottom: 20,
+    marginTop: 16,
   },
   statBox: {
     flex: 1,
@@ -102,6 +103,15 @@ const styles = StyleSheet.create({
     fontFamily: "Helvetica-Bold",
     marginBottom: 8,
     marginTop: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: BORDER,
+    borderBottomStyle: "solid",
+    paddingBottom: 4,
+  },
+  sectionTitleTop: {
+    fontSize: 11,
+    fontFamily: "Helvetica-Bold",
+    marginBottom: 8,
     borderBottomWidth: 1,
     borderBottomColor: BORDER,
     borderBottomStyle: "solid",
@@ -217,6 +227,7 @@ function QRCodePDF({ value, size = 60 }: { value: string; size?: number }) {
 interface PortfolioPDFDocumentProps {
   displayName: string;
   address: string;
+  bio?: string;
   credentials: HydratedCredential[];
   skillScores: AggregatedSkillScore[];
   stats: StudentStats;
@@ -224,7 +235,14 @@ interface PortfolioPDFDocumentProps {
 
 // ── Document ──────────────────────────────────────────────────────────────────
 
-export function PortfolioPDFDocument({ displayName, address, credentials, skillScores, stats }: PortfolioPDFDocumentProps) {
+export function PortfolioPDFDocument({
+  displayName,
+  address,
+  bio,
+  credentials,
+  skillScores,
+  stats,
+}: PortfolioPDFDocumentProps) {
   const generatedDate = format(new Date(), "d MMMM yyyy");
   const topSkills = skillScores.slice(0, 10);
   const readyCredentials = credentials.filter((c) => c.metadata !== null);
@@ -247,6 +265,14 @@ export function PortfolioPDFDocument({ displayName, address, credentials, skillS
           <Text style={styles.addressRow}>Wallet: {address}</Text>
           <Text style={styles.generatedDate}>Generated on {generatedDate} · Optimism Blockchain</Text>
         </View>
+
+        {/* ── Summary ── */}
+        {bio && (
+          <>
+            <Text style={styles.sectionTitleTop}>Summary</Text>
+            <Text style={{ fontSize: 9, color: "#374151", lineHeight: 1.5 }}>{bio}</Text>
+          </>
+        )}
 
         {/* ── Stats ── */}
         <View style={styles.statsRow}>

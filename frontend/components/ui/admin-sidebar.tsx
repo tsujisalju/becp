@@ -17,7 +17,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { ROUTES } from "@becp/shared";
-import { Calendars, FileBadge, SquareChartGantt } from "lucide-react";
+import { Calendars, FileBadge, SquareChartGantt, UserCircle2 } from "lucide-react";
 import Link from "next/link";
 import ConnectWalletSidebar from "./connect-wallet-sidebar";
 
@@ -36,6 +36,11 @@ const items = [
     title: "Credentials",
     url: `${ROUTES.ADMIN}/credentials`,
     icon: <FileBadge />,
+  },
+  {
+    title: "Profile",
+    url: ROUTES.ADMIN_PROFILE,
+    icon: <UserCircle2 />,
   },
 ];
 

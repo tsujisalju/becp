@@ -59,22 +59,21 @@ export function CredentialTypeCard({ credentialType }: CredentialTypeCardProps) 
   return (
     <Drawer direction="right" open={open} onOpenChange={setOpen}>
       <Card
-        className={`relative overflow-hidden pt-0 cursor-pointer hover:shadow-md transition-shadow ${!active ? "opacity-60" : ""}`}
+        className={`relative overflow-hidden ${metadata?.becp_certificate_image && "pt-0"} cursor-pointer hover:shadow-md transition-shadow ${!active ? "opacity-60" : ""}`}
         onClick={() => setOpen(true)}
       >
-        <div className="relative aspect-2/1 w-full flex items-center justify-center bg-muted">
-          {metadata?.becp_event_image && (
-            <>
-              <Image
-                src={ipfsToHttp(metadata.becp_event_image)}
-                alt={metadata.name}
-                fill
-                className="object-cover opacity-50 blur-sm"
-              />
-              <Image src={ipfsToHttp(metadata.becp_event_image)} alt={metadata.name} fill className="object-contain" />
-            </>
-          )}
-        </div>
+        {" "}
+        {metadata?.becp_event_image && (
+          <div className="relative aspect-2/1 w-full flex items-center justify-center bg-muted">
+            <Image
+              src={ipfsToHttp(metadata.becp_event_image)}
+              alt={metadata.name}
+              fill
+              className="object-cover opacity-50 blur-sm"
+            />
+            <Image src={ipfsToHttp(metadata.becp_event_image)} alt={metadata.name} fill className="object-contain" />
+          </div>
+        )}
         <CardHeader>
           <CardTitle>{metadata?.name ?? `Credential Type #${tokenId}`}</CardTitle>
           <CardDescription>
@@ -172,32 +171,49 @@ export function CredentialTypeCard({ credentialType }: CredentialTypeCardProps) 
           <div>
             <DrawerTitle>{metadata?.name ?? `Credential Type #${tokenId}`}</DrawerTitle>
             <div className="flex items-center gap-2 flex-wrap mt-1.5">
-              <Badge variant="secondary" className="font-mono">Token #{tokenId.toString()}</Badge>
+              <Badge variant="secondary" className="font-mono">
+                Token #{tokenId.toString()}
+              </Badge>
               {metadata?.becp_activity_category && (
                 <Badge variant="outline">
                   {CATEGORY_LABELS[metadata.becp_activity_category] ?? metadata.becp_activity_category}
                 </Badge>
               )}
               <Badge className={`${active ? "bg-emerald-50 text-emerald-700" : "bg-muted"}`}>
-                {active ? <><CheckCircle className="size-3" />Active</> : <><XCircle className="size-3" />Inactive</>}
+                {active ? (
+                  <>
+                    <CheckCircle className="size-3" />
+                    Active
+                  </>
+                ) : (
+                  <>
+                    <XCircle className="size-3" />
+                    Inactive
+                  </>
+                )}
               </Badge>
             </div>
           </div>
           <DrawerClose asChild>
-            <Button variant="ghost" size="icon-sm" className="shrink-0"><X /></Button>
+            <Button variant="ghost" size="icon-sm" className="shrink-0">
+              <X />
+            </Button>
           </DrawerClose>
         </DrawerHeader>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {metadata?.becp_event_image && (
             <div className="relative w-full aspect-2/1 rounded-lg overflow-hidden bg-muted">
-              <Image src={ipfsToHttp(metadata.becp_event_image)} alt={metadata.name} fill className="object-cover opacity-50 blur-sm" />
+              <Image
+                src={ipfsToHttp(metadata.becp_event_image)}
+                alt={metadata.name}
+                fill
+                className="object-cover opacity-50 blur-sm"
+              />
               <Image src={ipfsToHttp(metadata.becp_event_image)} alt={metadata.name} fill className="object-contain" />
             </div>
           )}
-          {metadata?.description && (
-            <p className="text-sm leading-relaxed">{metadata.description}</p>
-          )}
+          {metadata?.description && <p className="text-sm leading-relaxed">{metadata.description}</p>}
           <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
             {metadata?.becp_activity_date && (
               <span className="flex items-center gap-1">
@@ -213,7 +229,8 @@ export function CredentialTypeCard({ credentialType }: CredentialTypeCardProps) 
             )}
             <span>Registered {format(new Date(Number(registeredAt) * 1000), "d MMM yyyy")}</span>
             <span>
-              Issued to <span className="font-medium text-foreground">{credentialType.issuedCount.toString()}</span> student{Number(credentialType.issuedCount) !== 1 ? "s" : ""}
+              Issued to <span className="font-medium text-foreground">{credentialType.issuedCount.toString()}</span> student
+              {Number(credentialType.issuedCount) !== 1 ? "s" : ""}
             </span>
           </div>
           {metadata?.becp_skills && metadata.becp_skills.length > 0 && (

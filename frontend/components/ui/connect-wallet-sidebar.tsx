@@ -18,14 +18,32 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRole } from "@/hooks/useRole";
 import { useStudentProfile } from "@/hooks/useStudentProfile";
-import { roleLabel } from "@becp/shared";
+import { roleLabel, ROUTES } from "@becp/shared";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { CircleUserRound, EllipsisVertical, User, Wallet } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function ConnectWalletSidebar() {
   const { profile } = useStudentProfile();
   const { role } = useRole();
+  const router = useRouter();
+
+  const openProfileSettings = () => {
+    if (role == "student") {
+      router.push(ROUTES.PROFILE);
+      return;
+    }
+    if (role == "organizer") {
+      router.push(ROUTES.ORGANIZER_PROFILE);
+      return;
+    }
+    if (role == "university_admin") {
+      router.push(ROUTES.ADMIN_PROFILE);
+      return;
+    }
+  };
+
   return (
     <ConnectButton.Custom>
       {({ account, chain, openAccountModal, openChainModal, authenticationStatus, mounted }) => {
@@ -108,7 +126,7 @@ export default function ConnectWalletSidebar() {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onSelect={openProfileSettings}>
                       <CircleUserRound />
                       Profile
                     </DropdownMenuItem>

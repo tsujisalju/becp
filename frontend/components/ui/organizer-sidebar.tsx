@@ -17,7 +17,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { ROUTES } from "@becp/shared";
-import { CalendarFold, FilePlusCorner, SquareChartGantt } from "lucide-react";
+import { CalendarFold, FilePlusCorner, SquareChartGantt, UserCircle2 } from "lucide-react";
 import Link from "next/link";
 import ConnectWalletSidebar from "./connect-wallet-sidebar";
 
@@ -36,6 +36,11 @@ const items = [
     title: "Issue Credentials",
     url: ROUTES.ORGANIZER_ISSUE,
     icon: <FilePlusCorner />,
+  },
+  {
+    title: "Profile",
+    url: ROUTES.ORGANIZER_PROFILE,
+    icon: <UserCircle2 />,
   },
 ];
 

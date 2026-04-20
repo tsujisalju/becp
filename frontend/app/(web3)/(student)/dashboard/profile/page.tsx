@@ -12,7 +12,10 @@ import ProfileEditForm from "./profile-edit-form";
 export default function CredentialsPage() {
   return (
     <div className="px-6 flex flex-col space-y-4">
-      <PageHeader title="My Profile" desc="Display name and career information shown on your public credential portfolio." />
+      <PageHeader
+        title="My Profile"
+        desc="Display information to be shown on your public credential portfolio, and career goal for skill and event recommendations."
+      />
       <ProfileEditForm />
     </div>
   );

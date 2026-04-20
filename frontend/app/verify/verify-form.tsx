@@ -13,7 +13,7 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from "@/components/u
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { addressExplorerUrl, BECP_CREDENTIAL_ABI, ipfsToHttp, nftExplorerUrl } from "@becp/shared";
+import { addressExplorerUrl, BECP_CREDENTIAL_ABI, ipfsToHttp } from "@becp/shared";
 import { useForm } from "@tanstack/react-form";
 import { CircleAlert, CircleCheck, CircleX, ExternalLink, ScanSearch } from "lucide-react";
 import Link from "next/link";

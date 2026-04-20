@@ -121,7 +121,7 @@ export default function ProfileEditForm() {
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 <FieldDescription className="text-xs">
-                  Shown on your public credential portfolio page. Defaults to your shortened wallet address.
+                  Shown as your name on your public credential portfolio. Defaults to your shortened wallet address.
                 </FieldDescription>
               </Field>
             );
@@ -141,7 +141,7 @@ export default function ProfileEditForm() {
                     value={field.state.value ?? ""}
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder="A short introduction shown to recruiters viewing your credentials..."
+                    placeholder="A short summary shown to recruiters viewing your credentials..."
                     maxLength={maxLength}
                     rows={6}
                     aria-invalid={isInvalid}
@@ -153,7 +153,7 @@ export default function ProfileEditForm() {
                   </InputGroupAddon>
                 </InputGroup>
                 <FieldDescription className="text-xs">
-                  Shown on your public credential portfolio page. Defaults to your shortened wallet address.
+                  Shown as your summary on your public credential portfolio. None displayed if left empty.
                 </FieldDescription>
               </Field>
             );

@@ -143,17 +143,20 @@ export function CredentialCard({ credential, holderAddress }: CredentialCardProp
   return (
     <Drawer direction="right" open={open} onOpenChange={setOpen}>
       <Card
-        className="relative overflow-hidden pt-0 cursor-pointer hover:shadow-md transition-shadow"
+        className={`relative overflow-hidden ${metadata?.becp_certificate_image && "pt-0"} cursor-pointer hover:shadow-md transition-shadow`}
         onClick={() => setOpen(true)}
       >
-        <div className="relative aspect-2/1 w-full flex items-center justify-center bg-muted">
-          {metadata?.becp_certificate_image && (
-            <>
-              <Image src={ipfsToHttp(metadata.becp_certificate_image)} alt={metadata.name} fill className="object-cover opacity-50 blur-sm" />
-              <Image src={ipfsToHttp(metadata.becp_certificate_image)} alt={metadata.name} fill className="object-contain" />
-            </>
-          )}
-        </div>
+        {metadata?.becp_certificate_image && (
+          <div className="relative aspect-2/1 w-full flex items-center justify-center bg-muted">
+            <Image
+              src={ipfsToHttp(metadata.becp_certificate_image)}
+              alt={metadata.name}
+              fill
+              className="object-cover opacity-50 blur-sm"
+            />
+            <Image src={ipfsToHttp(metadata.becp_certificate_image)} alt={metadata.name} fill className="object-contain" />
+          </div>
+        )}
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Award />
@@ -161,7 +164,9 @@ export function CredentialCard({ credential, holderAddress }: CredentialCardProp
           </CardTitle>
           <CardDescription>
             <div className="flex items-center gap-2 flex-wrap -ml-1">
-              <Badge variant="secondary" className="font-mono">Token #{tokenId.toString()}</Badge>
+              <Badge variant="secondary" className="font-mono">
+                Token #{tokenId.toString()}
+              </Badge>
               {metadata?.becp_activity_category && (
                 <Badge variant="outline">
                   {CATEGORY_LABELS[metadata.becp_activity_category] ?? metadata.becp_activity_category}
@@ -231,7 +236,9 @@ export function CredentialCard({ credential, holderAddress }: CredentialCardProp
           <div>
             <DrawerTitle>{metadata?.name ?? `Credential #${tokenId}`}</DrawerTitle>
             <div className="flex items-center gap-2 flex-wrap mt-1.5">
-              <Badge variant="secondary" className="font-mono">Token #{tokenId.toString()}</Badge>
+              <Badge variant="secondary" className="font-mono">
+                Token #{tokenId.toString()}
+              </Badge>
               {metadata?.becp_activity_category && (
                 <Badge variant="outline">
                   {CATEGORY_LABELS[metadata.becp_activity_category] ?? metadata.becp_activity_category}
@@ -240,20 +247,25 @@ export function CredentialCard({ credential, holderAddress }: CredentialCardProp
             </div>
           </div>
           <DrawerClose asChild>
-            <Button variant="ghost" size="icon-sm" className="shrink-0"><X /></Button>
+            <Button variant="ghost" size="icon-sm" className="shrink-0">
+              <X />
+            </Button>
           </DrawerClose>
         </DrawerHeader>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {metadata?.becp_certificate_image && (
             <div className="relative w-full aspect-2/1 rounded-lg overflow-hidden bg-muted">
-              <Image src={ipfsToHttp(metadata.becp_certificate_image)} alt={metadata.name} fill className="object-cover opacity-50 blur-sm" />
+              <Image
+                src={ipfsToHttp(metadata.becp_certificate_image)}
+                alt={metadata.name}
+                fill
+                className="object-cover opacity-50 blur-sm"
+              />
               <Image src={ipfsToHttp(metadata.becp_certificate_image)} alt={metadata.name} fill className="object-contain" />
             </div>
           )}
-          {metadata?.description && (
-            <p className="text-sm leading-relaxed">{metadata.description}</p>
-          )}
+          {metadata?.description && <p className="text-sm leading-relaxed">{metadata.description}</p>}
           <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
             {metadata?.becp_activity_date && (
               <span className="flex items-center gap-1">
@@ -268,7 +280,9 @@ export function CredentialCard({ credential, holderAddress }: CredentialCardProp
               </span>
             )}
             {metadata?.becp_issuer_name && (
-              <span>Issued by <span className="font-medium text-foreground">{metadata.becp_issuer_name}</span></span>
+              <span>
+                Issued by <span className="font-medium text-foreground">{metadata.becp_issuer_name}</span>
+              </span>
             )}
           </div>
           {metadata?.becp_skills && metadata.becp_skills.length > 0 && (

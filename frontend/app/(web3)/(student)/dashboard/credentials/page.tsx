@@ -189,6 +189,7 @@ export default function CredentialsPage() {
               <PortfolioPDFDocument
                 displayName={displayName}
                 address={address}
+                bio={profile?.bio}
                 credentials={credentials}
                 skillScores={skillScores}
                 stats={stats}

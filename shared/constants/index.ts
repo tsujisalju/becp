@@ -106,11 +106,13 @@ export const ROUTES = {
   ORGANIZER_PORTAL: '/organizer',
   ORGANIZER_EVENTS: '/organizer/events',
   ORGANIZER_ISSUE: '/organizer/issue',
+  ORGANIZER_PROFILE: '/organizer/profile',
 
   // Admin
   ADMIN: '/admin',
   ADMIN_ORGANIZERS: '/admin/organizers',
   ADMIN_CREDENTIALS: '/admin/credentials',
+  ADMIN_PROFILE: '/admin/profile',
 
   // Auth
   CONNECT: '/connect',
