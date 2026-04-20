@@ -1,56 +1,93 @@
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
 // Program Name     : frontend/tests/unit/api-profile.test.ts
 // Description      : Unit tests for the /api/profile/[address] route handler.
-//                    Tests GET and PUT behaviour including validation, file I/O,
+//                    Tests GET and PUT behaviour including validation, DB reads/writes,
 //                    field merging and error responses — all without a running
-//                    Next.js server.
+//                    Next.js server or real database connection.
 // First Written on : Saturday, 14-Mar-2026
-// Last Written on  : Sunday, 15-Mar-2026
+// Last Written on  : Tuesday, 21-Apr-2026
 
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
-// ── fs/promises mock ──────────────────────────────────────────────────────────
-// The route handler reads and writes JSON files under .becp-profiles/.
-// We replace fs/promises entirely so no real files are touched during tests.
+// ── DB mock ───────────────────────────────────────────────────────────────────
+// Simulates the Drizzle query builder chain without a real Neon connection.
+// select().from().where() returns whatever is in profileStore for that address.
+// insert().values().onConflictDoUpdate().returning() upserts and returns the row.
 
-const mockFiles = new Map<string, string>();
+type ProfileRow = {
+  address: string;
+  displayName: string | null;
+  bio: string | null;
+  careerGoal: string | null;
+  avatarUri: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
-vi.mock("fs/promises", () => ({
-  default: {
-    mkdir: vi.fn().mockResolvedValue(undefined),
-    readFile: vi.fn(async (filePath: string) => {
-      const content = mockFiles.get(filePath);
-      if (!content) {
-        const err = new Error("ENOENT") as NodeJS.ErrnoException;
-        err.code = "ENOENT";
-        throw err;
+const profileStore = new Map<string, ProfileRow>();
+
+// Minimal types for the Drizzle SQL condition object produced by eq().
+// We only need to inspect queryChunks to extract the bound address value.
+interface DrizzleQueryChunk {
+  value?: unknown;
+}
+interface DrizzleCondition {
+  queryChunks?: DrizzleQueryChunk[];
+  sql?: { queryChunks?: DrizzleQueryChunk[] };
+}
+
+// Capture the address being queried in where() by inspecting the SQL object
+// that Drizzle's eq() produces (queryChunks[2] holds the value param).
+function extractAddressFromCondition(condition: DrizzleCondition): string | null {
+  try {
+    const chunks = condition?.queryChunks ?? condition?.sql?.queryChunks;
+    if (Array.isArray(chunks)) {
+      for (const chunk of chunks) {
+        if (chunk?.value !== undefined && typeof chunk.value === "string") {
+          return chunk.value;
+        }
       }
-      return content;
-    }),
-    writeFile: vi.fn(async (filePath: string, content: string) => {
-      mockFiles.set(filePath, content);
-    }),
-  },
-  mkdir: vi.fn().mockResolvedValue(undefined),
-  readFile: vi.fn(async (filePath: string) => {
-    const content = mockFiles.get(filePath);
-    if (!content) {
-      const err = new Error("ENOENT") as NodeJS.ErrnoException;
-      err.code = "ENOENT";
-      throw err;
     }
-    return content;
-  }),
-  writeFile: vi.fn(async (filePath: string, content: string) => {
-    mockFiles.set(filePath, content);
-  }),
-}));
+  } catch {
+    // fall through
+  }
+  return null;
+}
 
-// Import route handlers AFTER mocking fs so the mock is in place when the
-// module is first evaluated.
+vi.mock("@/lib/db", () => {
+  return {
+    db: {
+      select: () => ({
+        from: () => ({
+          where: async (condition: DrizzleCondition) => {
+            const addr = extractAddressFromCondition(condition);
+            if (!addr) return [];
+            const row = profileStore.get(addr);
+            return row ? [row] : [];
+          },
+        }),
+      }),
+      insert: () => ({
+        values: (vals: ProfileRow) => ({
+          onConflictDoUpdate: (opts: { target: unknown; set: Partial<ProfileRow> }) => ({
+            returning: async () => {
+              const existing = profileStore.get(vals.address);
+              const row: ProfileRow = existing
+                ? { ...existing, ...opts.set }
+                : { ...vals };
+              profileStore.set(vals.address, row);
+              return [row];
+            },
+          }),
+        }),
+      }),
+    },
+  };
+});
+
+// Import route handlers AFTER setting up the mock.
 import { GET, PUT } from "@/app/api/profile/[address]/route";
-import path from "path";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -73,16 +110,23 @@ function makePutRequest(address: string, body: object) {
   });
 }
 
-function seedProfile(address: string, profile: object) {
-  const filePath = path.join(process.cwd(), ".becp-profiles", `${address}.json`);
-  mockFiles.set(filePath, JSON.stringify(profile));
+function seedProfile(address: string, profile: Partial<ProfileRow> & { createdAt?: string | Date }) {
+  profileStore.set(address.toLowerCase(), {
+    address: address.toLowerCase(),
+    displayName: profile.displayName ?? null,
+    bio: profile.bio ?? null,
+    careerGoal: profile.careerGoal ?? null,
+    avatarUri: profile.avatarUri ?? null,
+    createdAt: profile.createdAt instanceof Date ? profile.createdAt : new Date(profile.createdAt ?? Date.now()),
+    updatedAt: new Date(),
+  });
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 describe("GET /api/profile/[address]", () => {
   beforeEach(() => {
-    mockFiles.clear();
+    profileStore.clear();
   });
 
   it("returns 400 for an invalid Ethereum address", async () => {
@@ -92,31 +136,25 @@ describe("GET /api/profile/[address]", () => {
     expect(body.error).toBeDefined();
   });
 
-  it("returns 404 when no profile file exists for the address", async () => {
+  it("returns 404 when no profile exists for the address", async () => {
     const res = await GET(makeGetRequest(VALID_ADDRESS), makeParams(VALID_ADDRESS));
     expect(res.status).toBe(404);
   });
 
-  it("returns the profile JSON when a file exists", async () => {
-    const stored = {
-      address: VALID_ADDRESS,
-      displayName: "Qayyum",
-      createdAt: "2026-03-14T00:00:00.000Z",
-      updatedAt: "2026-03-14T00:00:00.000Z",
-    };
-    seedProfile(VALID_ADDRESS, stored);
+  it("returns the profile when one exists", async () => {
+    seedProfile(VALID_ADDRESS, { displayName: "Qayyum" });
 
     const res = await GET(makeGetRequest(VALID_ADDRESS), makeParams(VALID_ADDRESS));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.displayName).toBe("Qayyum");
-    expect(body.address).toBe(VALID_ADDRESS);
+    expect(body.address).toBe(VALID_ADDRESS.toLowerCase());
   });
 });
 
 describe("PUT /api/profile/[address]", () => {
   beforeEach(() => {
-    mockFiles.clear();
+    profileStore.clear();
   });
 
   it("returns 400 for an invalid Ethereum address", async () => {
@@ -158,52 +196,34 @@ describe("PUT /api/profile/[address]", () => {
 
   it("updates only the provided fields and preserves existing fields", async () => {
     seedProfile(VALID_ADDRESS, {
-      address: VALID_ADDRESS,
       displayName: "Original Name",
       bio: "Original bio",
       careerGoal: "Software Engineer",
-      createdAt: "2026-03-01T00:00:00.000Z",
-      updatedAt: "2026-03-01T00:00:00.000Z",
     });
 
     const res = await PUT(makePutRequest(VALID_ADDRESS, { displayName: "Updated Name" }), makeParams(VALID_ADDRESS));
     const body = await res.json();
     expect(body.displayName).toBe("Updated Name");
-    // Fields not in the PUT body are preserved
     expect(body.bio).toBe("Original bio");
     expect(body.careerGoal).toBe("Software Engineer");
   });
 
   it("preserves the original createdAt timestamp on subsequent updates", async () => {
-    const originalCreatedAt = "2026-03-01T00:00:00.000Z";
-    seedProfile(VALID_ADDRESS, {
-      address: VALID_ADDRESS,
-      displayName: "First",
-      createdAt: originalCreatedAt,
-      updatedAt: originalCreatedAt,
-    });
+    const originalCreatedAt = new Date("2026-03-01T00:00:00.000Z");
+    seedProfile(VALID_ADDRESS, { displayName: "First", createdAt: originalCreatedAt });
 
     const res = await PUT(makePutRequest(VALID_ADDRESS, { displayName: "Second" }), makeParams(VALID_ADDRESS));
     const body = await res.json();
-    expect(body.createdAt).toBe(originalCreatedAt);
-    // updatedAt should be a newer timestamp
-    expect(body.updatedAt).not.toBe(originalCreatedAt);
+    expect(body.createdAt).toBe(originalCreatedAt.toISOString());
+    expect(body.updatedAt).not.toBe(originalCreatedAt.toISOString());
   });
 
   it("allows fields to be explicitly cleared by passing null", async () => {
-    seedProfile(VALID_ADDRESS, {
-      address: VALID_ADDRESS,
-      displayName: "Qayyum",
-      bio: "Some bio",
-      createdAt: "2026-03-01T00:00:00.000Z",
-      updatedAt: "2026-03-01T00:00:00.000Z",
-    });
+    seedProfile(VALID_ADDRESS, { displayName: "Qayyum", bio: "Some bio" });
 
     const res = await PUT(makePutRequest(VALID_ADDRESS, { bio: null }), makeParams(VALID_ADDRESS));
     const body = await res.json();
-    // bio should now be absent or undefined since null was passed
     expect(body.bio).toBeUndefined();
-    // displayName untouched
     expect(body.displayName).toBe("Qayyum");
   });
 });

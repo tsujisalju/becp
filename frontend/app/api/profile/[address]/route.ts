@@ -1,49 +1,23 @@
 // Programmer Name  : Muhammad Qayyum Bin Mahamad Yazid, Software Engineering Degree Student, APU
-// Program Name     : frontend/api/profile/[address]/route.ts
-// Description      : API route for retrieving profile information
-//                    Initially stores data in a JSON file locally as proof-of-concept
-//                    Will migrate to proper database in Phase 4
+// Program Name     : frontend/app/api/profile/[address]/route.ts
+// Description      : API route for retrieving and updating per-wallet profile data
+//                    (displayName, bio, careerGoal, avatarUri). Backed by Neon Postgres
+//                    via Drizzle ORM. GET returns the profile or 404; PUT upserts it.
 // First Written on : Thursday, 12-Mar-2026
-// Last Modified on : Thursday, 12-Mar-2026
+// Last Modified on : Tuesday, 21-Apr-2026
 
-import fs from "fs/promises";
+import { db } from "@/lib/db";
+import { profiles } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import { isAddress } from "viem";
 import { NextRequest, NextResponse } from "next/server";
-import path from "path";
 
-const PROFILES_DIR = path.join(process.cwd(), ".becp-profiles");
-
-async function ensureDir() {
-  await fs.mkdir(PROFILES_DIR, { recursive: true });
-}
-
-function profilePath(address: string) {
-  return path.join(PROFILES_DIR, `${address.toLowerCase()}.json`);
-}
-
-interface Profile {
-  address: string;
-  displayName?: string;
-  bio?: string;
-  careerGoal?: string;
-  avatarUri?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-async function readProfile(address: string): Promise<Profile | null> {
-  try {
-    const raw = await fs.readFile(profilePath(address), "utf-8");
-    return JSON.parse(raw) as Profile;
-  } catch {
-    return null;
-  }
-}
-
-async function writeProfile(profile: Profile) {
-  await ensureDir();
-  await fs.writeFile(profilePath(profile.address), JSON.stringify(profile, null, 2), "utf-8");
-}
+type ProfileUpdate = Partial<{
+  displayName: string | null;
+  bio: string | null;
+  careerGoal: string | null;
+  avatarUri: string | null;
+}>;
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ address: string }> }) {
   const { address } = await params;
@@ -51,20 +25,30 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ add
     return NextResponse.json({ error: "Invalid address" }, { status: 400 });
   }
 
-  const profile = await readProfile(address.toLowerCase());
-  if (!profile) {
+  const rows = await db.select().from(profiles).where(eq(profiles.address, address.toLowerCase()));
+  if (rows.length === 0) {
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
-  return NextResponse.json(profile);
+
+  const row = rows[0];
+  return NextResponse.json({
+    address: row.address,
+    displayName: row.displayName ?? undefined,
+    bio: row.bio ?? undefined,
+    careerGoal: row.careerGoal ?? undefined,
+    avatarUri: row.avatarUri ?? undefined,
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+  });
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ address: string }> }) {
   const { address } = await params;
   if (!isAddress(address)) {
-    return NextResponse.json({ error: "InvalidAddress" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid address" }, { status: 400 });
   }
 
-  let body: Partial<Profile>;
+  let body: ProfileUpdate;
   try {
     body = await req.json();
   } catch {
@@ -72,19 +56,41 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ addr
   }
 
   const addr = address.toLowerCase();
-  const existing = await readProfile(addr);
-  const now = new Date().toISOString();
+  const now = new Date();
 
-  const updated: Profile = {
-    address: addr,
-    displayName: "displayName" in body ? (body.displayName ?? undefined) : existing?.displayName,
-    bio: "bio" in body ? (body.bio ?? undefined) : existing?.bio,
-    careerGoal: "careerGoal" in body ? (body.careerGoal ?? undefined) : existing?.careerGoal,
-    avatarUri: "avatarUri" in body ? (body.avatarUri ?? undefined) : existing?.avatarUri,
-    createdAt: existing?.createdAt ?? now,
-    updatedAt: now,
-  };
+  const existing = await db.select().from(profiles).where(eq(profiles.address, addr));
 
-  await writeProfile(updated);
-  return NextResponse.json(updated);
+  const updated = await db
+    .insert(profiles)
+    .values({
+      address: addr,
+      displayName: "displayName" in body ? (body.displayName ?? null) : (existing[0]?.displayName ?? null),
+      bio: "bio" in body ? (body.bio ?? null) : (existing[0]?.bio ?? null),
+      careerGoal: "careerGoal" in body ? (body.careerGoal ?? null) : (existing[0]?.careerGoal ?? null),
+      avatarUri: "avatarUri" in body ? (body.avatarUri ?? null) : (existing[0]?.avatarUri ?? null),
+      createdAt: existing[0]?.createdAt ?? now,
+      updatedAt: now,
+    })
+    .onConflictDoUpdate({
+      target: profiles.address,
+      set: {
+        displayName: "displayName" in body ? (body.displayName ?? null) : existing[0]?.displayName,
+        bio: "bio" in body ? (body.bio ?? null) : existing[0]?.bio,
+        careerGoal: "careerGoal" in body ? (body.careerGoal ?? null) : existing[0]?.careerGoal,
+        avatarUri: "avatarUri" in body ? (body.avatarUri ?? null) : existing[0]?.avatarUri,
+        updatedAt: now,
+      },
+    })
+    .returning();
+
+  const row = updated[0];
+  return NextResponse.json({
+    address: row.address,
+    displayName: row.displayName ?? undefined,
+    bio: row.bio ?? undefined,
+    careerGoal: row.careerGoal ?? undefined,
+    avatarUri: row.avatarUri ?? undefined,
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+  });
 }

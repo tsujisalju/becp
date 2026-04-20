@@ -2,31 +2,16 @@
 // Program Name     : frontend/app/api/organizer-request/[address]/route.ts
 // Description      : PATCH endpoint to update an organizer request status (approve/reject/revoke).
 //                    Called by the admin after approving or revoking a role on-chain.
+//                    Backed by Neon Postgres via Drizzle ORM.
 // First Written on : Friday, 27-Mar-2026
-// Last Modified on : Friday, 27-Mar-2026
+// Last Modified on : Tuesday, 21-Apr-2026
 
-import fs from "fs/promises";
+import { db } from "@/lib/db";
+import { organizerRequests } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 import { isAddress } from "viem";
 import { NextRequest, NextResponse } from "next/server";
-import path from "path";
-import type { OrganizerRequest, OrganizerRequestStatus } from "../route";
-
-const REQUESTS_DIR = path.join(process.cwd(), ".becp-organizer-requests");
-const REQUESTS_FILE = path.join(REQUESTS_DIR, "requests.json");
-
-async function readRequests(): Promise<OrganizerRequest[]> {
-  try {
-    const raw = await fs.readFile(REQUESTS_FILE, "utf-8");
-    return JSON.parse(raw) as OrganizerRequest[];
-  } catch {
-    return [];
-  }
-}
-
-async function writeRequests(requests: OrganizerRequest[]) {
-  await fs.mkdir(REQUESTS_DIR, { recursive: true });
-  await fs.writeFile(REQUESTS_FILE, JSON.stringify(requests, null, 2), "utf-8");
-}
+import type { OrganizerRequestStatus } from "../route";
 
 const VALID_STATUSES: OrganizerRequestStatus[] = ["approved", "rejected", "revoked", "pending"];
 
@@ -49,19 +34,30 @@ export async function PATCH(
 
   const { status } = body;
   if (!status || !VALID_STATUSES.includes(status as OrganizerRequestStatus)) {
-    return NextResponse.json({ error: `status must be one of: ${VALID_STATUSES.join(", ")}` }, { status: 400 });
+    return NextResponse.json(
+      { error: `status must be one of: ${VALID_STATUSES.join(", ")}` },
+      { status: 400 },
+    );
   }
 
-  const requests = await readRequests();
   const addr = address.toLowerCase();
-  const idx = requests.findIndex((r) => r.address === addr);
+  const updated = await db
+    .update(organizerRequests)
+    .set({ status, updatedAt: new Date() })
+    .where(eq(organizerRequests.address, addr))
+    .returning();
 
-  if (idx === -1) {
+  if (updated.length === 0) {
     return NextResponse.json({ error: "Request not found" }, { status: 404 });
   }
 
-  requests[idx] = { ...requests[idx], status: status as OrganizerRequestStatus };
-  await writeRequests(requests);
-
-  return NextResponse.json(requests[idx]);
+  const row = updated[0];
+  return NextResponse.json({
+    address: row.address,
+    displayName: row.displayName,
+    organization: row.organization,
+    reason: row.reason,
+    status: row.status,
+    requestedAt: row.requestedAt.toISOString(),
+  });
 }
