@@ -13,7 +13,7 @@
 // Last Written on  : Friday, 10-Apr-2026
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { act, screen, waitFor } from "@testing-library/react";
+import { act, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "../test-utils";
 import React from "react";
@@ -27,6 +27,59 @@ vi.mock("next/link", () => ({
   default: ({ href, children, ...props }: { href: string; children: React.ReactNode }) =>
     React.createElement("a", { href, ...props }, children),
 }));
+
+// ── Drawer mock ───────────────────────────────────────────────────────────────
+// Vaul uses WAAPI + rAF which don't exist in jsdom. Replace with a minimal
+// controlled implementation backed by a context so DrawerClose can call
+// onOpenChange(false) and DrawerContent can gate on open.
+
+vi.mock("@/components/ui/drawer", async () => {
+  const { createContext, useContext, createElement } = await import("react");
+  type ReactNode = import("react").ReactNode;
+
+  const Ctx = createContext<{ open: boolean; onOpenChange: (v: boolean) => void }>({
+    open: false,
+    onOpenChange: () => {},
+  });
+
+  function Drawer({
+    open,
+    onOpenChange,
+    children,
+  }: {
+    open: boolean;
+    onOpenChange: (v: boolean) => void;
+    children: ReactNode;
+    direction?: string;
+  }) {
+    return createElement(Ctx.Provider, { value: { open, onOpenChange } }, children);
+  }
+
+  function DrawerContent({ children, className }: { children: ReactNode; className?: string }) {
+    const { open } = useContext(Ctx);
+    if (!open) return null;
+    return createElement("div", { role: "dialog", "data-testid": "drawer-content", className }, children);
+  }
+
+  function DrawerHeader({ children, className }: { children: ReactNode; className?: string }) {
+    return createElement("div", { "data-testid": "drawer-header", className }, children);
+  }
+
+  function DrawerTitle({ children }: { children: ReactNode }) {
+    return createElement("h2", null, children);
+  }
+
+  function DrawerFooter({ children, className }: { children: ReactNode; className?: string }) {
+    return createElement("div", { className }, children);
+  }
+
+  function DrawerClose({ children }: { asChild?: boolean; children: ReactNode }) {
+    const { onOpenChange } = useContext(Ctx);
+    return createElement("span", { onClick: () => onOpenChange(false) }, children);
+  }
+
+  return { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerClose };
+});
 
 // ── Clipboard mock ────────────────────────────────────────────────────────────
 // navigator.clipboard is a non-configurable getter in jsdom — use
@@ -191,6 +244,51 @@ describe("CredentialCard", () => {
       await waitFor(() => {
         expect(mockWriteText).toHaveBeenCalledWith(expect.stringContaining(`/verify?tokenId=1&holder=${MOCK_ADDRESS}`));
       });
+    });
+  });
+
+  describe("Drawer", () => {
+    it("clicking the card body opens the drawer", async () => {
+      renderWithProviders(<CredentialCard credential={makeCredential()} holderAddress={MOCK_ADDRESS} />);
+      expect(screen.queryByTestId("drawer-content")).not.toBeInTheDocument();
+
+      await act(async () => {
+        screen.getByText("DevMatch 2024 Hackathon").click();
+      });
+
+      expect(screen.getByTestId("drawer-content")).toBeInTheDocument();
+    });
+
+    it("drawer header shows the credential name", async () => {
+      renderWithProviders(<CredentialCard credential={makeCredential()} holderAddress={MOCK_ADDRESS} />);
+      await act(async () => {
+        screen.getByText("DevMatch 2024 Hackathon").click();
+      });
+
+      const drawerHeader = screen.getByTestId("drawer-header");
+      expect(within(drawerHeader).getByRole("heading", { name: "DevMatch 2024 Hackathon" })).toBeInTheDocument();
+    });
+
+    it("clicking the close button closes the drawer", async () => {
+      renderWithProviders(<CredentialCard credential={makeCredential()} holderAddress={MOCK_ADDRESS} />);
+      await act(async () => {
+        screen.getByText("DevMatch 2024 Hackathon").click();
+      });
+      expect(screen.getByTestId("drawer-content")).toBeInTheDocument();
+
+      const closeBtn = within(screen.getByTestId("drawer-header")).getByRole("button");
+      await act(async () => { closeBtn.click(); });
+
+      expect(screen.queryByTestId("drawer-content")).not.toBeInTheDocument();
+    });
+
+    it("clicking the Share button does not open the drawer", async () => {
+      renderWithProviders(<CredentialCard credential={makeCredential()} holderAddress={MOCK_ADDRESS} />);
+      await act(async () => {
+        screen.getByRole("button", { name: /share/i }).click();
+      });
+
+      expect(screen.queryByTestId("drawer-content")).not.toBeInTheDocument();
     });
   });
 });
