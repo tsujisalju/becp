@@ -85,7 +85,7 @@ export default function Home() {
         </div>
       </div>
       <div className="w-full flex flex-col justify-center items-center space-y-8 pt-32">
-        <div className="grid grid-cols-1 lg:grid-cols-2 max-w-6xl">
+        <div className="grid grid-cols-1 px-4 lg:grid-cols-2 max-w-6xl">
           <div className="flex relative h-100">
             <Image src="/becp-credential.webp" alt="BECP credential showing skills gained" fill className="object-contain" />
           </div>

@@ -45,7 +45,7 @@ function Row({ label, value, mono }: { label: string; value: string; mono?: bool
 }
 
 function VerifySuccess({ result }: { result: VerifyResult }) {
-  const explorerUrl = addressExplorerUrl(result.holderAddress);
+  const explorerUrl = addressExplorerUrl(result.holderAddress) + "#nfttransfers";
   const ipfsUrl = result.tokenUri.startsWith("ipfs://") ? ipfsToHttp(result.tokenUri) : result.tokenUri;
 
   return (

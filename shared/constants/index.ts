@@ -27,8 +27,8 @@ export const DEFAULT_CHAIN_ID =
   process.env.NODE_ENV === 'production' ? CHAIN.OPTIMISM.id : CHAIN.OP_SEPOLIA.id
 
 /** Active chain config — OP Sepolia in dev, Optimism mainnet in production */
-export const ACTIVE_CHAIN =
-  process.env.NODE_ENV === 'production' ? CHAIN.OPTIMISM : CHAIN.OP_SEPOLIA
+export const ACTIVE_CHAIN = CHAIN.OP_SEPOLIA // patch: mainnet not deployed yet, use testnet for fyp demo
+  //process.env.NODE_ENV === 'production' ? CHAIN.OPTIMISM : CHAIN.OP_SEPOLIA
 
 // ── Smart Contract Role Identifiers ──────────────────────────────────────────
 // These are the keccak256 hashes of the role strings used in AccessControl.
